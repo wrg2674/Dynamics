@@ -1,9 +1,9 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\wrg\\VisualStudioProjecet\\Dynamics\\",
+  "WorkspaceRootPath": "D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{1F528F6C-668E-4C6C-A3B5-2A9F8B422DBD}|Dynamics\\Dynamics.vcxproj|D:\\wrg\\VisualStudioProjecet\\Dynamics\\Dynamics\\PBD.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{1F528F6C-668E-4C6C-A3B5-2A9F8B422DBD}|Dynamics\\Dynamics.vcxproj|D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\Dynamics\\PBD.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{1F528F6C-668E-4C6C-A3B5-2A9F8B422DBD}|Dynamics\\Dynamics.vcxproj|solutionrelative:Dynamics\\PBD.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
@@ -20,11 +20,11 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "PBD.cpp",
-              "DocumentMoniker": "D:\\wrg\\VisualStudioProjecet\\Dynamics\\Dynamics\\PBD.cpp",
+              "DocumentMoniker": "D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\Dynamics\\PBD.cpp",
               "RelativeDocumentMoniker": "Dynamics\\PBD.cpp",
-              "ToolTip": "D:\\wrg\\VisualStudioProjecet\\Dynamics\\Dynamics\\PBD.cpp",
+              "ToolTip": "D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\Dynamics\\PBD.cpp",
               "RelativeToolTip": "Dynamics\\PBD.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAARAAAAAAAAAA==",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAABcAAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-07-07T09:29:49.825Z",
               "EditorCaption": ""
