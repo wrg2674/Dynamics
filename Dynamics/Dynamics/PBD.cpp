@@ -7,6 +7,9 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
+#include "teapot_loader.h"
+#include "Vertex.h"
+#include "distanceConstriant.h"
 
 using namespace std;
 
@@ -24,6 +27,8 @@ float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
+
+glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
 int main() {
 	glfwInit();
@@ -54,7 +59,35 @@ int main() {
 	}
 	glEnable(GL_DEPTH_TEST);
 
-	Shader ourShader("PBD.vs", "PBD.fs");
+	Shader ourShader("shader/PBD.vs", "shader/PBD.fs");
+
+
+
+	vector<Vertex> cloth;
+	int vertexNum = 1000;
+	for (int i = 0; i < 50; i++) {
+		for (int j = 0; j < 20; j++) {
+			float px = -1 * j / 20.0f + 1 * (1 - j / 20.0f);
+			float py = -1 * i / 50.0f + 1 * (1 - i / 50.0f);
+			float pz = 0;
+			Vertex tmp = Vertex(px, py, pz, 0.0f, 0.0f, 0.0f, 1.0f);
+			cloth.push_back(tmp);
+		}
+	}
+
+
+	GLuint VAO, VBO;
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, cloth.size()* sizeof(Vertex), cloth.data(), GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, x));
+	glEnableVertexAttribArray(0);
+
+
 
 	while (!glfwWindowShouldClose(window)) {
 		float currentFrame = static_cast<float>(glfwGetTime());
@@ -65,6 +98,11 @@ int main() {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
+
+
+
+
 		ourShader.use();
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		ourShader.setMat4("projection", projection);
@@ -72,10 +110,20 @@ int main() {
 		glm::mat4 view = camera.GetViewMatrix();
 		ourShader.setMat4("view", view);
 
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::scale(model, glm::vec3(0.8, 0.8, 1));
+		ourShader.setMat4("model", model);
+
+		glBindVertexArray(VAO);
+		//glDrawArrays(GL_TRIANGLES, 0, cloth.size());
+		glDrawArrays(GL_POINTS, 0, cloth.size());
+
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 
 	}
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
 	glfwTerminate();
 	return 0;
 }

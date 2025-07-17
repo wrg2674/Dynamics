@@ -3,8 +3,44 @@
   "WorkspaceRootPath": "D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{1F528F6C-668E-4C6C-A3B5-2A9F8B422DBD}|Dynamics\\Dynamics.vcxproj|D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\Dynamics\\Constraint.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{1F528F6C-668E-4C6C-A3B5-2A9F8B422DBD}|Dynamics\\Dynamics.vcxproj|solutionrelative:Dynamics\\Constraint.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1F528F6C-668E-4C6C-A3B5-2A9F8B422DBD}|Dynamics\\Dynamics.vcxproj|D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\Dynamics\\Constraint.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{1F528F6C-668E-4C6C-A3B5-2A9F8B422DBD}|Dynamics\\Dynamics.vcxproj|solutionrelative:Dynamics\\Constraint.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1F528F6C-668E-4C6C-A3B5-2A9F8B422DBD}|Dynamics\\Dynamics.vcxproj|D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\Dynamics\\distanceConstriant.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{1F528F6C-668E-4C6C-A3B5-2A9F8B422DBD}|Dynamics\\Dynamics.vcxproj|solutionrelative:Dynamics\\distanceConstriant.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1F528F6C-668E-4C6C-A3B5-2A9F8B422DBD}|Dynamics\\Dynamics.vcxproj|D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\Dynamics\\distanceConstraint.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{1F528F6C-668E-4C6C-A3B5-2A9F8B422DBD}|Dynamics\\Dynamics.vcxproj|solutionrelative:Dynamics\\distanceConstraint.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1F528F6C-668E-4C6C-A3B5-2A9F8B422DBD}|Dynamics\\Dynamics.vcxproj|D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\include\\learnopengl\\camera.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{1F528F6C-668E-4C6C-A3B5-2A9F8B422DBD}|Dynamics\\Dynamics.vcxproj|solutionrelative:include\\learnopengl\\camera.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1F528F6C-668E-4C6C-A3B5-2A9F8B422DBD}|Dynamics\\Dynamics.vcxproj|D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\Dynamics\\Vertex.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{1F528F6C-668E-4C6C-A3B5-2A9F8B422DBD}|Dynamics\\Dynamics.vcxproj|solutionrelative:Dynamics\\Vertex.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{1F528F6C-668E-4C6C-A3B5-2A9F8B422DBD}|Dynamics\\Dynamics.vcxproj|D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\Dynamics\\PBD.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{1F528F6C-668E-4C6C-A3B5-2A9F8B422DBD}|Dynamics\\Dynamics.vcxproj|solutionrelative:Dynamics\\PBD.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1F528F6C-668E-4C6C-A3B5-2A9F8B422DBD}|Dynamics\\Dynamics.vcxproj|D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\Dynamics\\Vertex.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{1F528F6C-668E-4C6C-A3B5-2A9F8B422DBD}|Dynamics\\Dynamics.vcxproj|solutionrelative:Dynamics\\Vertex.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\Dynamics\\shader\\PBD.fs||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Dynamics\\shader\\PBD.fs||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\Dynamics\\shader\\PBD.vs||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Dynamics\\shader\\PBD.vs||{8B382828-6202-11D1-8870-0000F87579D2}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,20 +50,132 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Vertex.cpp",
+              "DocumentMoniker": "D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\Dynamics\\Vertex.cpp",
+              "RelativeDocumentMoniker": "Dynamics\\Vertex.cpp",
+              "ToolTip": "D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\Dynamics\\Vertex.cpp",
+              "RelativeToolTip": "Dynamics\\Vertex.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-07-12T12:28:15.789Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Vertex.h",
+              "DocumentMoniker": "D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\Dynamics\\Vertex.h",
+              "RelativeDocumentMoniker": "Dynamics\\Vertex.h",
+              "ToolTip": "D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\Dynamics\\Vertex.h",
+              "RelativeToolTip": "Dynamics\\Vertex.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-07-12T12:24:30.261Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "distanceConstraint.cpp",
+              "DocumentMoniker": "D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\Dynamics\\distanceConstraint.cpp",
+              "RelativeDocumentMoniker": "Dynamics\\distanceConstraint.cpp",
+              "ToolTip": "D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\Dynamics\\distanceConstraint.cpp",
+              "RelativeToolTip": "Dynamics\\distanceConstraint.cpp",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-07-12T12:13:40.965Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "distanceConstriant.h",
+              "DocumentMoniker": "D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\Dynamics\\distanceConstriant.h",
+              "RelativeDocumentMoniker": "Dynamics\\distanceConstriant.h",
+              "ToolTip": "D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\Dynamics\\distanceConstriant.h",
+              "RelativeToolTip": "Dynamics\\distanceConstriant.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-07-12T12:10:44.287Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "camera.h",
+              "DocumentMoniker": "D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\include\\learnopengl\\camera.h",
+              "RelativeDocumentMoniker": "include\\learnopengl\\camera.h",
+              "ToolTip": "D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\include\\learnopengl\\camera.h",
+              "RelativeToolTip": "include\\learnopengl\\camera.h",
+              "ViewState": "AgIAAFEAAAAAAAAAAADwv2oAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-07-12T10:13:55.254Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Constraint.h",
+              "DocumentMoniker": "D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\Dynamics\\Constraint.h",
+              "RelativeDocumentMoniker": "Dynamics\\Constraint.h",
+              "ToolTip": "D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\Dynamics\\Constraint.h",
+              "RelativeToolTip": "Dynamics\\Constraint.h",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAABYAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-07-12T10:04:56.319Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "Constraint.cpp",
+              "DocumentMoniker": "D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\Dynamics\\Constraint.cpp",
+              "RelativeDocumentMoniker": "Dynamics\\Constraint.cpp",
+              "ToolTip": "D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\Dynamics\\Constraint.cpp",
+              "RelativeToolTip": "Dynamics\\Constraint.cpp",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAAAC0AAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-07-12T10:04:33.424Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "PBD.fs",
+              "DocumentMoniker": "D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\Dynamics\\shader\\PBD.fs",
+              "RelativeDocumentMoniker": "Dynamics\\shader\\PBD.fs",
+              "ToolTip": "D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\Dynamics\\shader\\PBD.fs",
+              "RelativeToolTip": "Dynamics\\shader\\PBD.fs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-07-12T07:44:36.936Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "PBD.vs",
+              "DocumentMoniker": "D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\Dynamics\\shader\\PBD.vs",
+              "RelativeDocumentMoniker": "Dynamics\\shader\\PBD.vs",
+              "ToolTip": "D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\Dynamics\\shader\\PBD.vs",
+              "RelativeToolTip": "Dynamics\\shader\\PBD.vs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-07-12T07:44:33.475Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
               "Title": "PBD.cpp",
               "DocumentMoniker": "D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\Dynamics\\PBD.cpp",
               "RelativeDocumentMoniker": "Dynamics\\PBD.cpp",
               "ToolTip": "D:\\wrg\\VisualStudioProjecet\\GitHub\\Dynamics\\Dynamics\\Dynamics\\PBD.cpp",
               "RelativeToolTip": "Dynamics\\PBD.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAHIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-07-07T09:29:49.825Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-07T09:29:49.825Z"
             }
           ]
         }
