@@ -2,5 +2,11 @@
 D:\wrg\VisualStudioProjecet\GitHub\Dynamics\Dynamics\include\GLFW\glfw3.h(3235,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
   (소스 파일 'PBD.cpp'을(를) 컴파일하는 중)
   
-D:\wrg\VisualStudioProjecet\GitHub\Dynamics\Dynamics\Dynamics\PBD.cpp(114,40): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\wrg\VisualStudioProjecet\GitHub\Dynamics\Dynamics\Dynamics\PBD.cpp(30,25): warning C4305: '초기화 중': 'double'에서 'float'(으)로 잘립니다.
+D:\wrg\VisualStudioProjecet\GitHub\Dynamics\Dynamics\Dynamics\PBD.cpp(162,43): warning C4267: '인수': 'size_t'에서 'GLsizei'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\wrg\VisualStudioProjecet\GitHub\Dynamics\Dynamics\Dynamics\PBD.cpp(188,24): warning C4244: '=': 'double'에서 'T'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+D:\wrg\VisualStudioProjecet\GitHub\Dynamics\Dynamics\Dynamics\PBD.cpp(188,24): warning C4244:         with
+D:\wrg\VisualStudioProjecet\GitHub\Dynamics\Dynamics\Dynamics\PBD.cpp(188,24): warning C4244:         [
+D:\wrg\VisualStudioProjecet\GitHub\Dynamics\Dynamics\Dynamics\PBD.cpp(188,24): warning C4244:             T=float
+D:\wrg\VisualStudioProjecet\GitHub\Dynamics\Dynamics\Dynamics\PBD.cpp(188,24): warning C4244:         ]
   Dynamics.vcxproj -> D:\wrg\VisualStudioProjecet\GitHub\Dynamics\Dynamics\x64\Debug\Dynamics.exe

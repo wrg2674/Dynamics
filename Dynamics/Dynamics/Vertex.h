@@ -1,21 +1,21 @@
 #pragma once
 #ifndef VERTEX_H
 #define VERTEX_H
+#include <glm/glm.hpp>
 
 class Vertex {
 private:
-	float p[3];
-	float dp[3] = { 0 };
+	
 public:
-	float x[3];
+	glm::vec3 x;
 	float m; // Áú·®
-	float v[3];
-
+	glm::vec3 v;
+	glm::vec3 p;
+	glm::vec3 dp = { 0,0,0 };
 	Vertex(float px, float py, float pz, float vx, float vy, float vz, float m);
 
-	void updateP(float value[3]);
-	float* getP();
-	float* getDp();
+	void updateP(glm::vec3 value);
+
 };
 
 #endif VERTEX_H

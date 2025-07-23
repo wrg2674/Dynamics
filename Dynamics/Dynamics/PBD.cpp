@@ -18,8 +18,18 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 
+void velocityUpdate(vector<Vertex>& vertices);
+void updateVertices(vector<Vertex>& vertices, float tstep);
+void applyForce(vector<Vertex>& vertices, vector<glm::vec3>& forces, float tstep);
+void sumExtForce(vector<glm::vec3>& forces, glm::vec3 result);
+void dampVelocities(vector<Vertex>& vertices);
+void estimateP(vector<Vertex>& vertices, float tstep);
+
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
+const float K_DAMPING = 0.3;
+
+enum CollisionDetection { TRUE, FALSE, FAIL };
 
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float lastX = SCR_WIDTH / 2.0f;
@@ -64,17 +74,54 @@ int main() {
 
 
 	vector<Vertex> cloth;
-	int vertexNum = 1000;
-	for (int i = 0; i < 50; i++) {
-		for (int j = 0; j < 20; j++) {
-			float px = -1 * j / 20.0f + 1 * (1 - j / 20.0f);
-			float py = -1 * i / 50.0f + 1 * (1 - i / 50.0f);
-			float pz = 0;
-			Vertex tmp = Vertex(px, py, pz, 0.0f, 0.0f, 0.0f, 1.0f);
-			cloth.push_back(tmp);
+	//for (int i = 0; i < 50; i++) {
+	//	for (int j = 0; j < 20; j++) {
+	//		float px = -1 * j / 20.0f + 1 * (1 - j / 20.0f);
+	//		float py = -1 * i / 50.0f + 1 * (1 - i / 50.0f);
+	//		float pz = 0;
+	//		Vertex tmp = Vertex(px, py, pz, 0.0f, 0.0f, 0.0f, 1.0f);
+	//		cloth.push_back(tmp);
+	//	}
+	//}
+	
+	for (int i = 0; i < 60; i++) {
+		for (int j = 0; j < 30; j++) {
+			float x1 = -1 * j / 30.0f + 1 * (1 - j) / 30.0f;
+			float y1 = -1 * i / 60.0f + 1 * (1 - i) / 60.0f;
+
+			float x2 = -1 * (j + 1) / 30.0f + 1 * (1 - (j + 1)) / 30.0f;
+			float y2 = -1 * i / 60.0f + 1 * (1 - i) / 60.0f;
+
+			float x3 = -1 * j / 30.0f + 1 * (1 - j) / 30.0f;
+			float y3 = -1 * (i+1) / 60.0f + 1 * (1 - (i+1)) / 60.0f;
+
+			Vertex tmp1 = Vertex(x1, y1, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+			Vertex tmp2 = Vertex(x2, y2, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+			Vertex tmp3 = Vertex(x3, y3, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+			cloth.push_back(tmp1);
+			cloth.push_back(tmp2);
+			cloth.push_back(tmp3);
 		}
 	}
+	for (int i = 60; i > 0; i--) {
+		for (int j = 30; j > 0; j--) {
+			float x1 = -1 * j / 30.0f + 1 * (1 - j) / 30.0f;
+			float y1 = -1 * i / 60.0f + 1 * (1 - i) / 60.0f;
 
+			float x2 = -1 * (j - 1) / 30.0f + 1 * (1 - (j - 1)) / 30.0f;
+			float y2 = -1 * i / 60.0f + 1 * (1 - i) / 60.0f;
+
+			float x3 = -1 * j / 30.0f + 1 * (1 - j) / 30.0f;
+			float y3 = -1 * (i - 1) / 60.0f + 1 * (1 - (i - 1)) / 60.0f;
+
+			Vertex tmp1 = Vertex(x1, y1, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+			Vertex tmp2 = Vertex(x2, y2, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+			Vertex tmp3 = Vertex(x3, y3, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+			cloth.push_back(tmp1);
+			cloth.push_back(tmp2);
+			cloth.push_back(tmp3);
+		}
+	}
 
 	GLuint VAO, VBO;
 	glGenVertexArrays(1, &VAO);
@@ -87,7 +134,8 @@ int main() {
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, x));
 	glEnableVertexAttribArray(0);
 
-
+	DistanceConstraint distanceConstraint(2, 0.5, true, 1.0);
+	glm::vec3 gravity = glm::vec3(0, -9.8, 0);
 
 	while (!glfwWindowShouldClose(window)) {
 		float currentFrame = static_cast<float>(glfwGetTime());
@@ -97,10 +145,6 @@ int main() {
 		processInput(window);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
-
-
 
 
 		ourShader.use();
@@ -115,8 +159,8 @@ int main() {
 		ourShader.setMat4("model", model);
 
 		glBindVertexArray(VAO);
-		//glDrawArrays(GL_TRIANGLES, 0, cloth.size());
-		glDrawArrays(GL_POINTS, 0, cloth.size());
+		glDrawArrays(GL_TRIANGLES, 0, cloth.size());
+		//glDrawArrays(GL_POINTS, 0, cloth.size());
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -126,6 +170,98 @@ int main() {
 	glDeleteBuffers(1, &VBO);
 	glfwTerminate();
 	return 0;
+}
+
+void sumExtForce(vector<glm::vec3>& forces, glm::vec3 result) {
+	for (int i = 0; i < forces.size(); i++) {
+		for (int j = 0; j < 3; j++) {
+			result[j] += forces.at(i)[j];
+		}
+	}
+}
+void applyForce(vector<Vertex>& vertices, vector<glm::vec3>& forces, float tstep) {
+	glm::vec3 force = { 0,0,0 };
+	sumExtForce(forces, force);
+	for (int i = 0; i < vertices.size(); i++) {
+		Vertex& cur = vertices.at(i);
+		for (int j = 0; j < 3; j++) {
+			cur.v[j] = cur.v[j] + tstep * (1.0 / cur.m) * force[j];
+		}
+	}
+}
+void dampVelocities(vector<Vertex>& vertices) {
+	glm::vec3 xcm = { 0,0,0 };
+	glm::vec3 vcm = { 0,0,0 };
+	glm::vec3 sumXm = { 0,0,0 };
+	glm::vec3 sumVm = { 0,0,0 };
+	float sumM = 0;
+	glm::vec3 L, w;
+	glm::mat3 I;
+	for (int i = 0; i < vertices.size(); i++) {
+		Vertex& cur = vertices.at(i);
+		for (int j = 0; j < 3; j++) {
+			sumXm[j] += cur.x[j] * cur.m;
+			sumVm[j] += cur.v[j] * cur.m;
+			sumM += cur.m;
+		}
+	}
+	for (int j = 0; j < 3; j++) {
+		xcm[j] = sumXm[j] / sumM;
+		vcm[j] = sumVm[j] / sumM;
+	}
+	for (int i = 0; i < vertices.size(); i++) {
+		Vertex& cur = vertices.at(i);
+		glm::vec3 r = { 0,0,0 };
+		for (int j = 0; j < 3; j++) {
+			r[j] = cur.x[j] - xcm[j];
+		}
+		L += glm::cross(r, cur.m * cur.v);
+		glm::mat3 skew = { {0, r[2], -r[1]}, {-r[2], 0, r[0]}, {r[1], -r[0], 0} };
+		I += skew * glm::transpose(skew) * cur.m;
+	}
+	w = glm::inverse(I) * L;
+	for (int i = 0; i < vertices.size(); i++) {
+		Vertex& cur = vertices.at(i);
+		glm::vec3 deltaV = vcm + glm::cross(w, cur.x - xcm) - cur.v;
+		cur.v = cur.v + K_DAMPING * deltaV;
+	}
+}
+
+void estimateP(vector<Vertex>& vertices, float tstep) {
+	for (int i = 0; i < vertices.size(); i++) {
+		Vertex& cur = vertices.at(i);
+		for (int j = 0; j < 3; j++) {
+			cur.p[j] = cur.x[j]+cur.v[j]*tstep;
+		}
+	}
+}
+CollisionDetection CCD(vector<Vertex>& vertices) {
+	for (int i = 0; i < vertices.size(); i++) {
+		Vertex& cur = vertices.at(i);
+		float ray[3] = { 0,0,0 };
+		for (int j = 0; j < 3; j++) {
+			ray[j] = cur.p[j] - cur.x[j];
+		}
+
+	}
+	return FAIL;
+}
+void generateCollisionConstraint(vector<Vertex>& vertices) {
+
+}
+void updateVertices(vector<Vertex>& vertices, float tstep) {
+	for (int i = 0; i < vertices.size(); i++) {
+		Vertex& cur = vertices.at(i);
+		for (int j = 0; j < 3; j++) {
+			cur.v[j] = (cur.p[j] - cur.x[j]) / tstep;
+		}
+		for (int j = 0; j < 3; j++) {
+			cur.x[j] = cur.p[j];
+		}
+	}
+}
+void velocityUpdate(vector<Vertex>& vertices) {
+
 }
 
 void processInput(GLFWwindow* window) {

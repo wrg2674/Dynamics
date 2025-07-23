@@ -6,9 +6,7 @@
 class DistanceConstraint :public Constraint {
 public:
 	float d;
-	DistanceConstraint(float d);
-
-	float getLength(float vec[3]);
+	DistanceConstraint(int cardinality, float k, bool type, float d);
 
 	float constraintFunction() override;
 };

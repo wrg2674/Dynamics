@@ -2,18 +2,15 @@
 #include <cmath>
 using namespace std;
 
-DistanceConstraint::DistanceConstraint(float d) {
+DistanceConstraint::DistanceConstraint(int cardinality, float k, bool type, float d):Constraint(cardinality, k, type) {
 	this->d = d;
 }
 
 float DistanceConstraint::constraintFunction() {
 	Vertex* a = vertices.at(0);
 	Vertex* b = vertices.at(1);
-	float vec[3] = { a->getP()[0] - b->getP()[0], a->getP()[1] - b->getP()[1], a->getP()[2] - b->getP()[2] };
-	return getLength(vec) - d;
+	glm::vec3 vec = { a->p[0] - b->p[0], a->p[1] - b->p[1], a->p[2] - b->p[2] };
+	return vec.length() - d;
 }
 
-float DistanceConstraint::getLength(float vec[3]) {
-	return sqrt(vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2]);
-}
 
