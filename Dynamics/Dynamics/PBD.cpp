@@ -24,10 +24,12 @@ void applyForce(vector<Vertex>& vertices, vector<glm::vec3>& forces, float tstep
 void sumExtForce(vector<glm::vec3>& forces, glm::vec3 result);
 void dampVelocities(vector<Vertex>& vertices);
 void estimateP(vector<Vertex>& vertices, float tstep);
+void projection(vector<Constraint*>& constraints, float tstep, int count);
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
-const float K_DAMPING = 0.3;
+const float K_DAMPING = 0.3f;
+const float TIMESTEP = 0.05f;
 
 enum CollisionDetection { TRUE, FALSE, FAIL };
 
@@ -74,15 +76,6 @@ int main() {
 
 
 	vector<Vertex> cloth;
-	//for (int i = 0; i < 50; i++) {
-	//	for (int j = 0; j < 20; j++) {
-	//		float px = -1 * j / 20.0f + 1 * (1 - j / 20.0f);
-	//		float py = -1 * i / 50.0f + 1 * (1 - i / 50.0f);
-	//		float pz = 0;
-	//		Vertex tmp = Vertex(px, py, pz, 0.0f, 0.0f, 0.0f, 1.0f);
-	//		cloth.push_back(tmp);
-	//	}
-	//}
 	
 	for (int i = 0; i < 60; i++) {
 		for (int j = 0; j < 30; j++) {
@@ -134,18 +127,37 @@ int main() {
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, x));
 	glEnableVertexAttribArray(0);
 
-	DistanceConstraint distanceConstraint(2, 0.5, true, 1.0);
+	vector<glm::vec3> forces;
 	glm::vec3 gravity = glm::vec3(0, -9.8, 0);
+	forces.push_back(gravity);
 
+	vector<Constraint*> distanceConstraints;
+	for (int i = 0; i < cloth.size()-2; i++) {
+		DistanceConstraint tmp(2, 0.5, true, 1.0);
+		tmp.addVertex(&cloth.at(i));
+		tmp.addVertex(&cloth.at(i+1));
+		tmp.addVertex(&cloth.at(i+2));
+		distanceConstraints.push_back(&tmp);
+	}
+
+	int count = 0;
 	while (!glfwWindowShouldClose(window)) {
 		float currentFrame = static_cast<float>(glfwGetTime());
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-
+		
 		processInput(window);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
+		applyForce(cloth, forces, TIMESTEP);
+		dampVelocities(cloth);
+		estimateP(cloth, TIMESTEP);
+		// generateCollisionConstraint();
+		projection(distanceConstraints, TIMESTEP, count);
+		updateVertices(cloth, TIMESTEP);
+		// velocityUpdate();
 
 		ourShader.use();
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
@@ -164,7 +176,7 @@ int main() {
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
-
+		count++;
 	}
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
@@ -248,6 +260,12 @@ CollisionDetection CCD(vector<Vertex>& vertices) {
 }
 void generateCollisionConstraint(vector<Vertex>& vertices) {
 
+}
+
+void projection(vector<Constraint*>& constraints, float tstep, int count) {
+	for (int i = 0; i < constraints.size(); i++) {
+		constraints.at(i)->GS_Iteration(tstep, count);
+	}
 }
 void updateVertices(vector<Vertex>& vertices, float tstep) {
 	for (int i = 0; i < vertices.size(); i++) {

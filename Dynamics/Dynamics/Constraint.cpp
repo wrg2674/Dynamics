@@ -89,3 +89,4 @@ void Constraint::calcDeltaP(int idx , vector<glm::vec3>& gradient,float tstep){
 void Constraint::projectionFunction(float tstep, int ns) {
 	GS_Iteration(tstep, ns);
 }
+
