@@ -21,7 +21,7 @@ void processInput(GLFWwindow* window);
 void velocityUpdate(vector<Vertex>& vertices);
 void updateVertices(vector<Vertex>& vertices, float tstep);
 void applyForce(vector<Vertex>& vertices, vector<glm::vec3>& forces, float tstep);
-void sumExtForce(vector<glm::vec3>& forces, glm::vec3 result);
+void sumExtForce(vector<glm::vec3>& forces, glm::vec3& result);
 void dampVelocities(vector<Vertex>& vertices);
 void estimateP(vector<Vertex>& vertices, float tstep);
 void projection(vector<Constraint*>& constraints, float tstep, int count);
@@ -142,10 +142,13 @@ int main() {
 
 	int count = 0;
 	while (!glfwWindowShouldClose(window)) {
+		ios::sync_with_stdio(false);
+		cin.tie(NULL);
+
 		float currentFrame = static_cast<float>(glfwGetTime());
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-		
+
 		processInput(window);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -159,6 +162,13 @@ int main() {
 		updateVertices(cloth, TIMESTEP);
 		// velocityUpdate();
 
+		//for (int i = 0; i < cloth.size(); i++) {
+		//	cloth.at(i).x.y = cloth.at(i).x.y -9.8 * TIMESTEP;
+		//}
+
+		cout << "(" << cloth.at(500).x.x << ", " << cloth.at(500).x.y << ", " << cloth.at(500).x.z << ")\n";
+		glBufferSubData(GL_ARRAY_BUFFER, 0, cloth.size() * sizeof(Vertex), cloth.data());
+		
 		ourShader.use();
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		ourShader.setMat4("projection", projection);
@@ -184,7 +194,7 @@ int main() {
 	return 0;
 }
 
-void sumExtForce(vector<glm::vec3>& forces, glm::vec3 result) {
+void sumExtForce(vector<glm::vec3>& forces, glm::vec3& result) {
 	for (int i = 0; i < forces.size(); i++) {
 		for (int j = 0; j < 3; j++) {
 			result[j] += forces.at(i)[j];
@@ -198,6 +208,7 @@ void applyForce(vector<Vertex>& vertices, vector<glm::vec3>& forces, float tstep
 		Vertex& cur = vertices.at(i);
 		for (int j = 0; j < 3; j++) {
 			cur.v[j] = cur.v[j] + tstep * (1.0 / cur.m) * force[j];
+
 		}
 	}
 }
@@ -207,8 +218,8 @@ void dampVelocities(vector<Vertex>& vertices) {
 	glm::vec3 sumXm = { 0,0,0 };
 	glm::vec3 sumVm = { 0,0,0 };
 	float sumM = 0;
-	glm::vec3 L, w;
-	glm::mat3 I;
+	glm::vec3 L = { 0,0,0 }, w = {0,0,0};
+	glm::mat3 I=glm::mat3(1.0f);
 	for (int i = 0; i < vertices.size(); i++) {
 		Vertex& cur = vertices.at(i);
 		for (int j = 0; j < 3; j++) {
@@ -242,15 +253,13 @@ void dampVelocities(vector<Vertex>& vertices) {
 void estimateP(vector<Vertex>& vertices, float tstep) {
 	for (int i = 0; i < vertices.size(); i++) {
 		Vertex& cur = vertices.at(i);
-		for (int j = 0; j < 3; j++) {
-			cur.p[j] = cur.x[j]+cur.v[j]*tstep;
-		}
+		cur.p = cur.x + cur.v * tstep;
 	}
 }
 CollisionDetection CCD(vector<Vertex>& vertices) {
 	for (int i = 0; i < vertices.size(); i++) {
 		Vertex& cur = vertices.at(i);
-		float ray[3] = { 0,0,0 };
+		glm::vec3 ray = { 0,0,0 };
 		for (int j = 0; j < 3; j++) {
 			ray[j] = cur.p[j] - cur.x[j];
 		}
@@ -264,7 +273,7 @@ void generateCollisionConstraint(vector<Vertex>& vertices) {
 
 void projection(vector<Constraint*>& constraints, float tstep, int count) {
 	for (int i = 0; i < constraints.size(); i++) {
-		constraints.at(i)->GS_Iteration(tstep, count);
+		constraints.at(i)->projectionFunction(tstep, count);
 	}
 }
 void updateVertices(vector<Vertex>& vertices, float tstep) {
