@@ -77,52 +77,52 @@ int main() {
 
 	vector<Vertex> cloth;
 	
-	for (int i = 0; i < 60; i++) {
-		for (int j = 0; j < 30; j++) {
-			float x1 = -1 * j / 30.0f + 1 * (1 - j) / 30.0f;
-			float y1 = -1 * i / 60.0f + 1 * (1 - i) / 60.0f;
+	
+	int rows = 60;
+	int cols = 30;
 
-			float x2 = -1 * (j + 1) / 30.0f + 1 * (1 - (j + 1)) / 30.0f;
-			float y2 = -1 * i / 60.0f + 1 * (1 - i) / 60.0f;
-
-			float x3 = -1 * j / 30.0f + 1 * (1 - j) / 30.0f;
-			float y3 = -1 * (i+1) / 60.0f + 1 * (1 - (i+1)) / 60.0f;
-
-			Vertex tmp1 = Vertex(x1, y1, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-			Vertex tmp2 = Vertex(x2, y2, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-			Vertex tmp3 = Vertex(x3, y3, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-			cloth.push_back(tmp1);
-			cloth.push_back(tmp2);
-			cloth.push_back(tmp3);
-		}
-	}
-	for (int i = 60; i > 0; i--) {
-		for (int j = 30; j > 0; j--) {
-			float x1 = -1 * j / 30.0f + 1 * (1 - j) / 30.0f;
-			float y1 = -1 * i / 60.0f + 1 * (1 - i) / 60.0f;
-
-			float x2 = -1 * (j - 1) / 30.0f + 1 * (1 - (j - 1)) / 30.0f;
-			float y2 = -1 * i / 60.0f + 1 * (1 - i) / 60.0f;
-
-			float x3 = -1 * j / 30.0f + 1 * (1 - j) / 30.0f;
-			float y3 = -1 * (i - 1) / 60.0f + 1 * (1 - (i - 1)) / 60.0f;
-
-			Vertex tmp1 = Vertex(x1, y1, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-			Vertex tmp2 = Vertex(x2, y2, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-			Vertex tmp3 = Vertex(x3, y3, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-			cloth.push_back(tmp1);
-			cloth.push_back(tmp2);
-			cloth.push_back(tmp3);
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < cols; j++) {
+			float px = -1 * j / (float)cols + 1 * (1 - j) / (float)cols;
+			float py = -1 * i / (float)rows + 1 * (1 - i) / (float)rows;
+			float pz = 0;
+			Vertex tmp = Vertex(px, py, pz, 0.0f, 0.0f, 0.0f, 1.0f);
+			cloth.push_back(tmp);
 		}
 	}
 
-	GLuint VAO, VBO;
+	std::vector<unsigned int> indices;
+	for (int i = 0; i < rows - 1; ++i) {
+		for (int j = 0; j < cols - 1; ++j) {
+			int i0 = i * cols + j;           // 좌상단
+			int i1 = i * cols + (j + 1);     // 우상단
+			int i2 = (i + 1) * cols + j;     // 좌하단
+			int i3 = (i + 1) * cols + (j + 1); // 우하단
+
+			// 삼각형 1: (i0, i1, i2)
+			indices.push_back(i0);
+			indices.push_back(i1);
+			indices.push_back(i2);
+
+			// 삼각형 2: (i1, i3, i2)
+			indices.push_back(i1);
+			indices.push_back(i3);
+			indices.push_back(i2);
+		}
+	}
+
+	GLuint VAO, VBO, EBO;
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, cloth.size()* sizeof(Vertex), cloth.data(), GL_STATIC_DRAW);
+
+	glGenBuffers(1, &EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	// sizeof(indices)와 indices.size()*sizeof(unsigned int)는 다름
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()*sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, x));
 	glEnableVertexAttribArray(0);
@@ -132,14 +132,23 @@ int main() {
 	forces.push_back(gravity);
 
 	vector<Constraint*> distanceConstraints;
-	for (int i = 0; i < cloth.size()-2; i++) {
-		DistanceConstraint tmp(2, 0.5, true, 1.0);
-		tmp.addVertex(&cloth.at(i));
-		tmp.addVertex(&cloth.at(i+1));
-		tmp.addVertex(&cloth.at(i+2));
-		distanceConstraints.push_back(&tmp);
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < cols-1; j++) {
+			DistanceConstraint* tmp = new DistanceConstraint(2, 0.5, true, 1);
+			tmp->addVertex(&cloth.at(j+i*cols));
+			tmp->addVertex(&cloth.at(j+i*cols+1));
+			distanceConstraints.push_back(tmp);
+		}
 	}
-
+	for (int i = 0; i < rows-1; i++) {
+		for (int j = 0; j < cols; j++) {
+			DistanceConstraint* tmp = new DistanceConstraint(2, 0.5, true, 1);
+			tmp->addVertex(&cloth.at(j + i * cols));
+			tmp->addVertex(&cloth.at(j + (i+1) * cols ));
+			distanceConstraints.push_back(tmp);
+		}
+	}
+	glPointSize(2.0f);
 	int count = 0;
 	while (!glfwWindowShouldClose(window)) {
 		ios::sync_with_stdio(false);
@@ -166,7 +175,7 @@ int main() {
 		//	cloth.at(i).x.y = cloth.at(i).x.y -9.8 * TIMESTEP;
 		//}
 
-		cout << "(" << cloth.at(500).x.x << ", " << cloth.at(500).x.y << ", " << cloth.at(500).x.z << ")\n";
+		//cout << "(" << cloth.at(500).x.x << ", " << cloth.at(500).x.y << ", " << cloth.at(500).x.z << ")\n";
 		glBufferSubData(GL_ARRAY_BUFFER, 0, cloth.size() * sizeof(Vertex), cloth.data());
 		
 		ourShader.use();
@@ -177,13 +186,15 @@ int main() {
 		ourShader.setMat4("view", view);
 
 		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::scale(model, glm::vec3(0.8, 0.8, 1));
+		//model = glm::scale(model, glm::vec3(10, 10, 1));
 		ourShader.setMat4("model", model);
 
 		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, cloth.size());
+		//glDrawArrays(GL_TRIANGLES, 0, cloth.size());
 		//glDrawArrays(GL_POINTS, 0, cloth.size());
 
+		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+		//glDrawElements(GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 		count++;
