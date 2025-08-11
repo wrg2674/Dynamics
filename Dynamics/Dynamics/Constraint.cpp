@@ -1,5 +1,6 @@
 #include "Constraint.h"
 
+
 Constraint::Constraint(){
 	this->cardinality = 0;
 	this->index = vector<int>();
@@ -24,27 +25,13 @@ void Constraint::addVertex(Vertex* item) {
 }
 bool Constraint::satisfyConstraintFunction() {
 	if (type) {
-		return constraintFunction() == 0;
+		return abs(constraintFunction()) <= 1e-5f; // 원래는 == 0 이지만, 부동소수점 오차 고려함
 	}
 	return constraintFunction() < 0;
 }
 
-void Constraint::GS_Iteration(float tstep, int ns) {
-	for (int i = 0; i < vertices.size(); i++){
-		if (!satisfyConstraintFunction()) {
-			Vertex* cur = vertices.at(i);
-			vector<glm::vec3> gradient;
-			gradient = calcGradient(tstep);
-			calcDeltaP(i,gradient,tstep);
-			for (int j = 0; j < 3; j++) {
-				cur->p[j] = cur->p[j] + (1.0-pow((1.0-k), 1.0/ns)) * cur->dp[j];
-			}
-		}
-
-	}
-}
-
 void Constraint::calcCentralDiff(Vertex* cur, float tstep, glm::vec3& result) {
+	//float tstep = 1e-4; // tstep은 너무커서 더 작은 값으로 중심차분법을 계산함
 	glm::vec3 advP, prevP, curP;
 	float advF, prevF = 0;
 	glm::vec3 centralDiff;
@@ -53,14 +40,14 @@ void Constraint::calcCentralDiff(Vertex* cur, float tstep, glm::vec3& result) {
 		curP[i] = cur->p[i];
 	}
 	for (int j = 0; j < 3; j++) {
-		// 편미분은 각 성분에 대해 독립적으로 적용되어야 하므로 기존에 변경한 내용을 초기화시켜야함
+		// 편미분은 각 성분에 대해 독립적으로 적용되어야 하므로 
+		// 기존에 변경한 내용을 초기화시켜야함
 		for (int i = 0; i < 3; i++) {
 			advP[i] = cur->p[i];
 			prevP[i] = cur->p[i];
 		}
 		advP[j] = cur->p[j] + tstep;
 		prevP[j] = cur->p[j] - tstep;
-		//curP[j] = cur->p[j];
 
 		cur->updateP(advP);
 		advF = constraintFunction();
@@ -92,6 +79,28 @@ void Constraint::calcDeltaP(int idx , vector<glm::vec3>& gradient,float tstep){
 	}
 }
 void Constraint::projectionFunction(float tstep, int ns) {
-	GS_Iteration(tstep, ns);
+	if (satisfyConstraintFunction()) {
+		return;
+	}
+	vector<glm::vec3> gradient;
+	gradient = calcGradient(tstep);
+	for (int i = 0; i < vertices.size(); i++) {
+		Vertex* cur = vertices.at(i);
+		if (cur->pinned) {
+			continue;
+		}
+		calcDeltaP(i, gradient, tstep);
+	}
+	float weight = 1.0 - pow((1.0 - k), 1.0 / ns);
+	// GS 스타일의 즉시 업데이트는 제약사항 단위의 것을 의미하는 것이지 
+	// 한 제약사항 내에서 각 정점마다 즉시 업데이트를 하면 안됨.
+	for (int i = 0; i < vertices.size(); i++) {
+		for (int j = 0; j < 3; j++) {
+			Vertex* cur = vertices.at(i);
+			if (cur->pinned) {
+				continue;
+			}
+			cur->p[j] = cur->p[j] +  weight* cur->dp[j];
+		}
+	}
 }
-

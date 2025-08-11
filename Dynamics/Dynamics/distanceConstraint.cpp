@@ -13,5 +13,3 @@ float DistanceConstraint::constraintFunction() {
 	float length = glm::length(vec);
 	return length - d;
 }
-
-

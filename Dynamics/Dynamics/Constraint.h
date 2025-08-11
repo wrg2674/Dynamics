@@ -22,7 +22,6 @@ public:
 	void addIndex(int idx);
 	void addVertex(Vertex* item);
 
-	void GS_Iteration(float tstep, int ns);
 	vector<glm::vec3> calcGradient(float tstep);
 	void calcCentralDiff(Vertex*cur, float tstep, glm::vec3& result);
 	void calcDeltaP(int idx, vector<glm::vec3>& gradient, float tstep);

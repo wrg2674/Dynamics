@@ -21,15 +21,20 @@ void processInput(GLFWwindow* window);
 void velocityUpdate(vector<Vertex>& vertices);
 void updateVertices(vector<Vertex>& vertices, float tstep);
 void applyForce(vector<Vertex>& vertices, vector<glm::vec3>& forces, float tstep);
-void sumExtForce(vector<glm::vec3>& forces, glm::vec3& result);
+void sumExtForce(vector<Vertex>& vertices, vector<glm::vec3>& forces, vector<glm::vec3>& result);
 void dampVelocities(vector<Vertex>& vertices);
 void estimateP(vector<Vertex>& vertices, float tstep);
-void projection(vector<Constraint*>& constraints, float tstep, int count);
+void GSiteration(vector<Constraint*>& constraints, float tstep);
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 const float K_DAMPING = 0.3f;
 const float TIMESTEP = 0.05f;
+const int ROWS = 60;
+const int COLS = 30;
+const int ITERATION_COUNT = 30;
+const float K = 1.0f;
+const float GRAVITY = -9.8f;
 
 enum CollisionDetection { TRUE, FALSE, FAIL };
 
@@ -73,18 +78,11 @@ int main() {
 
 	Shader ourShader("shader/PBD.vs", "shader/PBD.fs");
 
-
-
 	vector<Vertex> cloth;
-	
-	
-	int rows = 60;
-	int cols = 30;
-
-	for (int i = 0; i < rows; i++) {
-		for (int j = 0; j < cols; j++) {
-			float px = -1 * j / (float)cols + 1 * (1 - j) / (float)cols;
-			float py = -1 * i / (float)rows + 1 * (1 - i) / (float)rows;
+	for (int i = 0; i < ROWS; i++) {
+		for (int j = 0; j < COLS; j++) {
+			float px = 1 * j / (float)(COLS-1) - 1 * (1 - j/ (float)(COLS-1));
+			float py = -1 * i / (float)(ROWS-1) + 1 * (1 - i/ (float)(ROWS-1));
 			float pz = 0;
 			Vertex tmp = Vertex(px, py, pz, 0.0f, 0.0f, 0.0f, 1.0f);
 			cloth.push_back(tmp);
@@ -92,12 +90,12 @@ int main() {
 	}
 
 	std::vector<unsigned int> indices;
-	for (int i = 0; i < rows - 1; ++i) {
-		for (int j = 0; j < cols - 1; ++j) {
-			int i0 = i * cols + j;           // 좌상단
-			int i1 = i * cols + (j + 1);     // 우상단
-			int i2 = (i + 1) * cols + j;     // 좌하단
-			int i3 = (i + 1) * cols + (j + 1); // 우하단
+	for (int i = 0; i < ROWS - 1; ++i) {
+		for (int j = 0; j < COLS - 1; ++j) {
+			int i0 = i * COLS + j;           // 좌상단
+			int i1 = i * COLS + (j + 1);     // 우상단
+			int i2 = (i + 1) * COLS + j;     // 좌하단
+			int i3 = (i + 1) * COLS + (j + 1); // 우하단
 
 			// 삼각형 1: (i0, i1, i2)
 			indices.push_back(i0);
@@ -128,28 +126,44 @@ int main() {
 	glEnableVertexAttribArray(0);
 
 	vector<glm::vec3> forces;
-	glm::vec3 gravity = glm::vec3(0, -9.8, 0);
+	glm::vec3 gravity = glm::vec3(0, GRAVITY, 0);
 	forces.push_back(gravity);
 
 	vector<Constraint*> distanceConstraints;
-	for (int i = 0; i < rows; i++) {
-		for (int j = 0; j < cols-1; j++) {
-			DistanceConstraint* tmp = new DistanceConstraint(2, 0.5, true, 1);
-			tmp->addVertex(&cloth.at(j+i*cols));
-			tmp->addVertex(&cloth.at(j+i*cols+1));
+	float restX = 2.0f / (COLS - 1);
+	float restY = 2.0f / (ROWS - 1);
+	// 양옆간의 거리제약
+	for (int i = 0; i < ROWS; i++) {
+		for (int j = 0; j < COLS-1; j++) {
+			DistanceConstraint* tmp = new DistanceConstraint(2, K, true, restX);
+			tmp->addVertex(&cloth.at(j+i*COLS));
+			tmp->addVertex(&cloth.at(j+i*COLS+1));
 			distanceConstraints.push_back(tmp);
 		}
 	}
-	for (int i = 0; i < rows-1; i++) {
-		for (int j = 0; j < cols; j++) {
-			DistanceConstraint* tmp = new DistanceConstraint(2, 0.5, true, 1);
-			tmp->addVertex(&cloth.at(j + i * cols));
-			tmp->addVertex(&cloth.at(j + (i+1) * cols ));
+	// 위아래간의 거리제약
+	for (int i = 0; i < ROWS-1; i++) {
+		for (int j = 0; j < COLS; j++) {
+			DistanceConstraint* tmp = new DistanceConstraint(2, K, true, restY);
+			tmp->addVertex(&cloth.at(j + i * COLS));
+			tmp->addVertex(&cloth.at(j + (i+1) * COLS ));
 			distanceConstraints.push_back(tmp);
 		}
 	}
 	glPointSize(2.0f);
 	int count = 0;
+	int stopper = 0;
+	//cin >> stopper;
+
+	cloth.at(0).pinned = true;
+	cloth.at(COLS - 1).pinned = true;
+	
+	for (int i = 0; i < cloth.size(); i++) {
+		if (cloth.at(i).pinned == true) {
+			cloth.at(i).m = 100000;
+		}
+	}
+
 	while (!glfwWindowShouldClose(window)) {
 		ios::sync_with_stdio(false);
 		cin.tie(NULL);
@@ -167,15 +181,10 @@ int main() {
 		dampVelocities(cloth);
 		estimateP(cloth, TIMESTEP);
 		// generateCollisionConstraint();
-		projection(distanceConstraints, TIMESTEP, count);
+		GSiteration(distanceConstraints, TIMESTEP);
 		updateVertices(cloth, TIMESTEP);
 		// velocityUpdate();
 
-		//for (int i = 0; i < cloth.size(); i++) {
-		//	cloth.at(i).x.y = cloth.at(i).x.y -9.8 * TIMESTEP;
-		//}
-
-		//cout << "(" << cloth.at(500).x.x << ", " << cloth.at(500).x.y << ", " << cloth.at(500).x.z << ")\n";
 		glBufferSubData(GL_ARRAY_BUFFER, 0, cloth.size() * sizeof(Vertex), cloth.data());
 		
 		ourShader.use();
@@ -190,36 +199,42 @@ int main() {
 		ourShader.setMat4("model", model);
 
 		glBindVertexArray(VAO);
-		//glDrawArrays(GL_TRIANGLES, 0, cloth.size());
-		//glDrawArrays(GL_POINTS, 0, cloth.size());
-
-		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-		//glDrawElements(GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0);
+		//glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 		count++;
 	}
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
 	glfwTerminate();
 	return 0;
 }
 
-void sumExtForce(vector<glm::vec3>& forces, glm::vec3& result) {
-	for (int i = 0; i < forces.size(); i++) {
-		for (int j = 0; j < 3; j++) {
-			result[j] += forces.at(i)[j];
+void sumExtForce(vector<Vertex>& vertices, vector<glm::vec3>& forces, vector<glm::vec3>& result) {
+	for (int k = 0; k < vertices.size(); k++) {
+		for (int i = 0; i < forces.size(); i++) {
+			for (int j = 0; j < 3; j++) {
+				result[k][j] += forces.at(i)[j] * vertices.at(k).m;
+			}
 		}
 	}
+	
 }
 void applyForce(vector<Vertex>& vertices, vector<glm::vec3>& forces, float tstep) {
-	glm::vec3 force = { 0,0,0 };
-	sumExtForce(forces, force);
+	vector<glm::vec3> vertexForce = vector<glm::vec3>();
+	for (int i = 0; i < vertices.size(); i++) {
+		vertexForce.push_back({ 0,0,0 });
+	}
+	sumExtForce(vertices, forces, vertexForce);
 	for (int i = 0; i < vertices.size(); i++) {
 		Vertex& cur = vertices.at(i);
 		for (int j = 0; j < 3; j++) {
-			cur.v[j] = cur.v[j] + tstep * (1.0 / cur.m) * force[j];
-
+			cur.v[j] = cur.v[j] + tstep * (1.0 / cur.m) * vertexForce[i][j];
+			if (cur.pinned) {
+				cur.v[j] = 0;
+			}
 		}
 	}
 }
@@ -265,6 +280,9 @@ void estimateP(vector<Vertex>& vertices, float tstep) {
 	for (int i = 0; i < vertices.size(); i++) {
 		Vertex& cur = vertices.at(i);
 		cur.p = cur.x + cur.v * tstep;
+		if (cur.pinned) {
+			cur.p = cur.x;
+		}
 	}
 }
 CollisionDetection CCD(vector<Vertex>& vertices) {
@@ -282,19 +300,30 @@ void generateCollisionConstraint(vector<Vertex>& vertices) {
 
 }
 
-void projection(vector<Constraint*>& constraints, float tstep, int count) {
-	for (int i = 0; i < constraints.size(); i++) {
-		constraints.at(i)->projectionFunction(tstep, count);
+void GSiteration(vector<Constraint*>& constraints, float tstep) {
+	// GS 스타일의 즉시 업데이트는 제약사항 단위의 것을 의미하는 것이지 
+	// 한 제약사항 내에서 각 정점마다 즉시 업데이트를 하면 안됨.
+	for (int count = 0; count < ITERATION_COUNT; count++) {
+		for (int i = 0; i < constraints.size(); i++) {
+			constraints.at(i)->projectionFunction(tstep, ITERATION_COUNT);
+		}
 	}
+
 }
 void updateVertices(vector<Vertex>& vertices, float tstep) {
 	for (int i = 0; i < vertices.size(); i++) {
 		Vertex& cur = vertices.at(i);
 		for (int j = 0; j < 3; j++) {
 			cur.v[j] = (cur.p[j] - cur.x[j]) / tstep;
+			if (cur.pinned) {
+				cur.v[j] = 0.0f;
+			}
 		}
 		for (int j = 0; j < 3; j++) {
 			cur.x[j] = cur.p[j];
+			if (cur.pinned) {
+				cur.x[j] = cur.x[j];
+			}
 		}
 	}
 }
