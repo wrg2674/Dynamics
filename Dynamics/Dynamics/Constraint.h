@@ -29,8 +29,7 @@ public:
 	virtual void projectionFunction(float tstep, int ns);
 	virtual bool satisfyConstraintFunction();
 	virtual float constraintFunction()=0;
-
-
+	virtual float calc()=0;
 };
 
 

@@ -1,9 +1,9 @@
 #include "Vertex.h"
 
 Vertex::Vertex(float px, float py, float pz, float vx, float vy, float vz, float m) {
-	this->x[0] = px;
-	this->x[1] = py;
-	this->x[2] = pz;
+	this->pos[0] = px;
+	this->pos[1] = py;
+	this->pos[2] = pz;
 
 	this->v[0] = vx;
 	this->v[1] = vy;

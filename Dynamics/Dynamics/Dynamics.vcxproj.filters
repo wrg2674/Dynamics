@@ -24,10 +24,19 @@
     <ClCompile Include="Constraint.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="distanceConstraint.cpp">
+    <ClCompile Include="Vertex.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Vertex.cpp">
+    <ClCompile Include="main.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="BendingConstraint.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="BendingConstraint.h">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="StretchConstraint.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -38,10 +47,13 @@
     <ClInclude Include="..\include\learnopengl\camera.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="distanceConstriant.h">
+    <ClInclude Include="Vertex.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Vertex.h">
+    <ClInclude Include="PBD.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="StretchConstriant.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
