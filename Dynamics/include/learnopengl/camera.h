@@ -82,7 +82,7 @@ public:
 		}
 		updateCameraVectors();
 	}
-	void ProceessMouseScroll(float yoffset) {
+	void ProcessMouseScroll(float yoffset) {
 		Zoom -= (float)yoffset;
 		if (Zoom < 1.0f) {
 			Zoom = 1.0f;

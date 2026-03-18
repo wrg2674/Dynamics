@@ -1,8 +1,3 @@
-D:\wrg\Github\Dynamics\Dynamics\Dynamics\BendingConstraint.cpp;D:\wrg\Github\Dynamics\Dynamics\Dynamics\x64\Debug\BendingConstraint.obj
-D:\wrg\Github\Dynamics\Dynamics\Dynamics\BendingConstraint.h;D:\wrg\Github\Dynamics\Dynamics\Dynamics\x64\Debug\BendingConstraint.obj
-D:\wrg\Github\Dynamics\Dynamics\Dynamics\Constraint.cpp;D:\wrg\Github\Dynamics\Dynamics\Dynamics\x64\Debug\Constraint.obj
+D:\wrg\Github\Dynamics\Dynamics\Dynamics\Constraint.h;D:\wrg\Github\Dynamics\Dynamics\Dynamics\x64\Debug\Constraint.obj
 D:\wrg\Github\Dynamics\Dynamics\Dynamics\glad.c;D:\wrg\Github\Dynamics\Dynamics\Dynamics\x64\Debug\glad.obj
 D:\wrg\Github\Dynamics\Dynamics\Dynamics\main.cpp;D:\wrg\Github\Dynamics\Dynamics\Dynamics\x64\Debug\main.obj
-D:\wrg\Github\Dynamics\Dynamics\Dynamics\PBD.cpp;D:\wrg\Github\Dynamics\Dynamics\Dynamics\x64\Debug\PBD.obj
-D:\wrg\Github\Dynamics\Dynamics\Dynamics\StretchConstraint.cpp;D:\wrg\Github\Dynamics\Dynamics\Dynamics\x64\Debug\StretchConstraint.obj
-D:\wrg\Github\Dynamics\Dynamics\Dynamics\Vertex.cpp;D:\wrg\Github\Dynamics\Dynamics\Dynamics\x64\Debug\Vertex.obj

@@ -1,36 +1,54 @@
-#pragma once
+#ifndef BENDINGCONSTRAINT_H
+#define BENDINGCONSTRAINT_H
 
-#ifndef CONSTRAINT_H
-#define CONSTRAINT_H
-#include <iostream>
-#include <vector>
 #include "Vertex.h"
-using namespace std;
+#include <vector>
+#include <cuda_runtime.h>
 
-class Constraint {
-public:
-	int cardinality;
-	vector<int> index;
-	vector<Vertex*> vertices;
-	float k;
-	// true : 등식, false : 부등식
-	bool type;
-
-	Constraint();
-	Constraint(int cardinality, float k, bool type);
-
-	void addIndex(int idx);
-	void addVertex(Vertex* item);
-
-	vector<glm::vec3> calcGradient(float tstep);
-	void calcCentralDiff(Vertex*cur, float tstep, glm::vec3& result);
-	void calcDeltaP(int idx, vector<glm::vec3>& gradient, float tstep);
-
-	virtual void projectionFunction(float tstep, int ns);
-	virtual bool satisfyConstraintFunction();
-	virtual float constraintFunction()=0;
-	virtual float calc()=0;
+struct ColorBatchHost {
+	std::vector<int> constraintIds;
+	std::vector<int> colorOffset;
+};
+struct ColorBatchDevice {
+	int* constraintIds;
+	int* colorOffset;
+	int colorCount;
+};
+struct StretchHost {
+	std::vector<int2> ver;
+	std::vector<float> k;
+	std::vector<float> l0; //소문자 L
+	ColorBatchHost color;
+};
+struct StretchDevice {
+	int2* ver;
+	float* k;
+	float* l0;
+	int n;
+	ColorBatchDevice color;
+};
+struct BendingHost {
+	std::vector<int4> ver;
+	std::vector<float> k;
+	std::vector<float> phi0;
+	ColorBatchHost color;
+};
+struct BendingDevice {
+	int4* ver;
+	float* k;
+	float* phi0;
+	int n;
+	ColorBatchDevice color;
 };
 
+struct ConstraintHost {
+	StretchHost stretch;
+	BendingHost bending;
+};
 
-#endif CONSTRAINT_H
+struct ConstraintDevice {
+	StretchDevice stretch;
+	BendingDevice bending;
+};
+#endif
+

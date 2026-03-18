@@ -1,0 +1,27 @@
+#ifndef COMMONSOLVER_CUH
+#define COMMONSOLVER_CUH
+
+#include "Vertex.h"
+#include "Constraint.h"
+#include "Utility.cuh"
+#include "Damping.h"
+
+#include <cuda_runtime.h>
+#include <device_launch_parameters.h>
+
+enum CollisionDetection { CollisionTrue, CollisionFalse, DetectFail };
+
+__device__ void calcCentralDiff(VertexDevice ver, ConstraintDevice cons, int verIndex, int consIndex, float tstep, Type type, float3& result);
+__device__ void calcStretchGradient(VertexDevice ver, ConstraintDevice cons, int verIndex, int consIndex, float3& result);
+__device__ void calcGradient(VertexDevice ver, ConstraintDevice cons, int verIndex, int consIndex, float tstep, Type type, float3& result);
+__device__ float stretch_impl(VertexDevice ver, ConstraintDevice cons, int consIndex, int overrideVid, const float3& overridePos);
+__device__ float calcStretch(VertexDevice ver, ConstraintDevice cons, int consIndex);
+__device__ float calcStretchOverride(VertexDevice ver, ConstraintDevice cons, int consIndex, int verIndex, const float3& newPos);
+__device__ float bending_impl(VertexDevice ver, ConstraintDevice cons, int consIndex, int overrideVid, const float3& overridePos);
+__device__ float calcBending(VertexDevice ver, ConstraintDevice cons, int consIndex);
+__device__ float calcBendingOverride(VertexDevice ver, ConstraintDevice cons, int consIndex, int verIndex, const float3& newPos);
+__device__ float3 calcPoscm(VertexDevice ver);
+__device__ float3 calcVcm(VertexDevice ver);
+__device__ float3 calcOmega(VertexDevice ver, float3 pcm);
+
+#endif
