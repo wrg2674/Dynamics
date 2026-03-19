@@ -118,7 +118,7 @@ __global__ void applyForceKernel(VertexDevice ver, float3* forces, int forceCoun
 	}
 	float invM = ver.invM[verIndex];
 	float3& curV = ver.v[verIndex];
-	float3 accel = mul(totalForce, invM);
+	float3 accel = add(mul(totalForce, invM), make_float3(0,-9.8,0));
 	curV = add(curV, mul(accel, tstep));
 }
 

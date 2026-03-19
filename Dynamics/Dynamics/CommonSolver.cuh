@@ -23,5 +23,7 @@ __device__ float calcBendingOverride(VertexDevice ver, ConstraintDevice cons, in
 __device__ float3 calcPoscm(VertexDevice ver);
 __device__ float3 calcVcm(VertexDevice ver);
 __device__ float3 calcOmega(VertexDevice ver, float3 pcm);
+__global__ void clearForceKernel(float3* extForce, int n);
+__global__ void windForceKernel(VertexDevice ver, int3* tris, int triCount, float3* extForce, float3 windVelocity, float airCoeff);
 
 #endif

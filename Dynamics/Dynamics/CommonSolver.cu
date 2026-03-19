@@ -207,3 +207,56 @@ __device__ float3 calcOmega(VertexDevice ver, float3 pcm) {
 
 	return omega;
 }
+
+__global__ void clearForceKernel(float3* extForce, int n) {
+	int i = blockIdx.x * blockDim.x + threadIdx.x;
+	if (i >= n) {
+		return;
+	}
+	extForce[i] = make_float3(0, 0, 0);
+}
+__global__ void windForceKernel(VertexDevice ver, int3* tris, int triCount, float3* extForce, float3 windVelocity, float airCoeff) {
+	int i = blockIdx.x * blockDim.x + threadIdx.x;
+	if (i >= triCount) {
+		return;
+	}
+	int a = tris[i].x;
+	int b = tris[i].y;
+	int c = tris[i].z;
+
+	float3 posa = ver.pos[a];
+	float3 posb = ver.pos[b];
+	float3 posc = ver.pos[c];
+
+	float3 va = ver.v[a];
+	float3 vb = ver.v[b];
+	float3 vc = ver.v[c];
+
+	float3 e1 = sub(posb, posa);
+	float3 e2 = sub(posc, posa);
+
+	float3 n;
+	cross(e1, e2, n);
+
+	float area2 = length(n);
+	if (area2 < 1e-8f) {
+		return;
+	}
+	float area = 0.5f * area2;
+
+	float3 normal = mul(n, 1 / area2);
+
+	float3 tmp = add(va, vb);
+	tmp = add(tmp, vc);
+	float3 vTri = mul(tmp, 1.0f / 3.0f);
+	float3 vRel = sub(windVelocity, vTri);
+
+	float vn = dot(vRel, normal);
+
+	if (vn <= 0.0f) return;
+
+	float3 Ftri = mul(normal, airCoeff * area * vn);
+
+	float3 each = mul(Ftri, 1.0f / 3.0f);
+
+}

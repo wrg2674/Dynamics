@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <glm/gtc/constants.hpp>
 #include <cuda_gl_interop.h>
+#include <chrono>
 
 #include <iostream>
 #include "teapot_loader.h"
@@ -18,6 +19,8 @@
 #include "PBDSolver.cuh"
 
 using namespace std;
+using Clock = std::chrono::high_resolution_clock;
+using ms = std::chrono::duration<double, std::milli>;
 
 struct EdgeKey {
 	unsigned int a, b;
@@ -62,7 +65,6 @@ const int COLS = 30;
 const int ITERATION_COUNT = 30;
 const float K_STRETCH = 1.0f;
 const float K_BENDING = 0.5f;
-const float GRAVITY = -9.8f;
 
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float lastX = SCR_WIDTH / 2.0f;
@@ -217,8 +219,8 @@ int main() {
 	checkCuda(cudaMalloc(&d_damp.omega, sizeof(float3)), "cudaMalloc damp.omega failed");
 
 	vector<glm::vec3> h_forces;
-	glm::vec3 gravity = glm::vec3(0.0f, GRAVITY, 0.0f);
-	h_forces.push_back(gravity);
+	glm::vec3 wind = glm::vec3(3, 0, 3);
+	h_forces.push_back(wind);
 
 	float3* d_forces = nullptr;
 	checkCuda(cudaMalloc(&d_forces, sizeof(float3) * h_forces.size()), "cudaMalloc d_forces failed");
@@ -239,7 +241,6 @@ int main() {
 		
 		d_ver.pos = d_vboPos;
 		solve(d_ver, d_cons, d_damp, d_forces, K_DAMPING, TIMESTEP, ITERATION_COUNT, (int)h_forces.size(), vertexCount, h_cons.stretch.color.colorOffset, h_cons.bending.color.colorOffset);
-
 		checkCuda(cudaDeviceSynchronize(), "cudaDeviceSynchronize after solve failed");
 		checkCuda(cudaGraphicsUnmapResources(1, &cudaVBO), "cudaGraphicsUnmapResources(frame) failed");
 
@@ -259,7 +260,7 @@ int main() {
 		ourShader.setMat4("model", model);
 
 		glBindVertexArray(VAO);
-		glDrawArrays(GL_POINTS, 0, vertexCount);
+		glDrawElements(GL_LINES, (GLsizei)triangleIndices.size(), GL_UNSIGNED_INT, 0);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}

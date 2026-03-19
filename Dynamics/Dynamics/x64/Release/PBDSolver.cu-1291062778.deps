@@ -1,0 +1,306 @@
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\assert.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\corecrt.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\corecrt_malloc.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\corecrt_math.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\corecrt_memcpy_s.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\corecrt_memory.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\corecrt_search.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\corecrt_share.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\corecrt_stdio_config.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\corecrt_terminate.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\corecrt_wconio.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\corecrt_wctype.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\corecrt_wdirect.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\corecrt_wio.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\corecrt_wprocess.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\corecrt_wstdio.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\corecrt_wstdlib.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\corecrt_wstring.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\corecrt_wtime.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\crtdbg.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\ctype.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\errno.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\float.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\locale.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\malloc.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\math.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\share.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\stddef.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\stdio.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\stdlib.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\string.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\sys\stat.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\sys\types.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\time.h
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\ucrt\wchar.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\ammintrin.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\atomic
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\cassert
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\cctype
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\cerrno
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\cfloat
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\climits
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\clocale
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\cmath
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\concurrencysal.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\crtdefs.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\cstddef
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\cstdint
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\cstdio
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\cstdlib
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\cstring
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\ctime
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\cwchar
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\eh.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\emmintrin.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\exception
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\functional
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\immintrin.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\initializer_list
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\intrin.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\intrin0.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\intrin0.inl.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\ios
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\iosfwd
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\iostream
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\istream
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\iterator
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\limits
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\limits.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\mmintrin.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\new
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\nmmintrin.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\ostream
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\pmmintrin.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\sal.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\setjmp.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\smmintrin.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\stdexcept
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\stdint.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\streambuf
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\system_error
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\tmmintrin.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\tuple
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\typeinfo
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\type_traits
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\use_ansi.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\utility
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\vadefs.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\vcruntime.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\vcruntime_exception.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\vcruntime_new.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\vcruntime_new_debug.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\vcruntime_string.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\vcruntime_typeinfo.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\vector
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\wmmintrin.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xatomic.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xcall_once.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xerrc.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xfacet
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xiosbase
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xkeycheck.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xlocale
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xlocinfo
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xlocnum
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xmemory
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xmmintrin.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xstring
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xthreads.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xtimec.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xtr1common
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\xutility
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\yvals.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\yvals_core.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\zmmintrin.h
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\__msvc_bit_utils.hpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\__msvc_iter_core.hpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\__msvc_ostream.hpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\__msvc_sanitizer_annotate_container.hpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\__msvc_string_view.hpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\__msvc_system_error_abi.hpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\__msvc_threads_core.hpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\__msvc_xlocinfo_types.hpp
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\builtin_types.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\channel_descriptor.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\crt\common_functions.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\crt\cudacc_ext.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\crt\device_double_functions.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\crt\device_double_functions.hpp
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\crt\device_functions.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\crt\device_functions.hpp
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\crt\host_config.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\crt\host_defines.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\crt\math_functions.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\crt\math_functions.hpp
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\crt\sm_100_rt.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\crt\sm_70_rt.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\crt\sm_80_rt.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\crt\sm_90_rt.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_device_runtime_api.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\device_atomic_functions.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\device_launch_parameters.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\device_types.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_functions.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\library_types.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\sm_20_atomic_functions.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\sm_20_intrinsics.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\sm_30_intrinsics.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\sm_32_atomic_functions.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\sm_32_intrinsics.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\sm_35_atomic_functions.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\sm_35_intrinsics.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\sm_60_atomic_functions.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\sm_61_intrinsics.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\surface_indirect_functions.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\surface_types.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\texture_indirect_functions.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\texture_types.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\vector_functions.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\vector_functions.hpp
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\vector_types.h
+D:\wrg\Github\Dynamics\Dynamics\Dynamics\CommonSolver.cuh
+D:\wrg\Github\Dynamics\Dynamics\Dynamics\Constraint.h
+D:\wrg\Github\Dynamics\Dynamics\Dynamics\Damping.h
+D:\wrg\Github\Dynamics\Dynamics\Dynamics\PBDSolver.cuh
+D:\wrg\Github\Dynamics\Dynamics\Dynamics\Utility.cuh
+D:\wrg\Github\Dynamics\Dynamics\Dynamics\Vertex.h
+D:\wrg\Github\Dynamics\Dynamics\include\glm\common.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\compute_common.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\compute_vector_decl.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\compute_vector_relational.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\func_common.inl
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\func_exponential.inl
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\func_geometric.inl
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\func_integer.inl
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\func_matrix.inl
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\func_packing.inl
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\func_trigonometric.inl
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\func_vector_relational.inl
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\qualifier.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\setup.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_half.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_half.inl
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_mat2x2.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_mat2x2.inl
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_mat2x3.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_mat2x3.inl
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_mat2x4.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_mat2x4.inl
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_mat3x2.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_mat3x2.inl
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_mat3x3.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_mat3x3.inl
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_mat3x4.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_mat3x4.inl
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_mat4x2.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_mat4x2.inl
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_mat4x3.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_mat4x3.inl
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_mat4x4.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_mat4x4.inl
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec1.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec1.inl
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec2.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec2.inl
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec3.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec3.inl
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec4.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec4.inl
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_fixes.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\exponential.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_double2x2.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_double2x2_precision.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_double2x3.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_double2x3_precision.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_double2x4.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_double2x4_precision.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_double3x2.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_double3x2_precision.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_double3x3.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_double3x3_precision.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_double3x4.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_double3x4_precision.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_double4x2.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_double4x2_precision.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_double4x3.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_double4x3_precision.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_double4x4.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_double4x4_precision.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_float2x2.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_float2x2_precision.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_float2x3.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_float2x3_precision.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_float2x4.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_float2x4_precision.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_float3x2.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_float3x2_precision.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_float3x3.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_float3x3_precision.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_float3x4.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_float3x4_precision.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_float4x2.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_float4x2_precision.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_float4x3.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_float4x3_precision.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_float4x4.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\matrix_float4x4_precision.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\scalar_int_sized.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\scalar_uint_sized.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\vector_bool2.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\vector_bool2_precision.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\vector_bool3.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\vector_bool3_precision.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\vector_bool4.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\vector_bool4_precision.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\vector_double2.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\vector_double2_precision.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\vector_double3.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\vector_double3_precision.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\vector_double4.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\vector_double4_precision.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\vector_float2.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\vector_float2_precision.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\vector_float3.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\vector_float3_precision.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\vector_float4.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\vector_float4_precision.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\vector_int2.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\vector_int2_sized.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\vector_int3.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\vector_int3_sized.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\vector_int4.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\vector_int4_sized.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\vector_uint2.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\vector_uint2_sized.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\vector_uint3.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\vector_uint3_sized.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\vector_uint4.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\ext\vector_uint4_sized.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\fwd.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\geometric.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\glm.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\integer.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\mat2x2.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\mat2x3.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\mat2x4.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\mat3x2.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\mat3x3.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\mat3x4.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\mat4x2.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\mat4x3.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\mat4x4.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\matrix.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\packing.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\simd\platform.h
+D:\wrg\Github\Dynamics\Dynamics\include\glm\trigonometric.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\vec2.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\vec3.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\vec4.hpp
+D:\wrg\Github\Dynamics\Dynamics\include\glm\vector_relational.hpp
