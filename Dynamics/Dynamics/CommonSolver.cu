@@ -115,14 +115,14 @@ __device__ float bending_impl(VertexDevice ver, ConstraintDevice cons, int consI
 	if (firstLength < 1e-8f) {
 		return 0;
 	}
-	normalize(firstTerm, firstTerm);
+	firstTerm = normalize(firstTerm);
 
 	cross(p1_0, p3_0, secondTerm);
 	float secondLength = length(secondTerm);
 	if (secondLength < 1e-8f) {
 		return 0;
 	}
-	normalize(secondTerm, secondTerm);
+	secondTerm = normalize(secondTerm);
 
 
 	float dotTerm = dot(firstTerm, secondTerm);
@@ -259,4 +259,61 @@ __global__ void windForceKernel(VertexDevice ver, int3* tris, int triCount, floa
 
 	float3 each = mul(Ftri, 1.0f / 3.0f);
 
+}
+__global__ void clearCollisionFlags(bool* collided) {
+	int i = blockIdx.x * blockDim.x + threadIdx.x;
+	if (i < gridDim.x * blockDim.x) {
+		collided[i] = false;
+	}
+}
+__global__ void resolvePlaneCollisionKernel(VertexDevice ver, CollisionPlane plane, float3* normals, float* fricOut, float* restOut, bool* collided) {
+	int i = blockIdx.x * blockDim.x + threadIdx.x;
+	if (i >= ver.N || ver.invM[i] == 0.0f) {
+		return;
+	}
+	float dist = dot(ver.p[i], plane.n) - plane.offset;
+	if (dist < 0.0f) {
+		ver.p[i] = add(ver.p[i], mul(plane.n, -dist));
+		normals[i] = plane.n;
+		fricOut[i] = plane.friction;
+		restOut[i] = plane.restitution;
+		collided[i] = true;
+	}
+}
+__global__ void resolveSphereCollisionKernel(VertexDevice ver, CollisionSphere sphere, float3* normals, float* fricOut, float* restOut, bool* collided) {
+	int i = blockIdx.x * blockDim.x + threadIdx.x;
+	if (i >= ver.N || ver.invM[i] == 0.0f) {
+		return;
+	}
+	float3 d = sub(ver.p[i], sphere.c);
+	float len = length(d);
+	float pen = sphere.r - len;
+	if (pen > 0.0f && len > 1e-8f) {
+		float3 n;
+		n = normalize(d);
+		ver.p[i] = add(ver.p[i], mul(n, pen));
+		normals[i] = n;
+		fricOut[i] = sphere.friction;
+		restOut[i] = sphere.restitution;
+		collided[i] = true;
+	}
+}
+__global__ void applyCollisionVelocityKernel(VertexDevice ver, const float3* normals, const float* fricOut, const float* restOut, const bool* collided) {
+	int i = blockIdx.x * blockDim.x + threadIdx.x;
+	if (i >= ver.N || ver.invM[i] == 0.0f) {
+		return;
+	}
+	if (!collided[i]) {
+		return;
+	}
+	float3 n = normals[i];
+	float vn = dot(ver.v[i], n);
+	float3 vt = sub(ver.v[i], mul(n, vn));
+
+	if (vn < 0) {
+		vn = -vn*restOut[i];
+	}
+	float3 vNormal = mul(n, vn);
+	float3 vTangent = mul(vt, fmaxf(0.0f, 1.0f - fricOut[i]));
+	ver.v[i] = add(vNormal, vTangent);
 }

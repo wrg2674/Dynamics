@@ -45,14 +45,16 @@ __device__ float norm2(const float3 vec) {
 	return vec.x * vec.x + vec.y * vec.y + vec.z * vec.z;
 }
 
-__device__ void normalize(const float3 vec, float3& result) {
+__device__ float3 normalize(const float3 vec) {
+	float3 result = make_float3(0, 0, 0);
 	float norm = length(vec);
 	if (norm == 0) {
-		return;
+		return result;
 	}
 	for (int i = 0; i < 3; i++) {
 		set(result, i, get(vec, i) / norm);
 	}
+	return result;
 }
 
 __device__ void cross(const float3 vec1, const float3 vec2, float3& result) {
@@ -79,6 +81,12 @@ __device__ float3 add(const float3& a, const float3& b) {
 }
 __device__ float3 sub(const float3& a, const float3& b) {
 	return make_float3(a.x - b.x, a.y - b.y, a.z - b.z);
+}
+__device__ float3 add(const float3& a, const float& b) {
+	return make_float3(a.x + b, a.y + b, a.z + b);
+}
+__device__ float3 sub(const float3& a, const float& b) {
+	return make_float3(a.x - b, a.y - b, a.z - b);
 }
 __device__ float3 mul(const float3& a, const float3& b) {
 	return make_float3(a.x * b.x, a.y * b.y, a.z * b.z);

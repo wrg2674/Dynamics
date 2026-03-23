@@ -59,12 +59,12 @@ void processInput(GLFWwindow* window);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 const float K_DAMPING = 0.3f;
-const float TIMESTEP = 0.05f;
+const float TIMESTEP = 0.02f;
 const int ROWS = 30;
 const int COLS = 30;
 const int ITERATION_COUNT = 30;
-const float K_STRETCH = 1.0f;
-const float K_BENDING = 0.5f;
+const float K_STRETCH = 0.9f;
+const float K_BENDING = 0.8f;
 
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float lastX = SCR_WIDTH / 2.0f;
@@ -218,16 +218,16 @@ int main() {
 	checkCuda(cudaMalloc(&d_damp.vcm, sizeof(float3)), "cudaMalloc damp.vcm failed");
 	checkCuda(cudaMalloc(&d_damp.omega, sizeof(float3)), "cudaMalloc damp.omega failed");
 
-	vector<glm::vec3> h_forces;
-	glm::vec3 wind = glm::vec3(3, 0, 3);
-	h_forces.push_back(wind);
-
-	float3* d_forces = nullptr;
-	checkCuda(cudaMalloc(&d_forces, sizeof(float3) * h_forces.size()), "cudaMalloc d_forces failed");
-	checkCuda(cudaMemcpy(d_forces, h_forces.data(), sizeof(float3) * h_forces.size(), cudaMemcpyHostToDevice), "cudaMemcpy d_forces failed");
-
+	
 	while (!glfwWindowShouldClose(window)) {
-		
+		vector<glm::vec3> h_forces;
+		glm::vec3 wind = glm::vec3(rand() % 10, 0, rand() % 10);
+		//h_forces.push_back(wind);
+
+		float3* d_forces = nullptr;
+		checkCuda(cudaMalloc(&d_forces, sizeof(float3) * h_forces.size()), "cudaMalloc d_forces failed");
+		checkCuda(cudaMemcpy(d_forces, h_forces.data(), sizeof(float3) * h_forces.size(), cudaMemcpyHostToDevice), "cudaMemcpy d_forces failed");
+
 		float currentFrame = static_cast<float>(glfwGetTime());
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
@@ -263,10 +263,12 @@ int main() {
 		glDrawElements(GL_LINES, (GLsizei)triangleIndices.size(), GL_UNSIGNED_INT, 0);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+
+		cudaFree(d_forces);
 	}
 	cudaGraphicsUnregisterResource(cudaVBO);
 
-	cudaFree(d_forces);
+	
 
 	cudaFree(d_damp.poscm);
 	cudaFree(d_damp.vcm);

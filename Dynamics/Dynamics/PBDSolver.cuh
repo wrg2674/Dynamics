@@ -2,7 +2,7 @@
 #define PBDSOLVER_CUH
 
 #include "CommonSolver.cuh"
-
+#include "Constraint.h"
 #include <device_launch_parameters.h>
 
 __device__ void calcDeltaP(VertexDevice ver, ConstraintDevice cons, int verIndex, int consIndex, Type type, float tstep);

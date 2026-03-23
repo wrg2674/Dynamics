@@ -24,6 +24,9 @@
     <ClCompile Include="Constraint.h">
       <Filter>헤더 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Collision.h">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\learnopengl\camera.h">

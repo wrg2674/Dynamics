@@ -24,12 +24,14 @@ __device__ void set(int4& value, int index, const int item);
 
 __device__ float length(const float3 vec);
 __device__ float norm2(const float3 vec);
-__device__ void normalize(const float3 vec, float3& result);
+__device__ float3 normalize(const float3 vec);
 __device__ void cross(const float3 vec1, const float3 vec2, float3& result);
 __device__ float dot(const float3 vec1, const float3 vec2);
 __device__ float clamp(const float value, const float min, const float max);
 __device__ float3 add(const float3& a, const float3& b);
 __device__ float3 sub(const float3& a, const float3& b);
+__device__ float3 add(const float3& a, const float& b);
+__device__ float3 sub(const float3& a, const float& b);
 __device__ float3 mul(const float3& a, const float3& b);
 __device__ float3 mul(const float3& a, const float b);
 __device__ float3 pickP(const VertexDevice& ver, int idx, int overrideVid, const float3& overridePos);

@@ -249,6 +249,32 @@ void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, float3* 
 	estimatePKernel<<<blocks, threads>>> (ver, tstep);
 	checkCudaKernel("estimatePKernel launch failed");
 
+	static bool* d_collided = nullptr;
+	static float3* d_normals = nullptr;
+	static float* d_fric = nullptr;
+	static float* d_rest = nullptr;
+	static int cachedN = 0;
+
+	if (cachedN != ver.N) {
+		if (d_collided) {
+			cudaFree(d_collided);
+			cudaFree(d_normals);
+			cudaFree(d_fric);
+			cudaFree(d_rest);
+		}
+		cudaMalloc(&d_collided, sizeof(bool) * ver.N);
+		cudaMalloc(&d_normals, sizeof(float3) * ver.N);
+		cudaMalloc(&d_fric, sizeof(float) * ver.N);
+		cudaMalloc(&d_rest, sizeof(float) * ver.N);
+		cachedN = ver.N;
+	}
+	cudaMemset(d_collided, 0, sizeof(bool) * ver.N);
+
+	CollisionPlane ground{ make_float3(0,1,0), -1.0f, 0.5f, 0.0f };
+	CollisionSphere ball{ make_float3(0, -1.8f, 1), 0.6f, 0.5f, 0.2f };
+
+	resolvePlaneCollisionKernel<<<blocks, threads>>>(ver, ground, d_normals, d_fric, d_rest, d_collided);
+	resolveSphereCollisionKernel<<<blocks, threads>>>(ver, ball, d_normals, d_fric, d_rest, d_collided);
 	for (int iter = 0; iter < iterationCount; iter++) {
 		for (int color = 0; color < cons.stretch.color.colorCount; color++) {
 			int start = stretchColorOffset[color];
@@ -271,7 +297,8 @@ void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, float3* 
 			checkCudaKernel("solveBendingColorKernel launch failed");
 		}
 	}
-
 	updateVerticesKernel<<<blocks, threads>>> (ver, tstep);
 	checkCudaKernel("updateVerticesKernel launch failed");
+	applyCollisionVelocityKernel << <blocks, threads >> > (ver, d_normals, d_fric, d_rest, d_collided);
+	checkCudaKernel("applyCollisionVelocityKernel launch failed");
 }
