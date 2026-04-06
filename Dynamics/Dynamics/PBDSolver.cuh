@@ -3,16 +3,18 @@
 
 #include "CommonSolver.cuh"
 #include "Constraint.h"
+#include "Collision.h"
+
+#include <algorithm>
+#include <vector>
 #include <device_launch_parameters.h>
 
 __device__ void calcDeltaP(VertexDevice ver, ConstraintDevice cons, int verIndex, int consIndex, Type type, float tstep);
 __device__ void projectionFunction(VertexDevice ver, ConstraintDevice cons, int verIndex, int consIndex, Type type, float tstep, int ns);
 __device__ float calcScale(VertexDevice ver, ConstraintDevice cons, int verIndex, int consIndex, Type type, float tstep);
-__device__ CollisionDetection CCD();
-__device__ void generateCollisionConstraint();
 __device__ void GSiteration(VertexDevice ver, ConstraintDevice cons, int verIndex, float tstep, int iterationCount);
 __device__ void updateVertices(VertexDevice ver, int verIndex, int tstep);
-__device__ void velocityUpdate();
+
 
 __global__ void applyForceKernel(VertexDevice ver, float3* forces, int forceCount, float tstep);
 __global__ void computeDampingKernel(VertexDevice ver, DampingDevice damp);
@@ -26,6 +28,8 @@ __device__ void projectStretchConstraint(VertexDevice ver, ConstraintDevice cons
 __device__ void projectBendingConstraint(VertexDevice ver, ConstraintDevice cons, int consIndex, float tstep, int iterationCount);
 __global__ void solveStretchColorKernel(VertexDevice ver,ConstraintDevice cons,const int* constraintIds,int count,float tstep,int iterationCount);
 __global__ void solveBendingColorKernel(VertexDevice ver,ConstraintDevice cons,const int* constraintIds,int count,float tstep,int iterationCount);
-void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, float3* forces, float k_damping, float tstep, int iterationCount, int forceCount, int n, std::vector<int> stretchColorOffset, std::vector<int> bendingColorOffset);
+__global__ void projectCollisionConstraint(VertexDevice ver, ConstraintDevice cons, int count);
+
+void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, std::vector<float*>& vertexSet, std::vector<unsigned int*>& indexSet, std::vector<int>& indexSetN, float3* forces, float k_damping, float tstep, float currentTime, int iterationCount, int forceCount, int n, std::vector<int> stretchColorOffset, std::vector<int> bendingColorOffset);
 
 #endif

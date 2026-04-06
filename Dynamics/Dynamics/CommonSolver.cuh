@@ -8,6 +8,7 @@
 #include "Collision.h"
 
 #include <cuda_runtime.h>
+#include <cuda_runtime_api.h>
 #include <device_launch_parameters.h>
 
 __device__ void calcCentralDiff(VertexDevice ver, ConstraintDevice cons, int verIndex, int consIndex, float tstep, Type type, float3& result);
@@ -24,9 +25,7 @@ __device__ float3 calcVcm(VertexDevice ver);
 __device__ float3 calcOmega(VertexDevice ver, float3 pcm);
 __global__ void clearForceKernel(float3* extForce, int n);
 __global__ void windForceKernel(VertexDevice ver, int3* tris, int triCount, float3* extForce, float3 windVelocity, float airCoeff);
-__global__ void clearCollisionFlags(bool* collided);
-__global__ void resolvePlaneCollisionKernel(VertexDevice ver, CollisionPlane plane, float3* normals, float* fricOut, float* restOut, bool* collided);
-__global__ void resolveSphereCollisionKernel(VertexDevice ver, CollisionSphere sphere, float3* normals, float* fricOut, float* restOut, bool* collided);
-__global__ void applyCollisionVelocityKernel(VertexDevice ver, const float3* normals, const float* fricOut, const float* restOut, const bool* collided);
+__device__ void createCollisionConstraint(ConstraintDevice cons, int3 tri, int verIndex, float k, float thickness, float3 q, float3 normal);
+__global__ void detectCollisionKernel(VertexDevice ver, ConstraintDevice cons, float* triangle, unsigned int* d_triangleIndices, int triangleN);
 
 #endif

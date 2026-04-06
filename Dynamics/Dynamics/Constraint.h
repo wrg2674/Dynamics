@@ -5,8 +5,6 @@
 #include <vector>
 #include <cuda_runtime.h>
 
-enum CollisionDetection { CollisionTrue, CollisionFalse, DetectFail };
-
 struct ColorBatchHost {
 	std::vector<int> constraintIds;
 	std::vector<int> colorOffset;
@@ -43,25 +41,34 @@ struct BendingDevice {
 	ColorBatchDevice color;
 };
 struct CollisionHost {
-	std::vector<int> hit;
-	std::vector<int2> ver;
-	std::vector<float3> collNormal;
-	std::vector<float3> collPoint;
+	std::vector<int3> tri;
+	std::vector<int> ver;
+	std::vector<float> k;
+	std::vector<float> thickness;
+	std::vector<float3> q;
+	std::vector<float3> normal;
+	int* n;
 };
 struct CollisionDevice {
-	int* hit;
-	int2* ver;
-	float3* collNormal;
-	float3* collPoint;
+	int3* tri;
+	int* ver;
+	float* k;
+	float* thickness;
+	float3* q;
+	float3* normal;
+	int* n;
+	int capacity;
 };
 struct ConstraintHost {
 	StretchHost stretch;
 	BendingHost bending;
+	CollisionHost collision;
 };
 
 struct ConstraintDevice {
 	StretchDevice stretch;
 	BendingDevice bending;
+	CollisionDevice collision;
 };
 #endif
 

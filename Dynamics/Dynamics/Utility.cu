@@ -57,10 +57,14 @@ __device__ float3 normalize(const float3 vec) {
 	return result;
 }
 
-__device__ void cross(const float3 vec1, const float3 vec2, float3& result) {
+
+__device__ float3 cross(const float3 vec1, const float3 vec2) {
+	float3 result;
 	result.x = vec1.y * vec2.z - vec1.z * vec2.y;
 	result.y = -(vec1.x * vec2.z - vec1.z * vec2.x);
 	result.z = vec1.x * vec2.y - vec1.y * vec2.x;
+
+	return result;
 }
 __device__ float dot(const float3 vec1, const float3 vec2) {
 	return vec1.x * vec2.x + vec1.y * vec2.y + vec1.z * vec2.z;
@@ -163,4 +167,28 @@ __device__ float det(const mat3& a) {
 	return a.row0.x * ((a.row1.y * a.row2.z) - (a.row2.y * a.row1.z))
 		- a.row0.y * ((a.row1.x * a.row2.z) - (a.row2.x * a.row1.z))
 		+ a.row0.z * ((a.row1.x * a.row2.y) - (a.row2.x * a.row1.y));
+}
+__device__ void atomicAddFloat3(float3* arr, int idx, const float3& v) {
+	atomicAdd(&arr[idx].x, v.x);
+	atomicAdd(&arr[idx].y, v.y);
+	atomicAdd(&arr[idx].z, v.z);
+}
+__global__ void clearVectorKernel(float3* buf, int n) {
+	int i = blockIdx.x * blockDim.x + threadIdx.x;
+	if (i >= n) {
+		return;
+	}
+	buf[i] = make_float3(0.0f, 0.0f, 0.0f);
+}
+__device__ float calcTriangleArea(const float3 a, const float3 b, const float3 c) {
+	float area = 0.5 * length(cross(sub(b, a), sub(c, a)));
+	return area;
+}
+__device__ float3 barycentric(const float3 a, const float3 b, const float3 c, const float3 p) {
+	float totalArea = calcTriangleArea(a, b, c);
+	float u = calcTriangleArea(p, b, c) / totalArea;
+	float v = calcTriangleArea(p, c, a) / totalArea;
+	float w = calcTriangleArea(p, a, b) / totalArea;
+
+	return make_float3(u, v, w);
 }

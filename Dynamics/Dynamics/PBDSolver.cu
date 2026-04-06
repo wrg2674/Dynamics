@@ -69,13 +69,6 @@ __device__ float calcScale(VertexDevice ver, ConstraintDevice cons, int verIndex
 	result = upper / lower;
 	return result;
 }
-__device__ CollisionDetection CCD() {
-	
-}
-__device__ void generateCollisionConstraint() {
-
-}
-
 __device__ void GSiteration(VertexDevice ver, ConstraintDevice cons, int verIndex, float tstep, int iterationCount) {
 	// GS 스타일의 즉시 업데이트는 제약사항 단위의 것을 의미하는 것이지 
 	// 한 제약사항 내에서 각 정점마다 즉시 업데이트를 하면 안됨.
@@ -102,9 +95,6 @@ __device__ void updateVertices(VertexDevice ver, int verIndex, int tstep) {
 		set(ver.v[verIndex], i, item);
 		set(pos, i, get(p, i));
 	}
-}
-__device__ void velocityUpdate() {
-
 }
 
 __global__ void applyForceKernel(VertexDevice ver, float3* forces, int forceCount, float tstep) {
@@ -135,8 +125,7 @@ __global__ void applyDampingKernel(VertexDevice ver, DampingDevice damp, float k
 	if (ver.invM[verIndex] == 0.0f) return;
 
 	float3 r = sub(ver.pos[verIndex], *damp.poscm);
-	float3 omegaCrossR;
-	cross(*damp.omega, r, omegaCrossR);
+	float3 omegaCrossR = cross(*damp.omega, r);
 
 	float3 target = add(*damp.vcm, omegaCrossR);
 	float3 deltaV = sub(target, ver.v[verIndex]);
@@ -236,7 +225,20 @@ __global__ void solveBendingColorKernel(VertexDevice ver, ConstraintDevice cons,
 	int consIndex = constraintIds[idx];
 	projectBendingConstraint(ver, cons, consIndex, tstep, iterationCount);
 }
-void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, float3* forces, float k_damping, float tstep, int iterationCount, int forceCount, int n, std::vector<int> stretchColorOffset, std::vector<int> bendingColorOffset) {
+
+__global__ void projectCollisionConstraint(VertexDevice ver, ConstraintDevice cons, int count) {
+	int i = blockIdx.x * blockDim.x + threadIdx.x;
+	if (i >= count) return;
+
+	int verIndex = cons.collision.ver[i];
+	float3 p = ver.p[verIndex];
+	float3 q = cons.collision.q[i];
+	float3 n = normalize(cons.collision.normal[i]);
+	float thickness = cons.collision.thickness[i];
+	float C = dot(sub(p, q), n)- thickness;
+	ver.p[verIndex] = add(p, mul(n, -C));
+}
+void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, std::vector<float*>& vertexSet, std::vector<unsigned int*>& indexSet, std::vector<int>& indexSetN, float3* forces, float k_damping, float tstep, float currentTime, int iterationCount, int forceCount, int n, std::vector<int> stretchColorOffset, std::vector<int> bendingColorOffset) {
 	computeDampingKernel<<<1, 1>>> (ver, damp);
 	checkCudaKernel("computeDampingKernel launch failed");
 	int threads = 256;
@@ -249,33 +251,19 @@ void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, float3* 
 	estimatePKernel<<<blocks, threads>>> (ver, tstep);
 	checkCudaKernel("estimatePKernel launch failed");
 
-	static bool* d_collided = nullptr;
-	static float3* d_normals = nullptr;
-	static float* d_fric = nullptr;
-	static float* d_rest = nullptr;
-	static int cachedN = 0;
+	int zero = 0;
+	cudaMemcpy(cons.collision.n, &zero, sizeof(int), cudaMemcpyHostToDevice);
 
-	if (cachedN != ver.N) {
-		if (d_collided) {
-			cudaFree(d_collided);
-			cudaFree(d_normals);
-			cudaFree(d_fric);
-			cudaFree(d_rest);
-		}
-		cudaMalloc(&d_collided, sizeof(bool) * ver.N);
-		cudaMalloc(&d_normals, sizeof(float3) * ver.N);
-		cudaMalloc(&d_fric, sizeof(float) * ver.N);
-		cudaMalloc(&d_rest, sizeof(float) * ver.N);
-		cachedN = ver.N;
+	for (int i = 0; i < vertexSet.size(); i++) {
+		int triangleCount = indexSetN[i]/3;
+		detectCollisionKernel <<<blocks, threads >>> (ver, cons, vertexSet[i], indexSet[i], triangleCount);
+		checkCudaKernel("detectCollisionKernel launch failed");
 	}
-	cudaMemset(d_collided, 0, sizeof(bool) * ver.N);
+	int collisionCount = 0;
+	cudaMemcpy(&collisionCount, cons.collision.n, sizeof(int), cudaMemcpyDeviceToHost);
+	//std::cout << "collisionCount = " << collisionCount << std::endl;
 
-	CollisionPlane ground{ make_float3(0,1,0), -1.0f, 0.5f, 0.0f };
-	CollisionSphere ball{ make_float3(0, -1.8f, 1), 0.6f, 0.5f, 0.2f };
-
-	resolvePlaneCollisionKernel<<<blocks, threads>>>(ver, ground, d_normals, d_fric, d_rest, d_collided);
-	resolveSphereCollisionKernel<<<blocks, threads>>>(ver, ball, d_normals, d_fric, d_rest, d_collided);
-	for (int iter = 0; iter < iterationCount; iter++) {
+	for (int iter = 0; iter < iterationCount; iter++) {		
 		for (int color = 0; color < cons.stretch.color.colorCount; color++) {
 			int start = stretchColorOffset[color];
 			int end = stretchColorOffset[color + 1];
@@ -296,9 +284,19 @@ void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, float3* 
 			solveBendingColorKernel<<<colorBlocks, threads >>> (ver, cons, cons.bending.color.constraintIds + start, count, tstep, iterationCount);
 			checkCudaKernel("solveBendingColorKernel launch failed");
 		}
+		if (collisionCount > 0) {
+			int collisionBlocks = (collisionCount + threads - 1) / threads;
+			projectCollisionConstraint << <collisionBlocks, threads >> > (ver, cons, collisionCount);
+			checkCudaKernel("projectCollisionConstraint launch failed");
+		}
+		
+		clearVectorKernel<<<blocks, threads>>>(ver.dp, ver.N);
+		checkCudaKernel("clearVectorKernel launch failed");
+		checkCudaKernel("applyDeltaToPredictedKernel launch failed");
+		clearVectorKernel << <blocks, threads >> > (ver.dp, ver.N);
+		checkCudaKernel("clearVectorKernel launch failed");
 	}
-	updateVerticesKernel<<<blocks, threads>>> (ver, tstep);
+	updateVerticesKernel<<<blocks, threads>>>(ver, tstep);
 	checkCudaKernel("updateVerticesKernel launch failed");
-	applyCollisionVelocityKernel << <blocks, threads >> > (ver, d_normals, d_fric, d_rest, d_collided);
-	checkCudaKernel("applyCollisionVelocityKernel launch failed");
+
 }

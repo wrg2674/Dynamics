@@ -110,14 +110,14 @@ __device__ float bending_impl(VertexDevice ver, ConstraintDevice cons, int consI
 	p2_0 = sub(p2, p0);
 	p3_0 = sub(p3, p0);
 
-	cross(p1_0, p2_0, firstTerm);
+	firstTerm = cross(p1_0, p2_0);
 	float firstLength = length(firstTerm);
 	if (firstLength < 1e-8f) {
 		return 0;
 	}
 	firstTerm = normalize(firstTerm);
 
-	cross(p1_0, p3_0, secondTerm);
+	secondTerm = cross(p1_0, p3_0);
 	float secondLength = length(secondTerm);
 	if (secondLength < 1e-8f) {
 		return 0;
@@ -127,6 +127,8 @@ __device__ float bending_impl(VertexDevice ver, ConstraintDevice cons, int consI
 
 	float dotTerm = dot(firstTerm, secondTerm);
 	dotTerm = clamp(dotTerm, -1.0f, 1.0f); //부동 소수점 오차로 인한 오류 방지
+
+	//printf("angle=%f\n", acosf(dotTerm));
 	return acosf(dotTerm) - phi0;
 }
 __device__ float calcBending(VertexDevice ver, ConstraintDevice cons, int consIndex) {
@@ -195,7 +197,7 @@ __device__ float3 calcOmega(VertexDevice ver, float3 pcm) {
 			set(velocity, j, item);
 		}
 		float3 tmp = make_float3(0, 0, 0);
-		cross(r, velocity, tmp);
+		tmp = cross(r, velocity);
 		L = add(L, tmp);
 		mat3 skew;
 		skew.row0 = make_float3(0, get(r, 2), -get(r, 1));
@@ -235,8 +237,7 @@ __global__ void windForceKernel(VertexDevice ver, int3* tris, int triCount, floa
 	float3 e1 = sub(posb, posa);
 	float3 e2 = sub(posc, posa);
 
-	float3 n;
-	cross(e1, e2, n);
+	float3 n = cross(e1, e2);
 
 	float area2 = length(n);
 	if (area2 < 1e-8f) {
@@ -260,60 +261,125 @@ __global__ void windForceKernel(VertexDevice ver, int3* tris, int triCount, floa
 	float3 each = mul(Ftri, 1.0f / 3.0f);
 
 }
-__global__ void clearCollisionFlags(bool* collided) {
-	int i = blockIdx.x * blockDim.x + threadIdx.x;
-	if (i < gridDim.x * blockDim.x) {
-		collided[i] = false;
-	}
-}
-__global__ void resolvePlaneCollisionKernel(VertexDevice ver, CollisionPlane plane, float3* normals, float* fricOut, float* restOut, bool* collided) {
-	int i = blockIdx.x * blockDim.x + threadIdx.x;
-	if (i >= ver.N || ver.invM[i] == 0.0f) {
-		return;
-	}
-	float dist = dot(ver.p[i], plane.n) - plane.offset;
-	if (dist < 0.0f) {
-		ver.p[i] = add(ver.p[i], mul(plane.n, -dist));
-		normals[i] = plane.n;
-		fricOut[i] = plane.friction;
-		restOut[i] = plane.restitution;
-		collided[i] = true;
-	}
-}
-__global__ void resolveSphereCollisionKernel(VertexDevice ver, CollisionSphere sphere, float3* normals, float* fricOut, float* restOut, bool* collided) {
-	int i = blockIdx.x * blockDim.x + threadIdx.x;
-	if (i >= ver.N || ver.invM[i] == 0.0f) {
-		return;
-	}
-	float3 d = sub(ver.p[i], sphere.c);
-	float len = length(d);
-	float pen = sphere.r - len;
-	if (pen > 0.0f && len > 1e-8f) {
-		float3 n;
-		n = normalize(d);
-		ver.p[i] = add(ver.p[i], mul(n, pen));
-		normals[i] = n;
-		fricOut[i] = sphere.friction;
-		restOut[i] = sphere.restitution;
-		collided[i] = true;
-	}
-}
-__global__ void applyCollisionVelocityKernel(VertexDevice ver, const float3* normals, const float* fricOut, const float* restOut, const bool* collided) {
-	int i = blockIdx.x * blockDim.x + threadIdx.x;
-	if (i >= ver.N || ver.invM[i] == 0.0f) {
-		return;
-	}
-	if (!collided[i]) {
-		return;
-	}
-	float3 n = normals[i];
-	float vn = dot(ver.v[i], n);
-	float3 vt = sub(ver.v[i], mul(n, vn));
 
-	if (vn < 0) {
-		vn = -vn*restOut[i];
+__device__ void createCollisionConstraint(ConstraintDevice cons, int3 tri, int verIndex, float k, float thickness, float3 q, float3 normal) {
+	int idx = atomicAdd(cons.collision.n, 1);
+
+	if (idx >= cons.collision.capacity) {
+		return;
 	}
-	float3 vNormal = mul(n, vn);
-	float3 vTangent = mul(vt, fmaxf(0.0f, 1.0f - fricOut[i]));
-	ver.v[i] = add(vNormal, vTangent);
+	cons.collision.tri[idx] = tri;
+	cons.collision.ver[idx] = verIndex;
+	cons.collision.k[idx] = k;
+	cons.collision.thickness[idx] = thickness;
+	cons.collision.q[idx] = q;
+	cons.collision.normal[idx] = normal;
+
 }
+__global__ void detectCollisionKernel(VertexDevice ver, ConstraintDevice cons, float* triangle, unsigned int* d_triangleIndices, int triangleN) {
+	int verIdx = blockIdx.x * blockDim.x + threadIdx.x;
+	if (verIdx >= ver.N) {
+		return;
+	}
+	if (ver.invM[verIdx] == 0.0f) {
+		return;
+	}
+
+	float3 x = ver.pos[verIdx];
+	float3 p = ver.p[verIdx];
+	float3 ray = sub(p, x);
+
+	const float thickness = 0.0025f;
+	const float eps = 1e-6f;
+
+	float bestMeasure = 1e30f;
+	int3 bestTri = make_int3(0, 0, 0);
+	float3 bestQ = make_float3(0.0f, 0.0f, 0.0f);
+	float3 bestN = make_float3(0.0f, 0.0f, 0.0f);
+	bool found = false;
+
+	for (int i = 0; i < triangleN; i++) {
+		unsigned int i0 = d_triangleIndices[3 * i + 0];
+		unsigned int i1 = d_triangleIndices[3 * i + 1];
+		unsigned int i2 = d_triangleIndices[3 * i + 2];
+
+		float3 p0 = make_float3(triangle[3 * i0 + 0], triangle[3 * i0 + 1], triangle[3 * i0 + 2]);
+		float3 p1 = make_float3(triangle[3 * i1 + 0], triangle[3 * i1 + 1], triangle[3 * i1 + 2]);
+		float3 p2 = make_float3(triangle[3 * i2 + 0], triangle[3 * i2 + 1], triangle[3 * i2 + 2]);
+
+		float3 triNormal = cross(sub(p1, p0), sub(p2, p0));
+		float nLen = length(triNormal);
+		if (nLen <= 1e-8f) {
+			continue;
+		}
+		triNormal = mul(triNormal, 1.0f / nLen);
+
+		float denom = dot(ray, triNormal);
+		float distP = dot(sub(p, p0), triNormal);
+
+		bool hitBySegment = false;
+		float3 contactPoint = make_float3(0.0f, 0.0f, 0.0f);
+		float measure = 1e30f;
+
+		if (fabsf(denom) > 1e-8f) {
+			float t = dot(sub(p0, x), triNormal) / denom;
+			if (t > 0.0f && t < 1.0f) {
+				float3 intersectPoint = add(x, mul(ray, t));
+
+				float3 barycentricPoint = barycentric(p0, p1, p2, intersectPoint);
+				float u = barycentricPoint.x;
+				float v = barycentricPoint.y;
+				float w = barycentricPoint.z;
+
+				bool inside =
+					u >= -1e-6f && v >= -1e-6f && w >= -1e-6f &&
+					u <= 1.0f + 1e-6f && v <= 1.0f + 1e-6f && w <= 1.0f + 1e-6f &&
+					fabsf((u + v + w) - 1.0f) <= 1e-4f;
+
+				if (inside) {
+					hitBySegment = true;
+					contactPoint = intersectPoint;
+					measure = t;
+				}
+			}
+		}
+
+		bool hitByPenetration = false;
+		if (!hitBySegment) {
+			float3 projP = sub(p, mul(triNormal, distP));
+
+			float3 barycentricPoint = barycentric(p0, p1, p2, projP);
+			float u = barycentricPoint.x;
+			float v = barycentricPoint.y;
+			float w = barycentricPoint.z;
+
+			bool inside =
+				u >= -1e-6f && v >= -1e-6f && w >= -1e-6f &&
+				u <= 1.0f + 1e-6f && v <= 1.0f + 1e-6f && w <= 1.0f + 1e-6f &&
+				fabsf((u + v + w) - 1.0f) <= 1.0e-4f;
+
+			if (inside) {
+				if (distP < thickness) {
+					hitByPenetration = true;
+					contactPoint = projP;
+					measure = distP;
+				}
+			}
+		}
+
+		if (hitBySegment || hitByPenetration) {
+			if (measure < bestMeasure) {
+				bestMeasure = measure;
+				bestTri = make_int3(i0, i1, i2);
+				bestQ = contactPoint;
+				bestN = triNormal;
+				found = true;
+			}
+		}
+	}
+
+	if (found) {
+		createCollisionConstraint(cons, bestTri, verIdx, 1.0f, thickness, bestQ, bestN);
+	}
+}
+
