@@ -45,6 +45,7 @@ __device__ mat3 inverse(const mat3& a);
 __device__ float det(const mat3& a);
 
 __device__ void atomicAddFloat3(float3* arr, int idx, const float3& v);
+__device__ void atomicAddFloat3(float3* arr, const float3& v);
 __global__ void clearVectorKernel(float3* buf, int n);
 __device__ float calcTriangleArea(const float3 a, const float3 b, const float3 c);
 __device__ float3 barycentric(const float3 a, const float3 b, const float3 c, const float3 p);

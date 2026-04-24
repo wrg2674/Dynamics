@@ -17,7 +17,9 @@ __device__ void updateVertices(VertexDevice ver, int verIndex, int tstep);
 
 
 __global__ void applyForceKernel(VertexDevice ver, float3* forces, int forceCount, float tstep);
-__global__ void computeDampingKernel(VertexDevice ver, DampingDevice damp);
+__global__ void initDampingVariablesKernel(DampingDevice damp, float* d_totalMass);
+__global__ void computeDampingKernel(VertexDevice ver, DampingDevice damp, float* d_totalMass);
+__global__ void finalizeDampingKernel(DampingDevice damp, float* d_totalMass);
 __global__ void applyDampingKernel(VertexDevice ver, DampingDevice damp, float k_damping);
 __global__ void estimatePKernel(VertexDevice ver, float tstep);
 __global__ void updateVerticesKernel(VertexDevice ver, float tstep);
@@ -29,7 +31,8 @@ __device__ void projectBendingConstraint(VertexDevice ver, ConstraintDevice cons
 __global__ void solveStretchColorKernel(VertexDevice ver,ConstraintDevice cons,const int* constraintIds,int count,float tstep,int iterationCount);
 __global__ void solveBendingColorKernel(VertexDevice ver,ConstraintDevice cons,const int* constraintIds,int count,float tstep,int iterationCount);
 __global__ void projectCollisionConstraint(VertexDevice ver, ConstraintDevice cons, int count);
+__global__ void velocityUpdateKernel(VertexDevice ver, ConstraintDevice cons, float friction, float restitution);
 
-void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, std::vector<float*>& vertexSet, std::vector<unsigned int*>& indexSet, std::vector<int>& indexSetN, float3* forces, float k_damping, float tstep, float currentTime, int iterationCount, int forceCount, int n, std::vector<int> stretchColorOffset, std::vector<int> bendingColorOffset);
+void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, std::vector<float*>& vertexSet, std::vector<unsigned int*>& indexSet, std::vector<int>& indexSetN, const int2* selfPairs, int* selfPairCount, float* d_totalMass, const int4* selfTris, const int* vertTriArray, const int* vertTriOffset, float selfThickness, float selfStiffness, float3* forces, float k_damping, float tstep, float currentTime, int iterationCount, int forceCount, int n, std::vector<int> stretchColorOffset, std::vector<int> bendingColorOffset, const float friction, const float restitution);
 
 #endif

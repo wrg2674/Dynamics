@@ -59,6 +59,24 @@ struct CollisionDevice {
 	int* n;
 	int capacity;
 };
+struct SelfCollisionHost {
+	std::vector<int3> tri;
+	std::vector<int> ver;
+	std::vector<float> thickness;
+	std::vector<float3> q;
+	std::vector<float3> normal;
+	std::vector<int> n;
+	int capacity;
+};
+struct SelfCollisionDevice {
+	int3* tri;
+	int* ver;
+	float* thickness;
+	float3* q;
+	float3* normal;
+	int* n;
+	int capacity;
+};
 struct ConstraintHost {
 	StretchHost stretch;
 	BendingHost bending;

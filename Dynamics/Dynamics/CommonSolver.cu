@@ -1,8 +1,8 @@
 #include "CommonSolver.cuh"
 
 __device__ void calcCentralDiff(VertexDevice ver, ConstraintDevice cons, int verIndex, int consIndex, float tstep, Type type, float3& result) {
-	//float tstep = 1e-4; // tstep은 너무커서 더 작은 값으로 중심차분법을 계산함
-	if (tstep <= 0.0f) { result = make_float3(0, 0, 0); return; }
+	float eps = 1e-4; // tstep은 너무커서 더 작은 값으로 중심차분법을 계산함
+	if (eps <= 0.0f) { result = make_float3(0, 0, 0); return; }
 	float3 advP = make_float3(0, 0, 0);
 	float3 prevP = make_float3(0, 0, 0);
 	float3 curP = make_float3(0, 0, 0);
@@ -20,8 +20,8 @@ __device__ void calcCentralDiff(VertexDevice ver, ConstraintDevice cons, int ver
 			set(advP, i, get(curP, i));
 			set(prevP, i, get(curP, i));
 		}
-		set(advP, j, get(curP, j) + tstep);
-		set(prevP, j, get(curP, j) - tstep);
+		set(advP, j, get(curP, j) + eps);
+		set(prevP, j, get(curP, j) - eps);
 
 		switch (type) {
 		case Stretch:
@@ -32,7 +32,7 @@ __device__ void calcCentralDiff(VertexDevice ver, ConstraintDevice cons, int ver
 			advF = calcBendingOverride(ver, cons, consIndex, verIndex, advP);
 			prevF = calcBendingOverride(ver, cons, consIndex, verIndex, prevP);
 		}
-		float temp = (advF-prevF)/ (2 * tstep);
+		float temp = (advF-prevF)/ (2 * eps);
 		set(result, j, temp);
 	}
 }
@@ -383,3 +383,183 @@ __global__ void detectCollisionKernel(VertexDevice ver, ConstraintDevice cons, f
 	}
 }
 
+__device__ bool triContainsVertex(const int3& tri, int v) {
+	return tri.x == v || tri.y == v || tri.z == v;
+}
+__device__ float3 closestPointOnSegment(const float3& p, const float3& a, const float3& b) {
+	float3 ab = sub(a, b);
+	float denom = dot(ab, ab);
+	if (denom <= 1e-12f) {
+		return a;
+	}
+	float t = dot(sub(p, a), ab) / denom;
+	t = clamp(t, 0.0f, 1.0f);
+	return add(a, mul(ab, t));
+}
+__device__ float3 closestPointOnTriangle(const float3& p, const float3& a, const float3& b, const float3& c) {
+	float3 ab = sub(b, a);
+	float3 ac = sub(c, a);
+	float3 ap = sub(p, a);
+
+	float d1 = dot(ab, ap);
+	float d2 = dot(ac, ap);
+
+	if (d1 <= 0.0f && d2 <= 0.0f) {
+		return a;
+	}
+
+	float3 bp = sub(p, b);
+	float d3 = dot(ab, bp);
+	float d4 = dot(ac, bp);
+
+	if (d3 >= 0.0f && d4 <= d3) {
+		return b;
+	}
+
+	float vc = d1 * d4 - d3 * d2;
+	if (vc <= 0.0f && d1 >= 0.0f && d3 <= 0.0f) {
+		float v = d1 / (d1 - d3);
+		return add(a, mul(ab, v));
+	}
+
+	float3 cp = sub(p, c);
+	float d5 = dot(ab, cp);
+	float d6 = dot(ac, cp);
+
+	if (d6 >= 0.0f && d5 <= d6) {
+		return c;
+	}
+
+	float vb = d5 * d2 - d1 * d6;
+	if (vb <= 0.0f && d2 >= 0.0f && d6 <= 0.0f) {
+		float w = d2 / (d2 - d6);
+		return add(a, mul(ac, w));
+	}
+	float va = d3 * d6 - d5 * d4;
+	if (va <= 0.0f && (d4 - d3) >= 0.0f && (d5 - d6) >= 0.0f) {
+		float3 bc = sub(c, b);
+		float w = (d4 - d3) / ((d4 - d3) + (d5 - d6));
+		return add(b, mul(bc, w));
+	}
+	float denom = 1.0f / (va + vb + vc);
+	float v = vb * denom;
+	float w = vc * denom;
+
+	return add(a, add(mul(ab, v), mul(ac, w)));
+}
+__device__ void findAndCreateSelfCollisionForVertex(VertexDevice ver, ConstraintDevice cons, int queryVertex, int anchorVertex, const int4* selfTris, const int* vertTriArray, const int* vertTriOffset, float thickness, float stiffness) {
+	if (ver.invM[queryVertex] == 0.0f) {
+		return;
+	}
+	float3 queryPos = ver.p[queryVertex];
+	float bestDist2 = thickness * thickness;
+	bool found = false;
+
+	int3 bestTri = make_int3(0, 0, 0);
+	float3 bestQ = make_float3(0.0f, 0.0f, 0.0f);
+	float3 bestN = make_float3(0.0f, 0.0f, 0.0f);
+
+	int begin = vertTriOffset[anchorVertex];
+	int end = vertTriOffset[anchorVertex + 1];
+
+	for (int i = begin; i < end; i++) {
+		int triIndex = vertTriArray[i];
+		int4 tri4 = selfTris[triIndex];
+		int3 tri = make_int3(tri4.x, tri4.y, tri4.z);
+
+		if (triContainsVertex(tri, queryVertex)) {
+			continue;
+		}
+
+		float3 p0 = ver.p[tri.x];
+		float3 p1 = ver.p[tri.y];
+		float3 p2 = ver.p[tri.z];
+
+		float3 triNormal = cross(sub(p1, p0), sub(p2, p0));
+		float nLen = length(triNormal);
+		if (nLen <= 1e-8f) {
+			continue;
+		}
+		triNormal = normalize(triNormal);
+
+		float3 q = closestPointOnTriangle(queryPos, p0, p1, p2);
+		float3 diff = sub(queryPos, q);
+		float dist2 = dot(diff, diff);
+
+		if (dist2 >= bestDist2) {
+			continue;
+		}
+		float3 n;
+		if (dist2 > 1e-12f) {
+			float invLen = rsqrtf(dist2);
+			n = mul(diff, invLen);
+		}
+		else {
+			float side = dot(sub(queryPos, p0), triNormal);
+			n = (side >= 0.0f) ? triNormal : mul(triNormal, -1.0f);
+		}
+		bestDist2 = dist2;
+		bestTri = tri;
+		bestQ = q;
+		bestN = n;
+		found = true;
+	}
+	if (found) {
+		createCollisionConstraint(cons, bestTri, queryVertex, stiffness, thickness, bestQ, bestN);
+	}
+}
+
+__global__ void buildSelfPairsGPUKernel(VertexDevice ver, int2* outPairs, int* pairCount, int maxPairs, float cellSize) {
+	int i = blockIdx.x * blockDim.x + threadIdx.x;
+	int j = blockIdx.y * blockDim.y + threadIdx.y;
+
+	if (i >= ver.N || j >= ver.N || i >= j) return;
+
+	float3 diff = sub(ver.p[i], ver.p[j]);
+	float dist2 = dot(diff, diff);
+	if (dist2 < cellSize * cellSize) {
+		// [MODIFIED] atomicAdd를 이용해 GPU 전역에서 안전하게 인덱스를 세고 데이터를 채움
+		int idx = atomicAdd(pairCount, 1);
+		if (idx < maxPairs) {
+			outPairs[idx] = make_int2(i, j);
+		}
+	}
+}
+__global__ void detectSelfCollisionKernel(VertexDevice ver, ConstraintDevice cons, const int2* selfPairs, int* d_pairCount, const int4* selfTris, const int* vertTriArray, const int* vertTriOffset, float thickness, float stiffness) {
+	int pairIdx = blockIdx.x * blockDim.x + threadIdx.x;
+
+	// [MODIFIED] GPU 전역 메모리에 저장된 실제 쌍의 개수를 읽어와 비교
+	if (pairIdx >= *d_pairCount) {
+		return;
+	}
+
+	int2 pair = selfPairs[pairIdx];
+	int a = pair.x;
+	int b = pair.y;
+	if (a < 0 || b < 0 || a >= ver.N || b >= ver.N) {
+		return;
+	}
+	findAndCreateSelfCollisionForVertex(ver, cons, a, b, selfTris, vertTriArray, vertTriOffset, thickness, stiffness);
+	findAndCreateSelfCollisionForVertex(ver, cons, b, a, selfTris, vertTriArray, vertTriOffset, thickness, stiffness);
+}
+void launchBuildSelfPairs(VertexDevice ver, int2* outPairs, int* pairCount, int maxPairs, float cellSize) {
+	dim3 pairBlocks((ver.N + 15) / 16, (ver.N + 15) / 16);
+	dim3 pairThreads(16, 16);
+
+	buildSelfPairsGPUKernel << <pairBlocks, pairThreads >> > (ver, outPairs, pairCount, maxPairs, cellSize);
+}
+__global__ void updateFloorKernel(float* d_floorVertices, float time) {
+	if (blockIdx.x == 0 && threadIdx.x == 0) {
+		float floorBaseY = -1.5f;
+		float animatedFloorY = floorBaseY + 0.5f * sin(time * 1.0f);
+
+		// 4개 정점의 Y좌표(index 1, 4, 7, 10)를 직접 수정
+		d_floorVertices[1] = animatedFloorY;
+		d_floorVertices[4] = animatedFloorY;
+		d_floorVertices[7] = animatedFloorY;
+		d_floorVertices[10] = animatedFloorY;
+	}
+}
+void launchUpdateFloor(float* d_floorVertices, float time) {
+	updateFloorKernel << <1, 1 >> > (d_floorVertices, time);
+}

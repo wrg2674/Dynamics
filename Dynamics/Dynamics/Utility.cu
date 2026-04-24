@@ -173,6 +173,11 @@ __device__ void atomicAddFloat3(float3* arr, int idx, const float3& v) {
 	atomicAdd(&arr[idx].y, v.y);
 	atomicAdd(&arr[idx].z, v.z);
 }
+__device__ void atomicAddFloat3(float3* arr, const float3& v) {
+	atomicAdd(&arr->x, v.x);
+	atomicAdd(&arr->y, v.y);
+	atomicAdd(&arr->z, v.z);
+}
 __global__ void clearVectorKernel(float3* buf, int n) {
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
 	if (i >= n) {
