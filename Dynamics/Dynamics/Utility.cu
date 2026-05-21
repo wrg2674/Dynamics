@@ -191,9 +191,66 @@ __device__ float calcTriangleArea(const float3 a, const float3 b, const float3 c
 }
 __device__ float3 barycentric(const float3 a, const float3 b, const float3 c, const float3 p) {
 	float totalArea = calcTriangleArea(a, b, c);
+
+	if (totalArea < 1e-12f || !isfinite(totalArea)) {
+		return make_float3(1.0f, 0.0f, 0.0f);
+	}
+
 	float u = calcTriangleArea(p, b, c) / totalArea;
 	float v = calcTriangleArea(p, c, a) / totalArea;
 	float w = calcTriangleArea(p, a, b) / totalArea;
 
 	return make_float3(u, v, w);
+}
+__global__ void clearIntKernel(int* buf, int n) {
+	int i = blockIdx.x * blockDim.x + threadIdx.x;
+
+	if (i >= n) {
+		return;
+	}
+
+	buf[i] = 0;
+}
+__global__ void calcHashKernel(VertexDevice ver, unsigned int* gridHashes, int* gridIndices, float cellSize) {
+	int i = blockIdx.x * blockDim.x + threadIdx.x;
+	if (i >= ver.N) {
+		return;
+	}
+
+	gridIndices[i] = i;
+	int3 cell = getCellCoords(ver.p[i], cellSize);
+	gridHashes[i] = computeHash(cell);
+}
+__global__ void findCellStartEndKernel(int n, unsigned int* gridHashes, int* cellStart, int* cellEnd) {
+	int i = blockIdx.x * blockDim.x + threadIdx.x;
+	if (i >= n) {
+		return;
+	}
+	unsigned int hash = gridHashes[i];
+	unsigned int prevHash = (i == 0) ? 999999 : gridHashes[i - 1];
+
+	if (hash != prevHash) {
+		cellStart[hash] = i;
+		if (i > 0) {
+			cellEnd[prevHash] = i;
+		}
+	}
+	if (i == n - 1) {
+		cellEnd[hash] = i + 1;
+	}
+}
+void updateSpatialHash(VertexDevice ver, float cellSize , unsigned int* d_gridHashes, int* d_gridIndices, int* d_cellStart, int* d_cellEnd, int gridCapacity) {
+	int threads = 256;
+	int blocks = (ver.N + threads - 1) / threads;
+
+	cudaMemset(d_cellStart, -1, sizeof(int) * gridCapacity);
+	cudaMemset(d_cellEnd, -1, sizeof(int) * gridCapacity);
+
+	calcHashKernel << <blocks, threads >> > (ver, d_gridHashes, d_gridIndices, cellSize);
+
+	thrust::device_ptr<unsigned int> t_hashes(d_gridHashes);
+	thrust::device_ptr<int> t_indices(d_gridIndices);
+	thrust::sort_by_key(t_hashes, t_hashes + ver.N, t_indices);
+
+	findCellStartEndKernel << <blocks, threads >> > (ver.N, d_gridHashes, d_cellStart, d_cellEnd);
 }

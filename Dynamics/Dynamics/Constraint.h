@@ -1,5 +1,5 @@
-#ifndef BENDINGCONSTRAINT_H
-#define BENDINGCONSTRAINT_H
+#ifndef CONSTRAINT_H
+#define CONSTRAINT_H
 
 #include "Vertex.h"
 #include <vector>
@@ -47,6 +47,7 @@ struct CollisionHost {
 	std::vector<float> thickness;
 	std::vector<float3> q;
 	std::vector<float3> normal;
+	std::vector<float3> colliderVelocity;
 	int* n;
 };
 struct CollisionDevice {
@@ -56,6 +57,7 @@ struct CollisionDevice {
 	float* thickness;
 	float3* q;
 	float3* normal;
+	float3* colliderVelocity;
 	int* n;
 	int capacity;
 };
@@ -63,6 +65,7 @@ struct SelfCollisionHost {
 	std::vector<int3> tri;
 	std::vector<int> ver;
 	std::vector<float> thickness;
+	std::vector<float> k;
 	std::vector<float3> q;
 	std::vector<float3> normal;
 	std::vector<int> n;
@@ -72,6 +75,7 @@ struct SelfCollisionDevice {
 	int3* tri;
 	int* ver;
 	float* thickness;
+	float* k;
 	float3* q;
 	float3* normal;
 	int* n;
@@ -81,12 +85,14 @@ struct ConstraintHost {
 	StretchHost stretch;
 	BendingHost bending;
 	CollisionHost collision;
+	SelfCollisionHost selfCollision;
 };
 
 struct ConstraintDevice {
 	StretchDevice stretch;
 	BendingDevice bending;
 	CollisionDevice collision;
+	SelfCollisionDevice selfCollision;
 };
 #endif
 

@@ -68,7 +68,6 @@ static void buildBendingConstraints_AllSharedEdges(vector<unsigned int>& indices
 static void buildPerVertexConstraintLists(const ConstraintHost& cons, vector<unsigned int>& constraintsArray, vector<int>& constraintOffset, int vertexCount);
 static void buildStretchColorBatches(ConstraintHost& cons);
 static void buildBendingColorBatches(ConstraintHost& cons);
-static void buildSelfPairs(const vector<glm::vec3>& h_pos, const vector<unsigned int>& triangleIndices, float cellSize, vector<int2>& outPairs, int maxPairs = 50000);
 static void buildVertexTriangleAdjacency(const vector<unsigned int>& triangleIndices, int vertexCount, vector<int>& outTriArray, vector<int>& outTriOffset);
 static void uploadColorBatch(const ColorBatchHost& host, ColorBatchDevice& device);
 
@@ -79,19 +78,19 @@ void processInput(GLFWwindow* window);
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
-const float TIMESTEP = 0.01f;
+const float TIMESTEP = 0.001f;
 const float SUBSTEP = 4;
-const int ROWS = 30;
-const int COLS = 30;
+const int ROWS = 50;
+const int COLS = 50;
 const int ITERATION_COUNT = 10;
-const float K_STRETCH = 0.7f;
+const float K_STRETCH = 0.92f;
 const float K_BENDING = 0.1f;
-const float K_DAMPING = 0.3f;
-const float SELF_COLLISION_RADIUS = 0.01f;
+const float K_DAMPING = 0.02f;
+const float SELF_COLLISION_RADIUS = 0.025f;
 const float SELF_COLLISION_THICKNESS = 0.006f;
-const float SELF_COLLISION_K = 0.08f;
-const float FRICTION = 0.2f;    // 마찰 계수 (0~1)
-const float RESTITUTION = 0.5f; // 반발 계수 (0~1)
+const float SELF_COLLISION_K = 0.5f;
+const float FRICTION = 0.1f;    // 마찰 계수 (0~1)
+const float RESTITUTION = 0.1f; // 반발 계수 (0~1)
 
 
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -120,6 +119,7 @@ int main() {
 	}
 
 	glfwMakeContextCurrent(window);
+	glfwSwapInterval(0);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
@@ -212,6 +212,7 @@ int main() {
 	checkCuda(cudaMalloc(&d_ver.v, sizeof(float3) * vertexCount), "cudaMalloc d_ver.v failed");
 	checkCuda(cudaMalloc(&d_ver.p, sizeof(float3) * vertexCount), "cudaMalloc d_ver.p failed");
 	checkCuda(cudaMalloc(&d_ver.dp, sizeof(float3) * vertexCount), "cudaMalloc d_ver.dp failed");
+	checkCuda(cudaMalloc(&d_ver.dpCount, sizeof(int) * vertexCount), "cudaMalloc d_ver.dpCount failed");
 	checkCuda(cudaMalloc(&d_ver.invM, sizeof(float) * vertexCount), "cudaMalloc d_Ver.invM failed");
 	checkCuda(cudaMalloc(&d_ver.constraintsArray, sizeof(unsigned int) * h_constraintsArray.size()), "cudaMalloc d_ver.constraintsArray failed");
 	checkCuda(cudaMalloc(&d_ver.constraintOffset, sizeof(int) * (vertexCount + 1)), "cudaMalloc d_ver.constraintOffset failed");
@@ -239,6 +240,7 @@ int main() {
 	d_cons.collision.thickness = nullptr;
 	d_cons.collision.q = nullptr;
 	d_cons.collision.normal = nullptr;
+	d_cons.collision.colliderVelocity = nullptr;
 	d_cons.collision.n = nullptr;
 	d_cons.collision.capacity = vertexCount * 8;
 
@@ -248,10 +250,32 @@ int main() {
 	checkCuda(cudaMalloc(&d_cons.collision.thickness, sizeof(float)* d_cons.collision.capacity), "cudaMalloc collision.thickness failed");
 	checkCuda(cudaMalloc(&d_cons.collision.q, sizeof(float3) * d_cons.collision.capacity), "cudaMalloc collision.q failed");
 	checkCuda(cudaMalloc(&d_cons.collision.normal, sizeof(float3) * d_cons.collision.capacity), "cudaMalloc collision.normal failed");
+	checkCuda(cudaMalloc(&d_cons.collision.colliderVelocity, sizeof(float3)* d_cons.collision.capacity), "cudaMalloc collision.colliderVelocity failed");
 	checkCuda(cudaMalloc(&d_cons.collision.n, sizeof(int)), "cudaMalloc collision.n failed");
 
 	int zero = 0;
 	checkCuda(cudaMemcpy(d_cons.collision.n, &zero, sizeof(int), cudaMemcpyHostToDevice), "init collision.n failed");
+	
+	d_cons.selfCollision.tri = nullptr;
+	d_cons.selfCollision.ver = nullptr;
+	d_cons.selfCollision.k = nullptr;
+	d_cons.selfCollision.thickness = nullptr;
+	d_cons.selfCollision.q = nullptr;
+	d_cons.selfCollision.normal = nullptr;
+	d_cons.selfCollision.n = nullptr;
+	d_cons.selfCollision.capacity = vertexCount * 8;
+
+	checkCuda(cudaMalloc(&d_cons.selfCollision.tri, sizeof(int3)* d_cons.selfCollision.capacity), "cudaMalloc selfCollision.tri failed");
+	checkCuda(cudaMalloc(&d_cons.selfCollision.ver, sizeof(int)* d_cons.selfCollision.capacity), "cudaMalloc selfCollision.ver failed");
+	checkCuda(cudaMalloc(&d_cons.selfCollision.k, sizeof(float)* d_cons.selfCollision.capacity), "cudaMalloc selfCollision.k failed");
+	checkCuda(cudaMalloc(&d_cons.selfCollision.thickness, sizeof(float)* d_cons.selfCollision.capacity), "cudaMalloc selfCollision.thickness failed");
+	checkCuda(cudaMalloc(&d_cons.selfCollision.q, sizeof(float3)* d_cons.selfCollision.capacity), "cudaMalloc selfCollision.q failed");
+	checkCuda(cudaMalloc(&d_cons.selfCollision.normal, sizeof(float3)* d_cons.selfCollision.capacity), "cudaMalloc selfCollision.normal failed");
+	checkCuda(cudaMalloc(&d_cons.selfCollision.n, sizeof(int)), "cudaMalloc selfCollision.n failed");
+
+	int zeroSelfCollision = 0;
+	checkCuda(cudaMemcpy(d_cons.selfCollision.n, &zeroSelfCollision, sizeof(int), cudaMemcpyHostToDevice), "init selfCollision.n failed");
+	
 	d_cons.stretch.color.constraintIds = nullptr;
 	d_cons.stretch.color.colorOffset = nullptr;
 	d_cons.stretch.color.colorCount = 0;
@@ -313,6 +337,7 @@ int main() {
 	int frameCount = 0;
 	double previousTime = 0;
 	vector<float*> vertexSet;
+	vector<float*> prevVertexSet;
 	vector<unsigned int*> indexSet;
 	vector<int>vertexSetN;
 	vector<int> indexSetN;
@@ -332,15 +357,19 @@ int main() {
 	};
 
 	float* d_floorVertices = nullptr;
+	float* d_prevFloorVertices = nullptr;
 	unsigned int* d_floorIndices = nullptr;
 
 	checkCuda(cudaMalloc(&d_floorVertices, sizeof(floorVertices)), "cudaMalloc d_floorVertices failed");
+	checkCuda(cudaMalloc(&d_prevFloorVertices, sizeof(floorVertices)), "cudaMalloc d_prevFloorVertices failed");
 	checkCuda(cudaMalloc(&d_floorIndices, sizeof(floorIndices)), "cudaMalloc d_floorIndices failed");
 
 	checkCuda(cudaMemcpy(d_floorVertices, floorVertices, sizeof(floorVertices), cudaMemcpyHostToDevice), "cudaMemcpy d_floorVertices failed");
+	checkCuda(cudaMemcpy(d_prevFloorVertices, floorVertices, sizeof(floorVertices), cudaMemcpyHostToDevice), "cudaMemcpy d_prevFloorVertices failed");
 	checkCuda(cudaMemcpy(d_floorIndices, floorIndices, sizeof(floorIndices), cudaMemcpyHostToDevice), "cudaMemcpy d_floorIndices failed");
 
 	vertexSet.push_back(d_floorVertices);
+	prevVertexSet.push_back(d_prevFloorVertices);
 	indexSet.push_back(d_floorIndices);
 
 	vertexSetN.push_back(4);
@@ -368,9 +397,28 @@ int main() {
 	glm::vec3 wind = glm::vec3(rand() % 2, 0, rand() % 2);
 	h_forces.push_back(wind);
 	checkCuda(cudaMalloc(&d_forces, sizeof(float3) * h_forces.size()), "cudaMalloc d_forces failed");
+	checkCuda(cudaMemcpy(d_forces, h_forces.data(), sizeof(float3)* h_forces.size(), cudaMemcpyHostToDevice), "cudaMemcpy d_forces failed");
 
 	float* d_totalMass = nullptr;
 	checkCuda(cudaMalloc(&d_totalMass, sizeof(float)), "totalMass malloc");
+	cudaEvent_t simStartEvent;
+	cudaEvent_t simEndEvent;
+
+	checkCuda(cudaEventCreate(&simStartEvent), "cudaEventCreate simStartEvent failed");
+	checkCuda(cudaEventCreate(&simEndEvent), "cudaEventCreate simEndEvent failed");
+	unsigned int* d_gridHashes;
+	int* d_gridIndices, * d_cellStart, * d_cellEnd;
+	int gridCapacity = 200000;
+
+	cudaMalloc(&d_gridHashes, sizeof(unsigned int) * vertexCount);
+	cudaMalloc(&d_gridIndices, sizeof(int) * vertexCount);
+	cudaMalloc(&d_cellStart, sizeof(int) * gridCapacity);
+	cudaMalloc(&d_cellEnd, sizeof(int) * gridCapacity);
+	
+	float simTime = 0.0f;
+	float currentFloorY = -1.5f;
+	float prevFloorY = currentFloorY;
+	float floorVelY = 0.0f;
 
 	while (!glfwWindowShouldClose(window)) {		
 		float currentFrame = static_cast<float>(glfwGetTime());
@@ -397,39 +445,65 @@ int main() {
 		d_ver.pos = d_vboPos;
 
 		float floorBaseY = -1.5f;
-		float amplitude = 0.5f;
+		float amplitude = 1.0f;
 		float speed = 1.0f;
-		float animatedFloorY = floorBaseY + amplitude * sin((float)glfwGetTime() * speed);
-
-		float floorVertices[] = {
-			-2.0f, animatedFloorY, -2.0f,
-			 2.0f, animatedFloorY, -2.0f,
-			 2.0f, animatedFloorY,  2.0f,
-			-2.0f, animatedFloorY,  2.0f
-		};
 
 
-
-		glBindBuffer(GL_ARRAY_BUFFER, floorVBO);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(floorVertices), floorVertices);
 
 		vector<int2> h_selfPairs;
 		
 		int pairN = (int)h_selfPairs.size();
 		
 		float dt_sub = TIMESTEP / SUBSTEP;
+
+		static double simTimeSumMs = 0.0;
+		static int simFrameCount = 0;
+		checkCuda(cudaEventRecord(simStartEvent), "cudaEventRecord simStartEvent failed");
+		float frameStartTime = glfwGetTime();
 		for (int s = 0; s < SUBSTEP; s++) {
+			float subAlpha = (float)(s + 1) / (float)SUBSTEP;
+			float motionTime = frameStartTime + subAlpha * TIMESTEP;
+			prevFloorY = currentFloorY;
 
-			int zero_val = 0;
-			cudaMemset(d_selfPairCount, 0, sizeof(int));
-			launchUpdateFloor(d_floorVertices, (float)glfwGetTime());
-			launchBuildSelfPairs(d_ver, d_selfPairs, d_selfPairCount, MAX_SELF_PAIRS, SELF_COLLISION_RADIUS);
+			simTime += dt_sub;
+			currentFloorY = floorBaseY - amplitude * cos(motionTime * speed);
+			floorVelY = (currentFloorY - prevFloorY) / dt_sub;
+			checkCuda(cudaMemcpy(d_prevFloorVertices,d_floorVertices,sizeof(floorVertices),cudaMemcpyDeviceToDevice),"cudaMemcpy d_floorVertices to d_prevFloorVertices failed");
+			launchUpdateFloor(d_floorVertices, currentFloorY);
 			
-			float t = (float)glfwGetTime();
-
-			solve(d_ver, d_cons, d_damp, vertexSet, indexSet, indexSetN, d_selfPairs, d_selfPairCount, d_totalMass, d_selfTris, d_vertTriArray, d_vertTriOffset, SELF_COLLISION_THICKNESS, SELF_COLLISION_K, d_forces, K_DAMPING, dt_sub, t, ITERATION_COUNT, (int)h_forces.size(), vertexCount, h_cons.stretch.color.colorOffset, h_cons.bending.color.colorOffset, FRICTION, RESTITUTION);
-			
+			solve(d_ver, d_cons, d_damp, vertexSet, prevVertexSet, indexSet, indexSetN, d_gridIndices, d_cellStart, d_cellEnd, d_gridHashes, d_totalMass, d_selfTris, d_vertTriArray, d_vertTriOffset, SELF_COLLISION_RADIUS, SELF_COLLISION_THICKNESS, SELF_COLLISION_K, gridCapacity, d_forces, K_DAMPING, dt_sub, simTime, ITERATION_COUNT, (int)h_forces.size(), vertexCount, h_cons.stretch.color.colorOffset, h_cons.bending.color.colorOffset, FRICTION, RESTITUTION);
 		}
+		float floorVertices[] = {
+			-2.0f, currentFloorY, -2.0f,
+			 2.0f, currentFloorY, -2.0f,
+			 2.0f, currentFloorY,  2.0f,
+			-2.0f, currentFloorY,  2.0f
+		};
+
+		glBindBuffer(GL_ARRAY_BUFFER, floorVBO);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(floorVertices), floorVertices);
+		
+		checkCuda(cudaEventRecord(simEndEvent), "cudaEventRecord simEndEvent failed");
+		checkCuda(cudaEventSynchronize(simEndEvent), "cudaEventSynchronize simEndEvent failed");
+
+		float simMs = 0.0f;
+		checkCuda(cudaEventElapsedTime(&simMs, simStartEvent, simEndEvent), "cudaEventElapsedTime failed");
+
+		simTimeSumMs += simMs;
+		simFrameCount++;
+
+		if (simFrameCount >= 60) {
+			double avgSimMs = simTimeSumMs / simFrameCount;
+			double simFps = 1000.0 / avgSimMs;
+
+			std::cout << "Average GPU simulation frame time: "
+				<< avgSimMs << " ms, FPS: "
+				<< simFps << std::endl;
+
+			simTimeSumMs = 0.0;
+			simFrameCount = 0;
+		}
+
 		checkCuda(cudaGraphicsUnmapResources(1, &cudaVBO), "cudaGraphicsUnmapResources(frame) failed");
 
 
@@ -487,7 +561,16 @@ int main() {
 	cudaFree(d_cons.collision.thickness);
 	cudaFree(d_cons.collision.q);
 	cudaFree(d_cons.collision.normal);
+	cudaFree(d_cons.collision.colliderVelocity);
 	cudaFree(d_cons.collision.n);
+
+	cudaFree(d_cons.selfCollision.tri);
+	cudaFree(d_cons.selfCollision.ver);
+	cudaFree(d_cons.selfCollision.k);
+	cudaFree(d_cons.selfCollision.thickness);
+	cudaFree(d_cons.selfCollision.q);
+	cudaFree(d_cons.selfCollision.normal);
+	cudaFree(d_cons.selfCollision.n);
 
 	cudaFree(d_cons.stretch.ver);
 	cudaFree(d_cons.stretch.k);
@@ -506,6 +589,7 @@ int main() {
 	cudaFree(d_ver.v);
 	cudaFree(d_ver.p);
 	cudaFree(d_ver.dp);
+	cudaFree(d_ver.dpCount);
 	cudaFree(d_ver.invM);
 	cudaFree(d_ver.constraintsArray);
 	cudaFree(d_ver.constraintOffset);
@@ -514,6 +598,7 @@ int main() {
 	cudaFree(d_selfPairs);
 
 	cudaFree(d_floorVertices);
+	cudaFree(d_prevFloorVertices);
 	cudaFree(d_floorIndices);
 
 	glDeleteVertexArrays(1, &VAO);
@@ -608,9 +693,9 @@ static void buildTriangleIndices(vector<unsigned int>& indices) {
 			indices.push_back(i1);
 			indices.push_back(i2);
 
-			indices.push_back(i0);
-			indices.push_back(i2);
+			indices.push_back(i1);
 			indices.push_back(i3);
+			indices.push_back(i2);
 		}
 	}
 }
@@ -729,19 +814,21 @@ static void buildBendingConstraints_AllSharedEdges(vector<unsigned int>& indices
 				glm::vec3 p3 = h_pos[v3];
 
 				glm::vec3 e01 = p1 - p0;
-				glm::vec3 n1 = glm::cross(e01, p2 - p0);
+				glm::vec3 n1 = glm::cross(p2 - p0, e01);
 				glm::vec3 n2 = glm::cross(e01, p3 - p0);
 
 				float n1Len = glm::length(n1);
 				float n2Len = glm::length(n2);
 
-				float phi0 = 0.0f;
-
-				if (n1Len > 1e-8f && n2Len > 1e-8f) {
-					float cval = glm::dot(n1, n2) / (n1Len * n2Len);
-					cval = glm::clamp(cval, -1.0f, 1.0f);
-					phi0 = glm::acos(cval);
+				if (n1Len < 1e-8f || n2Len < 1e-8f) {
+					continue;
 				}
+				n1 /= n1Len;
+				n2 /= n2Len;
+				float cval = glm::dot(n1, n2);
+				cval = glm::clamp(cval, -0.9999f, 0.9999f);
+				float phi0 = glm::acos(cval);
+
 				cons.bending.ver.push_back(make_int4(v0, v1, v2, v3));
 				cons.bending.k.push_back(K_BENDING);
 				cons.bending.phi0.push_back(phi0);
@@ -865,67 +952,6 @@ static void buildBendingColorBatches(ConstraintHost& cons) {
 		cons.bending.color.colorOffset.push_back((int)cons.bending.color.constraintIds.size());
 	}
 }
-//static void buildSelfPairs(const vector<glm::vec3>& h_pos, const vector<unsigned int>& triangleIndices, float cellSize, vector<int2>& outPairs, int maxPairs) {
-//	unordered_map<CellKey, std::vector<int>, CellHash> grid;
-//	grid.reserve(h_pos.size() * 2);
-//
-//	for (int i = 0; i < (int)h_pos.size(); i++) {
-//		grid[cellOf(h_pos[i], cellSize)].push_back(i);
-//	}
-//	auto makeEdgeKey = [](int a, int b)-> unsigned long long {
-//			if (a > b) std::swap(a, b);
-//			return (static_cast<unsigned long long>(static_cast<unsigned int>(a)) << 32) | static_cast<unsigned int>(b);
-//		};
-//	unordered_set<unsigned long long> adjacentEdges;
-//	adjacentEdges.reserve(triangleIndices.size() * 2);
-//
-//	for (size_t t = 0; t + 2 < triangleIndices.size(); t += 3) {
-//		int i0 = (int)triangleIndices[t + 0];
-//		int i1 = (int)triangleIndices[t + 1];
-//		int i2 = (int)triangleIndices[t + 2];
-//
-//		adjacentEdges.insert(makeEdgeKey(i0, i1));
-//		adjacentEdges.insert(makeEdgeKey(i1, i2));
-//		adjacentEdges.insert(makeEdgeKey(i2, i0));
-//	}
-//	const int off[27][3] = {
-//		{-1,-1,-1},{-1,-1,0},{-1,-1,1},{-1,0,-1},{-1,0,0},{-1,0,1},{-1,1,-1},{-1,1,0},{-1,1,1},
-//		  {0,-1,-1},{0,-1,0},{0,-1,1},{0,0,-1},{0,0,0},{0,0,1},{0,1,-1},{0,1,0},{0,1,1},
-//		  {1,-1,-1},{1,-1,0},{1,-1,1},{1,0,-1},{1,0,0},{1,0,1},{1,1,-1},{1,1,0},{1,1,1}
-//	};
-//	outPairs.clear();
-//	outPairs.reserve(maxPairs);
-//	float r2 = (cellSize * 0.6f) * (cellSize * 0.6f);
-//	for (auto& kv : grid) {
-//		const CellKey& key = kv.first;
-//		const auto& verts = kv.second;
-//		for (int n = 0; n < 27; n++) {
-//			CellKey cn{ key.x + off[n][0], key.y + off[n][1], key.z + off[n][2] };
-//			auto it = grid.find(cn);
-//			if (it == grid.end()) {
-//				continue;
-//			}
-//			const auto& other = it->second;
-//			for (int i : verts) {
-//				for (int j : other) {
-//					if (j <= i) {
-//						continue;
-//					}
-//					if (adjacentEdges.find(makeEdgeKey(i, j)) != adjacentEdges.end()) {
-//						continue;
-//					}
-//					glm::vec3 d = h_pos[i] - h_pos[j];
-//					if (glm::dot(d, d) < r2) {
-//						outPairs.push_back({ i, j });
-//						if ((int)outPairs.size() >= maxPairs) {
-//							return;
-//						}
-//					}
-//				}
-//			}
-//		}
-//	}
-//}
 
 static void buildVertexTriangleAdjacency(const vector<unsigned int>& triangleIndices, int vertexCount, vector<int>& outTriArray, vector<int>& outTriOffset) {
 	vector<vector<int>> perVertex(vertexCount);

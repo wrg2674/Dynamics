@@ -3,6 +3,8 @@
 
 #include <cuda_runtime.h>
 #include <iostream>
+#include <thrust/sort.h>
+#include <thrust/device_ptr.h>
 
 #include "Vertex.h"
 
@@ -49,4 +51,19 @@ __device__ void atomicAddFloat3(float3* arr, const float3& v);
 __global__ void clearVectorKernel(float3* buf, int n);
 __device__ float calcTriangleArea(const float3 a, const float3 b, const float3 c);
 __device__ float3 barycentric(const float3 a, const float3 b, const float3 c, const float3 p);
+
+__device__ __forceinline__ int3 getCellCoords(float3 pos, float cellSize) {
+    return make_int3((int)floorf(pos.x / cellSize), (int)floorf(pos.y / cellSize), (int)floorf(pos.z / cellSize));
+}
+
+__device__ __forceinline__ unsigned int computeHash(int3 cell) {
+    return ((unsigned int)(cell.x * 73856093) ^
+        (unsigned int)(cell.y * 19349663) ^
+        (unsigned int)(cell.z * 83492791)) % 10000;
+}
+__global__ void clearIntKernel(int* buf, int n);
+__global__ void calcHashKernel(VertexDevice ver, unsigned int* gridHashes, int* gridIndices, float cellSize);
+__global__ void findCellStartEndKernel(int n, unsigned int* gridHashes, int* cellStart, int* cellEnd);
+void updateSpatialHash(VertexDevice ver, float cellSize, unsigned int* d_gridHashes, int* d_gridIndices, int* d_cellStart, int* d_cellEnd, int gridCapacity);
+
 #endif

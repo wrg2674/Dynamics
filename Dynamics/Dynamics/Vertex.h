@@ -14,6 +14,7 @@ struct Vertex {
 	std::vector<glm::vec3> v;
 	std::vector<glm::vec3> p;
 	std::vector<glm::vec3> dp;
+	std::vector<int> dpCount;
 	std::vector<std::vector<int>> constraintIndex;
 };
 
@@ -22,7 +23,8 @@ struct VertexDevice {
 	float* invM; // 질량의 역수
 	float3* v;
 	float3* p;
-	float3* dp;
+	float3* dp; 
+	int* dpCount;
 	unsigned int* constraintsArray; // 정점들이 갖는 제약을 순차적으로 모은 배열
 	int* constraintOffset; // 각 정점이 갖는 제약의 시작 인덱스 
 

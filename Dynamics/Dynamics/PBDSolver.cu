@@ -13,6 +13,7 @@ __device__ void calcDeltaP(VertexDevice ver, ConstraintDevice cons, int verIndex
 		set(ver.dp[verIndex], i, -s * ver.invM[verIndex] * get(gradient, i));
 	}
 }
+
 __device__ void projectionFunction(VertexDevice ver, ConstraintDevice cons, int verIndex, int consIndex, Type type, float tstep, int ns) {
 	calcDeltaP(ver, cons, verIndex, consIndex, type, tstep);
 	float weight = 0;
@@ -111,10 +112,34 @@ __global__ void applyForceKernel(VertexDevice ver, float3* forces, int forceCoun
 	float3 accel = add(mul(totalForce, invM), make_float3(0,-9.8,0));
 	curV = add(curV, mul(accel, tstep));
 }
+__global__ void applyAverageDeltaToPredictedKernel(VertexDevice ver){
+	int i = blockIdx.x * blockDim.x + threadIdx.x;
+
+	if (i >= ver.N) {
+		return;
+	}
+
+	if (ver.invM[i] == 0.0f) {
+		return;
+	}
+
+	int count = ver.dpCount[i];
+
+	if (count <= 0) {
+		return;
+	}
+
+	float invCount = 1.0f / (float)count;
+	float3 avgDelta = mul(ver.dp[i], invCount);
+
+	ver.p[i] = add(ver.p[i], avgDelta);
+
+}
 __global__ void initDampingVariablesKernel(DampingDevice damp, float* d_totalMass) {
 	if (blockIdx.x == 0 && threadIdx.x == 0) {
 		*damp.poscm = make_float3(0, 0, 0);
 		*damp.vcm = make_float3(0, 0, 0);
+		*damp.omega = make_float3(0, 0, 0);
 		*d_totalMass = 0.0f;
 	}
 }
@@ -252,6 +277,9 @@ __global__ void projectCollisionConstraint(VertexDevice ver, ConstraintDevice co
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
 	if (i >= *(cons.collision.n)) return;
 
+	int collisionCount = min(*(cons.collision.n), cons.collision.capacity);
+	if (i >= collisionCount) return;
+
 	int verIndex = cons.collision.ver[i];
 	if (ver.invM[verIndex] == 0.0f) {
 		return;
@@ -266,39 +294,152 @@ __global__ void projectCollisionConstraint(VertexDevice ver, ConstraintDevice co
 	if (C >= 0.0f) {
 		return;
 	}
-	ver.p[verIndex] = add(p, mul(n, -C * stiffness));
+	float3 corr = mul(n, -C * stiffness);
+	if (!isfinite(corr.x) || !isfinite(corr.y) || !isfinite(corr.z)) {
+		return;
+	}
+	atomicAddFloat3(ver.dp, verIndex, corr);
+	atomicAdd(&(ver.dpCount[verIndex]), 1);
 }
+__global__ void projectSelfCollisionConstraintKernel(VertexDevice ver, ConstraintDevice cons) {
+	int i = blockIdx.x * blockDim.x + threadIdx.x;
+	int selfCollisionCount = min(*(cons.selfCollision.n), cons.selfCollision.capacity);
 
+	if (i >= selfCollisionCount) {
+		return;
+	}
+	int qIndex = cons.selfCollision.ver[i];
+	if (qIndex < 0 || qIndex >= ver.N) {
+		return;
+	}
+
+	if (ver.invM[qIndex] == 0.0f) {
+		return;
+	}
+	int3 tri = cons.selfCollision.tri[i];
+
+	int i0 = tri.x;
+	int i1 = tri.y;
+	int i2 = tri.z;
+
+	if (i0 < 0 || i0 >= ver.N) {
+		return;
+	}
+	if (i1 < 0 || i1 >= ver.N) {
+		return;
+	}
+	if (i2 < 0 || i2 >= ver.N) {
+		return;
+	}
+	if (qIndex == i0 || qIndex == i1 || qIndex == i2) {
+		return;
+	}
+	float3 q = ver.p[qIndex];
+	float3 p0 = ver.p[i0];
+	float3 p1 = ver.p[i1];
+	float3 p2 = ver.p[i2];
+
+	float3 n = normalize(cons.selfCollision.normal[i]);
+	float thickness = cons.selfCollision.thickness[i];
+	float stiffness = clamp(cons.selfCollision.k[i], 0.0f, 1.0f);
+
+	float3 bary = barycentric(p0, p1, p2, cons.selfCollision.q[i]);
+
+	float b0 = clamp(bary.x, 0.0f, 1.0f);
+	float b1 = clamp(bary.y, 0.0f, 1.0f);
+	float b2 = clamp(bary.z, 0.0f, 1.0f);
+
+	float bSum = b0 + b1 + b2;
+	if (bSum < 1e-8f || !isfinite(bSum)) {
+		return;
+	}
+	b0 /= bSum;
+	b1 /= bSum;
+	b2 /= bSum;
+
+	float3 triPoint = add(add(mul(p0, b0), mul(p1, b1)), mul(p2, b2));
+	float C = dot(sub(q, triPoint), n) - thickness;
+
+	if (C >= 0.0f) {
+		return;
+	}
+	float wq = ver.invM[qIndex];
+	float w0 = ver.invM[i0];
+	float w1 = ver.invM[i1];
+	float w2 = ver.invM[i2];
+
+	float denom = wq + w0 * b0 * b0 + w1 * b1 * b1 + w2 * b2 * b2;
+	if (denom < 1e-8f || !isfinite(denom)) {
+		return;
+	}
+	float s = C / denom;
+
+	float3 dq = mul(n, -s * wq * stiffness);
+	float3 d0 = mul(n, s * w0 * b0 * stiffness);
+	float3 d1 = mul(n, s * w1 * b1 * stiffness);
+	float3 d2 = mul(n, s * w2 * b2 * stiffness);
+
+	if (wq > 0.0f) {
+		atomicAddFloat3(ver.dp, qIndex, dq);
+		atomicAdd(&(ver.dpCount[qIndex]), 1);
+	}
+	if (w0 > 0.0f) {
+		atomicAddFloat3(ver.dp, i0, d0);
+		atomicAdd(&(ver.dpCount[i0]), 1);
+	}
+	if (w1 > 0.0f) {
+		atomicAddFloat3(ver.dp, i1, d1);
+		atomicAdd(&(ver.dpCount[i1]), 1);
+	}
+	if (w2 > 0.0f) {
+		atomicAddFloat3(ver.dp, i2, d2);
+		atomicAdd(&(ver.dpCount[i2]), 1);
+	}
+}
 
 __global__ void velocityUpdateKernel(VertexDevice ver, ConstraintDevice cons, float friction, float restitution) {
-	int i = blockIdx.x * blockDim.x + threadIdx.x;
-	if (i >= *(cons.collision.n)) return;
+	int verIndex = blockIdx.x * blockDim.x + threadIdx.x;
+	if (verIndex >= ver.N) return;
 
-	int verIndex = cons.collision.ver[i];
-	if (ver.invM[verIndex] == 0.0f) return;
+	if (ver.invM[verIndex] == 0.0f) {
+		ver.v[verIndex] = make_float3(0.0f, 0.0f, 0.0f);
+		return;
+	}
 
-	float3 n = normalize(cons.collision.normal[i]);
+	int collisionCount = min(*(cons.collision.n), cons.collision.capacity);
 	float3 v = ver.v[verIndex];
 
-	float vn_mag = dot(v, n);
-	float3 vn = mul(n, vn_mag);
-	float3 vt = sub(v, vn);
+	for (int i = 0; i < collisionCount; i++) {
+		if (cons.collision.ver[i] != verIndex) {
+			continue;
+		}
 
+		float3 n = normalize(cons.collision.normal[i]);
+		float3 colliderV = cons.collision.colliderVelocity[i];
 
-	if (vn_mag < -0.01f) { 
-		vn = mul(n, -vn_mag * restitution);
+		float3 relV = sub(v, colliderV);
+		float relVnMag = dot(relV, n);
+
+		if (relVnMag >= 0.0f) {
+			continue;
+		}
+
+		float3 relVn = mul(n, relVnMag);
+		float3 relVt = sub(relV, relVn);
+
+		float3 newRelVn = mul(n, -relVnMag * restitution);
+		float3 newRelVt = mul(relVt, fmaxf(0.0f, 1.0f - friction));
+
+		float3 newRelV = add(newRelVn, newRelVt);
+
+		v = add(newRelV, colliderV);
 	}
-	else {
-		vn = mul(n, 0.0f); 
-	}
 
-
-	vt = mul(vt, (1.0f - friction));
-
-
-	ver.v[verIndex] = add(vn, vt);
+	ver.v[verIndex] = v;
 }
-void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, std::vector<float*>& vertexSet, std::vector<unsigned int*>& indexSet, std::vector<int>& indexSetN, const int2* selfPairs, int* d_selfPairCount, float* d_totalMass, const int4* selfTris, const int* vertTriArray, const int* vertTriOffset, float selfThickness, float selfStiffness, float3* forces, float k_damping, float tstep, float currentTime, int iterationCount, int forceCount, int n, std::vector<int> stretchColorOffset, std::vector<int> bendingColorOffset, const float friction, const float restitution) {
+
+
+void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, std::vector<float*>& vertexSet, std::vector<float*>& prevVertexSet, std::vector<unsigned int*>& indexSet, std::vector<int>& indexSetN, int* d_gridIndices, int* d_cellStart, int* d_cellEnd, unsigned int* d_gridHashes, float* d_totalMass, const int4* selfTris, const int* vertTriArray, const int* vertTriOffset, float cellSize, float selfThickness, float selfStiffness, int gridCapacity, float3* forces, float k_damping, float tstep, float currentTime, int iterationCount, int forceCount, int n, std::vector<int> stretchColorOffset, std::vector<int> bendingColorOffset, const float friction, const float restitution) {
 	
 	checkCudaKernel("computeDampingKernel launch failed");
 	int threads = 256;
@@ -314,29 +455,27 @@ void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, std::vec
 	estimatePKernel<<<blocks, threads>>> (ver, tstep);
 	checkCudaKernel("estimatePKernel launch failed");
 
+	int staticCollBlocks = (cons.collision.capacity + threads - 1) / threads;
+	int selfCollBlocks = (cons.selfCollision.capacity + threads - 1) / threads;
+	updateSpatialHash(ver, cellSize, d_gridHashes, d_gridIndices, d_cellStart, d_cellEnd, gridCapacity);
+
 	int zero = 0;
+	cudaMemset(cons.selfCollision.n, 0, sizeof(int));
+	checkCudaKernel("cudaMemset selfCollision.n failed");
 
-	cudaMemset(cons.collision.n, 0, sizeof(int));
-
-	for (int i = 0; i < vertexSet.size(); i++) {
-		int triangleCount = indexSetN[i]/3;
-		detectCollisionKernel <<<blocks, threads >>> (ver, cons, vertexSet[i], indexSet[i], triangleCount);
-		checkCudaKernel("detectCollisionKernel launch failed");
-	}
-	if (d_selfPairCount != nullptr && selfPairs != nullptr && selfTris != nullptr && vertTriArray != nullptr && vertTriOffset != nullptr) {
-		int selfBlocks = (50000 + threads - 1) / threads;
-		detectSelfCollisionKernel << <selfBlocks, threads >> > (ver, cons, selfPairs, d_selfPairCount, selfTris, vertTriArray, vertTriOffset, selfThickness, selfStiffness);
+	if (d_gridIndices != nullptr && d_cellStart != nullptr && d_cellEnd != nullptr && selfTris != nullptr && vertTriArray != nullptr && vertTriOffset != nullptr) {
+		detectSelfCollisionKernel << <blocks, threads >> > (ver, cons, d_gridIndices, d_cellStart, d_cellEnd, selfTris, vertTriArray, vertTriOffset, cellSize, selfThickness, selfStiffness);
 		checkCudaKernel("detectSelfCollisionKernel launch failed");
 	}
 
-	int collBlocks = 0;
 	for (int iter = 0; iter < iterationCount; iter++) {		
 		for (int color = 0; color < cons.stretch.color.colorCount; color++) {
 			int start = stretchColorOffset[color];
 			int end = stretchColorOffset[color + 1];
 			int count = end - start;
-			if (count <= 0)continue;
-
+			if (count <= 0) {
+				continue;
+			}
 			int colorBlocks = (count + threads - 1) / threads;
 			solveStretchColorKernel<<<colorBlocks, threads >>> (ver, cons, cons.stretch.color.constraintIds + start, count, tstep, iterationCount);
 			checkCudaKernel("solveStretchColorKernel launch failed");
@@ -345,23 +484,41 @@ void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, std::vec
 			int start = bendingColorOffset[color];
 			int end = bendingColorOffset[color + 1];
 			int count = end - start;
-			if (count <= 0)continue;
+			if (count <= 0) {
+				continue;
+			}
 
 			int colorBlocks = (count + threads - 1) / threads;
 			solveBendingColorKernel<<<colorBlocks, threads >>> (ver, cons, cons.bending.color.constraintIds + start, count, tstep, iterationCount);
 			checkCudaKernel("solveBendingColorKernel launch failed");
 		}
+		cudaMemset(cons.collision.n, 0, sizeof(int));
+		checkCudaKernel("cudaMemset collision.n failed");
 
-		int maxCollision= cons.collision.capacity;
-		collBlocks = (maxCollision + threads - 1) / threads;
-		projectCollisionConstraint << <collBlocks, threads >> > (ver, cons, maxCollision);
-
-		clearVectorKernel<<<blocks, threads>>>(ver.dp, ver.N);
-		checkCudaKernel("clearVectorKernel launch failed");
+		bool runCCD = (iter == 0) || ((iter % CCD_INTERVAL) == 0);
+		for (int i = 0; i < vertexSet.size(); i++) {
+			int triangleCount = indexSetN[i] / 3;
+			if (runCCD) {
+				detectContinuousCollisionKernel << <blocks, threads >> > (ver, cons, vertexSet[i], indexSet[i], triangleCount);
+				checkCudaKernel("detectContinuousCollisionKernel CCD launch failed");
+			}
+			detectStaticCollisionKernel << <blocks, threads >> > (ver, cons, vertexSet[i], indexSet[i], triangleCount);
+			checkCudaKernel("detectStaticCollisionKernel launch failed");
+			clearVectorKernel << <blocks, threads >> > (ver.dp, ver.N);
+			checkCudaKernel("clearVectorKernel ver.dp launch failed");
+			clearIntKernel << <blocks, threads >> > (ver.dpCount, ver.N);
+			checkCudaKernel("clearIntKernel ver.dpCount launch failed");
+			projectCollisionConstraint << <staticCollBlocks, threads >> > (ver, cons, 0);
+			projectSelfCollisionConstraintKernel << <selfCollBlocks, threads >> > (ver, cons);
+			
+			
+			applyAverageDeltaToPredictedKernel << <blocks, threads >> > (ver);
+			checkCudaKernel("applyAverageDeltaToPredictedKernel launch failed");
+		}
 	}
 	updateVerticesKernel<<<blocks, threads>>>(ver, tstep);
 	checkCudaKernel("updateVerticesKernel launch failed");
-	velocityUpdateKernel << <collBlocks, threads >> > (ver, cons, friction, restitution);
-	checkCudaKernel("velocityUpdateKernel launch failed");
+	//velocityUpdateKernel << <blocks, threads >> > (ver, cons, friction, restitution);
+	//checkCudaKernel("velocityUpdateKernel launch failed");
 
 }
