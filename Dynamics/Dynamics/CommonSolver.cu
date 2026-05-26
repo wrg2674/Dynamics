@@ -155,39 +155,14 @@ __device__ float bending_impl(VertexDevice ver, ConstraintDevice cons, int consI
 	float3 p1 = pickP(ver, ids.y, overrideVid, overridePos);
 	float3 p2 = pickP(ver, ids.z, overrideVid, overridePos);
 	float3 p3 = pickP(ver, ids.w, overrideVid, overridePos);
-	//float3 p1_0 = make_float3(0, 0, 0);
-	//float3 p2_0 = make_float3(0, 0, 0);
-	//float3 p3_0 = make_float3(0, 0, 0);
-	//float3 firstTerm = make_float3(0, 0, 0);
-	//float3 secondTerm = make_float3(0, 0, 0);
 
-	//float phi0 = cons.bending.phi0[consIndex];
-
-	//p1_0 = sub(p1, p0);
-	//p2_0 = sub(p2, p0);
-	//p3_0 = sub(p3, p0);
-
-	//firstTerm = cross(p1_0, p2_0);
-	//float firstLength = length(firstTerm);
-	//if (firstLength < 1e-8f) {
-	//	return 0;
-	//}
-	//firstTerm = normalize(firstTerm);
-
-	//secondTerm = cross(p1_0, p3_0);
-	//float secondLength = length(secondTerm);
-	//if (secondLength < 1e-8f) {
-	//	return 0;
-	//}
-	//secondTerm = normalize(secondTerm);
-
-
-	//float dotTerm = dot(firstTerm, secondTerm);
-	//dotTerm = clamp(dotTerm, -1.0f, 1.0f); //부동 소수점 오차로 인한 오류 방지
-
-	//return acosf(dotTerm) - phi0;
 
 	float3 e01 = sub(p1, p0);
+	float edgeLen = length(e01);
+
+	if (edgeLen < 1e-8f || !isfinite(edgeLen)) {
+		return 0.0f;
+	}
 	float3 n1 = cross(sub(p2, p0), e01);
 	float3 n2 = cross(e01, sub(p3, p0));
 
@@ -204,6 +179,9 @@ __device__ float bending_impl(VertexDevice ver, ConstraintDevice cons, int consI
 	dotTerm = clamp(dotTerm, -0.9999f, 0.9999f);
 
 	float phi = acosf(dotTerm);
+	if (dot(cross(n1, n2), e01) > 0.0f) {
+		phi = -phi;
+	}
 	float phi0 = cons.bending.phi0[consIndex];
 
 	return phi - phi0;
@@ -339,7 +317,7 @@ __global__ void windForceKernel(VertexDevice ver, int3* tris, int triCount, floa
 
 }
 
-__device__ void createCollisionConstraint(ConstraintDevice cons, int3 tri, int verIndex, float k, float thickness, float3 q, float3 normal) {
+__device__ void createCollisionConstraint(ConstraintDevice cons, int3 tri, int verIndex, float k, float thickness, float3 q, float3 normal, float3 colliderVelocity) {
 	int idx = atomicAdd(cons.collision.n, 1);
 
 	if (idx >= cons.collision.capacity) {
@@ -351,7 +329,7 @@ __device__ void createCollisionConstraint(ConstraintDevice cons, int3 tri, int v
 	cons.collision.thickness[idx] = thickness;
 	cons.collision.q[idx] = q;
 	cons.collision.normal[idx] = normal;
-	//cons.collision.colliderVelocity[idx] = colliderVelocity;
+	cons.collision.colliderVelocity[idx] = colliderVelocity;
 
 }
 __device__ void createSelfCollisionConstraint(ConstraintDevice cons, int3 tri, int verIndex, float k, float thickness, float3 q, float3 normal) {
@@ -366,7 +344,7 @@ __device__ void createSelfCollisionConstraint(ConstraintDevice cons, int3 tri, i
 	cons.selfCollision.q[idx] = q;
 	cons.selfCollision.normal[idx] = normal;
 }
-__global__ void detectContinuousCollisionKernel(VertexDevice ver, ConstraintDevice cons, float* triangle,	 unsigned int* d_triangleIndices, int triangleN) {
+__global__ void detectContinuousCollisionKernel(VertexDevice ver, ConstraintDevice cons, float* triangle, float* prevTriangle, unsigned int* d_triangleIndices, int triangleN, float tstep) {
 	int verIdx = blockIdx.x * blockDim.x + threadIdx.x;
 	if (verIdx >= ver.N) {
 		return;
@@ -386,7 +364,7 @@ __global__ void detectContinuousCollisionKernel(VertexDevice ver, ConstraintDevi
 	int3 bestTri = make_int3(0, 0, 0);
 	float3 bestQ = make_float3(0.0f, 0.0f, 0.0f);
 	float3 bestN = make_float3(0.0f, 0.0f, 0.0f);
-	float3 bestQPrev = make_float3(0.0f, 0.0f, 0.0f);
+	float3 bestColliderVelocity = make_float3(0.0f, 0.0f, 0.0f);
 
 	bool found = false;
 
@@ -399,6 +377,10 @@ __global__ void detectContinuousCollisionKernel(VertexDevice ver, ConstraintDevi
 		float3 p1 = make_float3(triangle[3 * i1 + 0], triangle[3 * i1 + 1], triangle[3 * i1 + 2]);
 		float3 p2 = make_float3(triangle[3 * i2 + 0], triangle[3 * i2 + 1], triangle[3 * i2 + 2]);
 
+		float3 prevP0 = make_float3(prevTriangle[3 * i0 + 0], prevTriangle[3 * i0 + 1], prevTriangle[3 * i0 + 2]);
+		float3 prevP1 = make_float3(prevTriangle[3 * i1 + 0], prevTriangle[3 * i1 + 1], prevTriangle[3 * i1 + 2]);
+		float3 prevP2 = make_float3(prevTriangle[3 * i2 + 0], prevTriangle[3 * i2 + 1], prevTriangle[3 * i2 + 2]);
+
 		float3 triNormal = cross(sub(p1, p0), sub(p2, p0));
 		float nLen = length(triNormal);
 		if (nLen <= 1e-8f) {
@@ -406,16 +388,31 @@ __global__ void detectContinuousCollisionKernel(VertexDevice ver, ConstraintDevi
 		}
 		triNormal = mul(triNormal, 1.0f / nLen);
 
+		float3 d0 = sub(p0, prevP0);
+		float3 d1 = sub(p1, prevP1);
+		float3 d2 = sub(p2, prevP2);
+
+		float3 colliderDisplacement = mul(add(add(d0, d1), d2), 1.0f / 3.0f);
+
+		float safeDt = fmaxf(tstep, 1e-8f);
+		float3 colliderVelocity = mul(colliderDisplacement, 1.0f / safeDt);
+		float3 xInCurrentColliderFrame = add(x, colliderDisplacement);
+		float3 ray = sub(p, xInCurrentColliderFrame);
+
+		float rayLen2 = dot(ray, ray);
+		if (rayLen2 <= eps * eps) {
+			continue;
+		}
 		float denom = dot(ray, triNormal);
 		if (fabsf(denom) <= 1e-8f) {
 			continue;
 		}
-		float t = dot(sub(p0, x), triNormal) / denom;
+		float t = dot(sub(p0, xInCurrentColliderFrame), triNormal) / denom;
 		if (t < 0.0f || t>1.0f) {
 			continue;
 		}
 
-		float3 intersectPoint = add(x, mul(ray, t));
+		float3 intersectPoint = add(xInCurrentColliderFrame, mul(ray, t));
 
 		float3 barycentricPoint = barycentric(p0, p1, p2, intersectPoint);
 		float u = barycentricPoint.x;
@@ -430,20 +427,26 @@ __global__ void detectContinuousCollisionKernel(VertexDevice ver, ConstraintDevi
 		if (!inside) {
 			continue;
 		}
+		float predictedDist = dot(sub(p, intersectPoint), triNormal);
+
+		if (predictedDist >= thickness) {
+			continue;
+		}
 		if (t < bestT) {
 			bestT = t;
 			bestTri = make_int3(i0, i1, i2);
 			bestQ = intersectPoint;
 			bestN = triNormal;
+			bestColliderVelocity = colliderVelocity;
 			found = true;
 		}
 	}
 
 	if (found) {
-		createCollisionConstraint(cons, bestTri, verIdx, 0.5f, thickness, bestQ, bestN);
+		createCollisionConstraint(cons, bestTri, verIdx, 1.0f, thickness, bestQ, bestN, bestColliderVelocity);
 	}
 }
-__global__ void detectStaticCollisionKernel(VertexDevice ver, ConstraintDevice cons, float* triangle, unsigned int* d_triangleIndices, int triangleN) {
+__global__ void detectStaticCollisionKernel(VertexDevice ver, ConstraintDevice cons, float* triangle, float* prevTriangle, unsigned int* d_triangleIndices, int triangleN, float tstep) {
 	int verIdx = blockIdx.x * blockDim.x + threadIdx.x;
 
 	if (verIdx >= ver.N) {
@@ -461,29 +464,20 @@ __global__ void detectStaticCollisionKernel(VertexDevice ver, ConstraintDevice c
 	int3 bestTri = make_int3(0, 0, 0);
 	float3 bestQ = make_float3(0.0f, 0.0f, 0.0f);
 	float3 bestN = make_float3(0.0f, 0.0f, 0.0f);
+	float3 bestColliderVelocity = make_float3(0.0f, 0.0f, 0.0f);
 	bool found = false;
 	for (int i = 0; i < triangleN; i++) {
 		unsigned int i0 = d_triangleIndices[3 * i + 0];
 		unsigned int i1 = d_triangleIndices[3 * i + 1];
 		unsigned int i2 = d_triangleIndices[3 * i + 2];
 
-		float3 p0 = make_float3(
-			triangle[3 * i0 + 0],
-			triangle[3 * i0 + 1],
-			triangle[3 * i0 + 2]
-		);
+		float3 p0 = make_float3(triangle[3 * i0 + 0], triangle[3 * i0 + 1], triangle[3 * i0 + 2]);
+		float3 p1 = make_float3(triangle[3 * i1 + 0], triangle[3 * i1 + 1], triangle[3 * i1 + 2]);
+		float3 p2 = make_float3(triangle[3 * i2 + 0],triangle[3 * i2 + 1],triangle[3 * i2 + 2]);
 
-		float3 p1 = make_float3(
-			triangle[3 * i1 + 0],
-			triangle[3 * i1 + 1],
-			triangle[3 * i1 + 2]
-		);
-
-		float3 p2 = make_float3(
-			triangle[3 * i2 + 0],
-			triangle[3 * i2 + 1],
-			triangle[3 * i2 + 2]
-		);
+		float3 prevP0 = make_float3(prevTriangle[3 * i0 + 0], prevTriangle[3 * i0 + 1], prevTriangle[3 * i0 + 2]);
+		float3 prevP1 = make_float3(prevTriangle[3 * i1 + 0], prevTriangle[3 * i1 + 1], prevTriangle[3 * i1 + 2]);
+		float3 prevP2 = make_float3(prevTriangle[3 * i2 + 0], prevTriangle[3 * i2 + 1], prevTriangle[3 * i2 + 2]);
 
 		float3 triNormal = cross(sub(p1, p0), sub(p2, p0));
 		float nLen = length(triNormal);
@@ -519,11 +513,15 @@ __global__ void detectStaticCollisionKernel(VertexDevice ver, ConstraintDevice c
 			bestTri = make_int3(i0, i1, i2);
 			bestQ = q;
 			bestN = triNormal;
+
+			float3 prevQ = add(add(mul(prevP0, u), mul(prevP1, v)), mul(prevP2, w));
+			float safeDt = fmaxf(tstep, 1e-8f);
+			bestColliderVelocity = mul(sub(q, prevQ), 1.0f / safeDt);
 			found = true;
 		}
 	}
 	if (found) {
-		createCollisionConstraint(cons, bestTri, verIdx, 0.5f, thickness, bestQ, bestN);
+		createCollisionConstraint(cons, bestTri, verIdx, 0.5f, thickness, bestQ, bestN, bestColliderVelocity);
 	}
 }
 __device__ float3 closestPointOnSegment(const float3& p, const float3& a, const float3& b) {

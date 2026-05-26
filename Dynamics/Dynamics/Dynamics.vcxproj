@@ -19,21 +19,33 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="App.cpp" />
+    <ClCompile Include="ClothBuilder.cpp" />
     <ClCompile Include="Collision.h" />
     <ClCompile Include="Constraint.h" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PBDSimulation.cu" />
+    <ClCompile Include="RenderContext.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\learnopengl\camera.h" />
+    <ClInclude Include="App.h" />
+    <ClInclude Include="ClothBuilder.h" />
     <ClInclude Include="CommonSolver.cuh" />
+    <ClInclude Include="CudaConstraintUtils.cuh" />
+    <ClInclude Include="CudaUtils.cuh" />
     <ClInclude Include="Damping.h" />
+    <ClInclude Include="PBDSimulation.cuh" />
     <ClInclude Include="PBDSolver.cuh" />
+    <ClInclude Include="RenderContext.h" />
+    <ClInclude Include="SimulationConfig.h" />
     <ClInclude Include="Utility.cuh" />
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="CommonSolver.cu" />
+    <CudaCompile Include="CudaConstraintUtils.cu" />
     <CudaCompile Include="PBDSolver.cu" />
     <CudaCompile Include="Utility.cu" />
   </ItemGroup>

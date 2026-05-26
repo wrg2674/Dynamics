@@ -22,7 +22,9 @@ __global__ void applyForceKernel(VertexDevice ver, float3* forces, int forceCoun
 __global__ void applyAverageDeltaToPredictedKernel(VertexDevice ver);
 __global__ void initDampingVariablesKernel(DampingDevice damp, float* d_totalMass);
 __global__ void computeDampingKernel(VertexDevice ver, DampingDevice damp, float* d_totalMass);
-__global__ void finalizeDampingKernel(DampingDevice damp, float* d_totalMass);
+__global__ void computeAngularDampingKernel(VertexDevice ver, DampingDevice damp);
+__global__ void finalizeCenterOfMassKernel(DampingDevice damp, float* d_totalMass);
+__global__ void finalizeOmegaKernel(DampingDevice damp);
 __global__ void applyDampingKernel(VertexDevice ver, DampingDevice damp, float k_damping);
 __global__ void estimatePKernel(VertexDevice ver, float tstep);
 __global__ void updateVerticesKernel(VertexDevice ver, float tstep);

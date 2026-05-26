@@ -1,6 +1,6 @@
-﻿  Compiling CUDA source file CommonSolver.cu...
+﻿  Compiling CUDA source file PBDSolver.cu...
   
-  D:\wrg\Github\Dynamics\Dynamics\Dynamics>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\bin\nvcc.exe" -gencode=arch=compute_52,code=\"sm_52,compute_52\" --use-local-env -ccbin "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64" -x cu -rdc=true  -ID:\wrg\Github\Dynamics\Dynamics\/include -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8/include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include"     --keep-dir x64\Release  -maxrregcount=0    --machine 64 --compile -cudart static    -DNDEBUG -D_CONSOLE -D_UNICODE -DUNICODE -Xcompiler "/EHsc /W3 /nologo /O2 /FS   /MD " -Xcompiler "/Fdx64\Release\vc143.pdb" -o D:\wrg\Github\Dynamics\Dynamics\Dynamics\x64\Release\CommonSolver.cu.obj "D:\wrg\Github\Dynamics\Dynamics\Dynamics\CommonSolver.cu" 
+  D:\wrg\Github\Dynamics\Dynamics\Dynamics>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\bin\nvcc.exe" -gencode=arch=compute_52,code=\"sm_52,compute_52\" --use-local-env -ccbin "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64" -x cu -rdc=true  -ID:\wrg\Github\Dynamics\Dynamics\/include -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8/include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include"     --keep-dir x64\Release  -maxrregcount=0    --machine 64 --compile -cudart static    -DNDEBUG -D_CONSOLE -D_UNICODE -DUNICODE -Xcompiler "/EHsc /W3 /nologo /O2 /FS   /MD " -Xcompiler "/Fdx64\Release\vc143.pdb" -o D:\wrg\Github\Dynamics\Dynamics\Dynamics\x64\Release\PBDSolver.cu.obj "D:\wrg\Github\Dynamics\Dynamics\Dynamics\PBDSolver.cu" 
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
@@ -128,11 +128,15 @@ C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cub/warp/specia
 C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
   C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\thrust/detail/config/cpp_dialect.h:117: warning: Thrust requires at least C++ 17.C++ 14 is deprecated but still supported.C++ 14 support will be removed in a future release.Define THRUST_IGNORE_DEPRECATED_CPP_DIALECT to suppress this message.
   C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cub/util_cpp_dialect.cuh:129: warning: CUB requires at least C++ 17.C++ 14 is deprecated but still supported.C++ 14 support will be removed in a future release.Define CUB_IGNORE_DEPRECATED_CPP_DIALECT to suppress this message.
-D:\wrg\Github\Dynamics\Dynamics\Dynamics\CommonSolver.cu(383): warning #177-D: variable "eps" was declared but never referenced
-    	const float eps = 1e-6f;
-    	            ^
+D:\wrg\Github\Dynamics\Dynamics\Dynamics\PBDSolver.cu(621): warning #177-D: variable "colorBlocks" was declared but never referenced
+    			int colorBlocks = (count + threads - 1) / threads;
+    			    ^
   
   Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+  
+D:\wrg\Github\Dynamics\Dynamics\Dynamics\PBDSolver.cu(592): warning #177-D: variable "zero" was declared but never referenced
+    	int zero = 0;
+    	    ^
   
 D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(74): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
     			return vec<2, T, Q>(Func(a.x, b.x), Func(a.y, b.y));
@@ -363,8 +367,8 @@ D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning 
               instantiation of "glm::vec<4, T, Q> glm::operator*(const glm::vec<4, T, Q> &, T) [with T=float, Q=glm::highp]" at line 75 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_packing.inl
   
 CUDACOMPILE : nvcc warning : Support for offline compilation for architectures prior to '<compute/sm/lto>_75' will be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
-  CommonSolver.cu
-  tmpxft_0000378c_00000000-7_CommonSolver.cudafe1.cpp
+  PBDSolver.cu
+  tmpxft_00004f84_00000000-7_PBDSolver.cudafe1.cpp
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
@@ -373,138 +377,8 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
   C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\thrust/detail/config/cpp_dialect.h:117: warning: Thrust requires at least C++ 17.C++ 14 is deprecated but still supported.C++ 14 support will be removed in a future release.Define THRUST_IGNORE_DEPRECATED_CPP_DIALECT to suppress this message.
   C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cub/util_cpp_dialect.cuh:129: warning: CUB requires at least C++ 17.C++ 14 is deprecated but still supported.C++ 14 support will be removed in a future release.Define CUB_IGNORE_DEPRECATED_CPP_DIALECT to suppress this message.
-  Constraint.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'Constraint.h'을(를) 컴파일하는 중)
   
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'Constraint.h'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'Constraint.h'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'Constraint.h'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'Constraint.h'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'Constraint.h'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'Constraint.h'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'Constraint.h'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'Constraint.h'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'Constraint.h'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'Constraint.h'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'Constraint.h'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'Constraint.h'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'Constraint.h'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'Constraint.h'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'Constraint.h'을(를) 컴파일하는 중)
-  
-  main.cpp
-D:\wrg\Github\Dynamics\Dynamics\Dynamics\main.cpp(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-D:\wrg\Github\Dynamics\Dynamics\include\GLFW\glfw3.h(3173,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
-  
-  C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\thrust\detail\config\cpp_dialect.h:117: warning: Thrust requires at least C++ 17.C++ 14 is deprecated but still supported.C++ 14 support will be removed in a future release.Define THRUST_IGNORE_DEPRECATED_CPP_DIALECT to suppress this message.
-  C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cub\util_cpp_dialect.cuh:129: warning: CUB requires at least C++ 17.C++ 14 is deprecated but still supported.C++ 14 support will be removed in a future release.Define CUB_IGNORE_DEPRECATED_CPP_DIALECT to suppress this message.
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
-  
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
-  
-D:\wrg\Github\Dynamics\Dynamics\Dynamics\main.cpp(287,44): warning C4267: '=': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\wrg\Github\Dynamics\Dynamics\Dynamics\main.cpp(288,44): warning C4267: '=': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\wrg\Github\Dynamics\Dynamics\Dynamics\main.cpp(462,24): warning C4244: '초기화 중': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-D:\wrg\Github\Dynamics\Dynamics\Dynamics\main.cpp(134,12): warning C4996: 'cudaGLSetGLDevice': deprecated로 선언되었습니다.
-D:\wrg\Github\Dynamics\Dynamics\Dynamics\main.cpp(727,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  
-  D:\wrg\Github\Dynamics\Dynamics\Dynamics>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\bin\nvcc.exe" -dlink  -o x64\Release\Dynamics.device-link.obj -Xcompiler "/EHsc /W3 /nologo /O2   /MD " -Xcompiler "/Fdx64\Release\vc143.pdb" -L"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\bin/crt" -LD:\wrg\Github\Dynamics\Dynamics\/lib -L"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\lib\x64" glfw3.lib opengl32.lib cudart.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib cudadevrt.lib  -gencode=arch=compute_52,code=sm_52   D:\wrg\Github\Dynamics\Dynamics\Dynamics\x64\Release\CommonSolver.cu.obj D:\wrg\Github\Dynamics\Dynamics\Dynamics\x64\Release\PBDSolver.cu.obj D:\wrg\Github\Dynamics\Dynamics\Dynamics\x64\Release\Utility.cu.obj 
+  D:\wrg\Github\Dynamics\Dynamics\Dynamics>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\bin\nvcc.exe" -dlink  -o x64\Release\Dynamics.device-link.obj -Xcompiler "/EHsc /W3 /nologo /O2   /MD " -Xcompiler "/Fdx64\Release\vc143.pdb" -L"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\bin/crt" -LD:\wrg\Github\Dynamics\Dynamics\/lib -L"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\lib\x64" glfw3.lib opengl32.lib cudart.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib cudadevrt.lib  -gencode=arch=compute_52,code=sm_52   D:\wrg\Github\Dynamics\Dynamics\Dynamics\x64\Release\CommonSolver.cu.obj D:\wrg\Github\Dynamics\Dynamics\Dynamics\x64\Release\CudaConstraintUtils.cu.obj D:\wrg\Github\Dynamics\Dynamics\Dynamics\x64\Release\PBDSolver.cu.obj D:\wrg\Github\Dynamics\Dynamics\Dynamics\x64\Release\Utility.cu.obj 
 CUDALINK : nvcc warning : Support for offline compilation for architectures prior to '<compute/sm/lto>_75' will be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
   glfw3.lib
   opengl32.lib
@@ -523,11 +397,11 @@ CUDALINK : nvcc warning : Support for offline compilation for architectures prio
   odbccp32.lib
   cudadevrt.lib
   CommonSolver.cu.obj
+  CudaConstraintUtils.cu.obj
   PBDSolver.cu.obj
   Utility.cu.obj
   코드를 생성하고 있습니다.
-  1 of 1038 functions (<0.1%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
+  Previous IPDB and IOBJ mismatch, fall back to full compilation.
+  All 1074 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   코드를 생성했습니다.
   Dynamics.vcxproj -> D:\wrg\Github\Dynamics\Dynamics\x64\Release\Dynamics.exe

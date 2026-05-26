@@ -140,7 +140,11 @@ __global__ void initDampingVariablesKernel(DampingDevice damp, float* d_totalMas
 		*damp.poscm = make_float3(0, 0, 0);
 		*damp.vcm = make_float3(0, 0, 0);
 		*damp.omega = make_float3(0, 0, 0);
+		*damp.angularMomentum = make_float3(0.0f, 0.0f, 0.0f);
 		*d_totalMass = 0.0f;
+		for (int i = 0; i < 9; i++) {
+			damp.inertia[i] = 0.0f;
+		}
 	}
 }
 __global__ void computeDampingKernel(VertexDevice ver, DampingDevice damp, float* d_totalMass) {
@@ -155,27 +159,137 @@ __global__ void computeDampingKernel(VertexDevice ver, DampingDevice damp, float
 	atomicAdd(d_totalMass, m);
 }
 
-__global__ void finalizeDampingKernel(DampingDevice damp, float* d_totalMass) {
+__global__ void finalizeCenterOfMassKernel(DampingDevice damp, float* d_totalMass) {
 	if (blockIdx.x == 0 && threadIdx.x == 0) {
 		float M = *d_totalMass;
-		if (M > 0) {
-			*damp.poscm = mul(*damp.poscm, 1.0f / M);
-			*damp.vcm = mul(*damp.vcm, 1.0f / M);
+		if (M <= 1e-8f || !isfinite(M)) {
+			*damp.poscm = make_float3(0.0f, 0.0f, 0.0f);
+			*damp.vcm = make_float3(0.0f, 0.0f, 0.0f);
+			*damp.omega = make_float3(0.0f, 0.0f, 0.0f);
+			*damp.angularMomentum = make_float3(0.0f, 0.0f, 0.0f);
+			for (int i = 0; i < 9; i++) {
+				damp.inertia[i] = 0.0f;
+			}
+			return;
+		}
+		*damp.poscm = mul(*damp.poscm, 1.0f / M);
+		*damp.vcm = mul(*damp.vcm, 1.0f / M);
+
+	}
+}
+__global__ void computeAngularDampingKernel(VertexDevice ver, DampingDevice damp) {
+	int i = blockIdx.x * blockDim.x + threadIdx.x;
+
+	if (i >= ver.N) {
+		return;
+	}
+
+	if (ver.invM[i] == 0.0f) {
+		return;
+	}
+
+	float m = 1.0f / ver.invM[i];
+
+	float3 poscm = *damp.poscm;
+	float3 vcm = *damp.vcm;
+
+	float3 r = sub(ver.pos[i], poscm);
+	float3 vRel = sub(ver.v[i], vcm);
+	float3 Li = cross(r, mul(vRel, m));
+
+	atomicAddFloat3(damp.angularMomentum, Li);
+
+	float rr = dot(r, r);
+	float Ixx = m * (rr - r.x * r.x);
+	float Ixy = m * (0.0f - r.x * r.y);
+	float Ixz = m * (0.0f - r.x * r.z);
+
+	float Iyx = m * (0.0f - r.y * r.x);
+	float Iyy = m * (rr - r.y * r.y);
+	float Iyz = m * (0.0f - r.y * r.z);
+
+	float Izx = m * (0.0f - r.z * r.x);
+	float Izy = m * (0.0f - r.z * r.y);
+	float Izz = m * (rr - r.z * r.z);
+
+	atomicAdd(&damp.inertia[0], Ixx);
+	atomicAdd(&damp.inertia[1], Ixy);
+	atomicAdd(&damp.inertia[2], Ixz);
+
+	atomicAdd(&damp.inertia[3], Iyx);
+	atomicAdd(&damp.inertia[4], Iyy);
+	atomicAdd(&damp.inertia[5], Iyz);
+
+	atomicAdd(&damp.inertia[6], Izx);
+	atomicAdd(&damp.inertia[7], Izy);
+	atomicAdd(&damp.inertia[8], Izz);
+}
+
+__global__ void finalizeOmegaKernel(DampingDevice damp) {
+	if (blockIdx.x == 0 && threadIdx.x == 0) {
+		mat3 inertia;
+
+		inertia.row0 = make_float3(damp.inertia[0], damp.inertia[1], damp.inertia[2]);
+		inertia.row1 = make_float3(damp.inertia[3], damp.inertia[4], damp.inertia[5]);
+
+		inertia.row2 = make_float3(damp.inertia[6], damp.inertia[7], damp.inertia[8]);
+
+		const float eps = 1e-6f;
+		inertia.row0.x += eps;
+		inertia.row1.y += eps;
+		inertia.row2.z += eps;
+
+		float determinant = det(inertia);
+
+		if (fabsf(determinant) <= 1e-10f || !isfinite(determinant)) {
+			*damp.omega = make_float3(0.0f, 0.0f, 0.0f);
+			return;
+		}
+
+		float3 L = *damp.angularMomentum;
+
+		if (!isfinite(L.x) ||!isfinite(L.y) ||!isfinite(L.z)) {
+			*damp.omega = make_float3(0.0f, 0.0f, 0.0f);
+			return;
+		}
+		*damp.omega = mul(inverse(inertia), L);
+
+		if (!isfinite(damp.omega->x) ||!isfinite(damp.omega->y) ||!isfinite(damp.omega->z)) {
+			*damp.omega = make_float3(0.0f, 0.0f, 0.0f);
 		}
 	}
 }
 __global__ void applyDampingKernel(VertexDevice ver, DampingDevice damp, float k_damping) {
 	int verIndex = blockIdx.x * blockDim.x + threadIdx.x;
-	if (verIndex >= ver.N) return;
-	if (ver.invM[verIndex] == 0.0f) return;
 
-	float3 r = sub(ver.pos[verIndex], *damp.poscm);
-	float3 omegaCrossR = cross(*damp.omega, r);
+	if (verIndex >= ver.N) {
+		return;
+	}
 
-	float3 target = add(*damp.vcm, omegaCrossR);
-	float3 deltaV = sub(target, ver.v[verIndex]);
+	if (ver.invM[verIndex] == 0.0f) {
+		return;
+	}
 
-	ver.v[verIndex] = add(ver.v[verIndex], mul(deltaV, k_damping));
+	// 수정: damping 계수 제한
+	float k = fminf(fmaxf(k_damping, 0.0f), 1.0f);
+
+	float3 poscm = *damp.poscm;
+	float3 vcm = *damp.vcm;
+	float3 omega = *damp.omega;
+
+	if (
+		!isfinite(poscm.x) || !isfinite(poscm.y) || !isfinite(poscm.z) ||
+		!isfinite(vcm.x) || !isfinite(vcm.y) || !isfinite(vcm.z) ||
+		!isfinite(omega.x) || !isfinite(omega.y) || !isfinite(omega.z)
+		) {
+		return;
+	}
+
+	float3 r = sub(ver.pos[verIndex], poscm);
+	float3 rigidVelocity = add(vcm, cross(omega, r));
+
+	float3 deltaV = sub(rigidVelocity, ver.v[verIndex]);
+	ver.v[verIndex] = add(ver.v[verIndex], mul(deltaV, k));
 }
 
 __global__ void estimatePKernel(VertexDevice ver, float tstep) {
@@ -408,12 +522,12 @@ __global__ void velocityUpdateKernel(VertexDevice ver, ConstraintDevice cons, fl
 
 	int collisionCount = min(*(cons.collision.n), cons.collision.capacity);
 	float3 v = ver.v[verIndex];
-
+	bool touched = false;
 	for (int i = 0; i < collisionCount; i++) {
 		if (cons.collision.ver[i] != verIndex) {
 			continue;
 		}
-
+		touched = true;
 		float3 n = normalize(cons.collision.normal[i]);
 		float3 colliderV = cons.collision.colliderVelocity[i];
 
@@ -426,16 +540,25 @@ __global__ void velocityUpdateKernel(VertexDevice ver, ConstraintDevice cons, fl
 
 		float3 relVn = mul(n, relVnMag);
 		float3 relVt = sub(relV, relVn);
+		float newRelVnMag = 0.0f;
 
-		float3 newRelVn = mul(n, -relVnMag * restitution);
-		float3 newRelVt = mul(relVt, fmaxf(0.0f, 1.0f - friction));
+		if (relVnMag < 0.0f) {
+			newRelVnMag = -relVnMag * restitution;
+		}
+		else {
+			newRelVnMag = 0.0f;
+		}
+		float3 newRelVn = mul(n, newRelVnMag);
+		float frictionScale = fmaxf(0.0f, 1.0f - friction);
+		float3 newRelVt = mul(relVt, frictionScale);
 
 		float3 newRelV = add(newRelVn, newRelVt);
-
-		v = add(newRelV, colliderV);
+		v = add(colliderV, newRelV);
 	}
 
-	ver.v[verIndex] = v;
+	if (touched) {
+		ver.v[verIndex] = v;
+	}
 }
 
 
@@ -446,7 +569,14 @@ void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, std::vec
 	int blocks = (ver.N + threads - 1) / threads;
 	initDampingVariablesKernel << <1, 1 >> > (damp, d_totalMass);
 	computeDampingKernel << <blocks, threads >> > (ver, damp, d_totalMass);
-	finalizeDampingKernel << <1, 1 >> > (damp, d_totalMass);
+	finalizeCenterOfMassKernel << <1, 1 >> > (damp, d_totalMass);
+	checkCudaKernel("finalizeCenterOfMassKernel launch failed");
+	computeAngularDampingKernel << <blocks, threads >> > (ver, damp);
+	checkCudaKernel("computeAngularDampingKernel launch failed");
+	finalizeOmegaKernel << <1, 1 >> > (damp);
+	checkCudaKernel("finalizeOmegaKernel launch failed");
+	applyDampingKernel << <blocks, threads >> > (ver, damp, k_damping);
+	checkCudaKernel("applyDampingKernel launch failed");
 
 	applyForceKernel<<<blocks, threads>>> (ver, forces, forceCount, tstep);
 	checkCudaKernel("applyForceKernel launch failed");
@@ -464,7 +594,7 @@ void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, std::vec
 	checkCudaKernel("cudaMemset selfCollision.n failed");
 
 	if (d_gridIndices != nullptr && d_cellStart != nullptr && d_cellEnd != nullptr && selfTris != nullptr && vertTriArray != nullptr && vertTriOffset != nullptr) {
-		detectSelfCollisionKernel << <blocks, threads >> > (ver, cons, d_gridIndices, d_cellStart, d_cellEnd, selfTris, vertTriArray, vertTriOffset, cellSize, selfThickness, selfStiffness);
+		//detectSelfCollisionKernel << <blocks, threads >> > (ver, cons, d_gridIndices, d_cellStart, d_cellEnd, selfTris, vertTriArray, vertTriOffset, cellSize, selfThickness, selfStiffness);
 		checkCudaKernel("detectSelfCollisionKernel launch failed");
 	}
 
@@ -489,7 +619,7 @@ void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, std::vec
 			}
 
 			int colorBlocks = (count + threads - 1) / threads;
-			solveBendingColorKernel<<<colorBlocks, threads >>> (ver, cons, cons.bending.color.constraintIds + start, count, tstep, iterationCount);
+			//solveBendingColorKernel<<<colorBlocks, threads >>> (ver, cons, cons.bending.color.constraintIds + start, count, tstep, iterationCount);
 			checkCudaKernel("solveBendingColorKernel launch failed");
 		}
 		cudaMemset(cons.collision.n, 0, sizeof(int));
@@ -498,11 +628,15 @@ void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, std::vec
 		bool runCCD = (iter == 0) || ((iter % CCD_INTERVAL) == 0);
 		for (int i = 0; i < vertexSet.size(); i++) {
 			int triangleCount = indexSetN[i] / 3;
+			float* prevColliderVertices = vertexSet[i];
+			if (i < prevVertexSet.size() && prevVertexSet[i] != nullptr) {
+				prevColliderVertices = prevVertexSet[i];
+			}
 			if (runCCD) {
-				detectContinuousCollisionKernel << <blocks, threads >> > (ver, cons, vertexSet[i], indexSet[i], triangleCount);
+				detectContinuousCollisionKernel << <blocks, threads >> > (ver, cons, vertexSet[i], prevColliderVertices, indexSet[i], triangleCount, tstep);
 				checkCudaKernel("detectContinuousCollisionKernel CCD launch failed");
 			}
-			detectStaticCollisionKernel << <blocks, threads >> > (ver, cons, vertexSet[i], indexSet[i], triangleCount);
+			detectStaticCollisionKernel << <blocks, threads >> > (ver, cons, vertexSet[i], prevColliderVertices, indexSet[i], triangleCount, tstep);
 			checkCudaKernel("detectStaticCollisionKernel launch failed");
 			clearVectorKernel << <blocks, threads >> > (ver.dp, ver.N);
 			checkCudaKernel("clearVectorKernel ver.dp launch failed");
@@ -519,6 +653,6 @@ void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, std::vec
 	updateVerticesKernel<<<blocks, threads>>>(ver, tstep);
 	checkCudaKernel("updateVerticesKernel launch failed");
 	//velocityUpdateKernel << <blocks, threads >> > (ver, cons, friction, restitution);
-	//checkCudaKernel("velocityUpdateKernel launch failed");
+	checkCudaKernel("velocityUpdateKernel launch failed");
 
 }

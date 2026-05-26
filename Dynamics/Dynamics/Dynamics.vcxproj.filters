@@ -27,6 +27,18 @@
     <ClCompile Include="Collision.h">
       <Filter>헤더 파일</Filter>
     </ClCompile>
+    <ClCompile Include="ClothBuilder.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="App.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderContext.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="PBDSimulation.cu">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\learnopengl\camera.h">
@@ -47,6 +59,23 @@
     <ClInclude Include="Utility.cuh">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="ClothBuilder.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="App.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="SimulationConfig.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderContext.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CudaUtils.cuh" />
+    <ClInclude Include="CudaConstraintUtils.cuh" />
+    <ClInclude Include="PBDSimulation.cuh">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="Utility.cu">
@@ -56,6 +85,9 @@
       <Filter>소스 파일</Filter>
     </CudaCompile>
     <CudaCompile Include="CommonSolver.cu">
+      <Filter>소스 파일</Filter>
+    </CudaCompile>
+    <CudaCompile Include="CudaConstraintUtils.cu">
       <Filter>소스 파일</Filter>
     </CudaCompile>
   </ItemGroup>
