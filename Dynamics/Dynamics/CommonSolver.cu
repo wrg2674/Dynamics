@@ -85,8 +85,8 @@ __device__ void calcBendingGradient(VertexDevice ver, ConstraintDevice cons, int
 	float3 q2 = mul(n1, eLen / n1l2);
 	float3 q3 = mul(n2, -eLen / n2l2);
 	float invEL2 = 1.0f / (eLen * eLen);
-	float3 q0 = add(mul(q2, dot(sub(p1, p2), e) * invEL2), mul(q3, dot(sub(p1, p3), e) * invEL2));
-	float3 q1 = add(mul(q2, dot(sub(p2, p0), e) * invEL2), mul(q3, dot(sub(p3, p0), e) * invEL2));	result[0] = q0;
+	float3 q0 = add(mul(q2, dot(sub(p2, p1), e) * invEL2), mul(q3, dot(sub(p3, p1), e) * invEL2));
+	float3 q1 = add(mul(q2, dot(sub(p3, p2), e) * invEL2), mul(q3, dot(sub(p0, p3), e) * invEL2));	result[0] = q0;
 	result[1] = q1;
 	result[2] = q2;
 	result[3] = q3;

@@ -355,19 +355,76 @@ __device__ void projectStretchConstraint(VertexDevice ver, ConstraintDevice cons
 }
 __device__ void projectBendingConstraint(VertexDevice ver, ConstraintDevice cons, int consIndex, float tstep, int iterationCount) {
 	int4 ids = cons.bending.ver[consIndex];
-	float s = calcScale(ver, cons, ids.x, consIndex, Bending, tstep);
 
-	if (fabsf(s) < 1e-8f) return;
+	float C = calcBending(ver, cons, consIndex);
+
+	if (fabsf(C) < 1e-8f || !isfinite(C)) {
+		return;
+	}
+
+	float3 gradients[4];
+	calcBendingGradient(ver, cons, consIndex, gradients);
+
+	int verIds[4] = {
+		ids.x,
+		ids.y,
+		ids.z,
+		ids.w
+	};
+
+	float lower = 0.0f;
+
+	for (int i = 0; i < 4; i++) {
+		int verIndex = verIds[i];
+
+		if (verIndex < 0 || verIndex >= ver.N) {
+			return;
+		}
+
+		float w = ver.invM[verIndex];
+
+		if (w == 0.0f) {
+			continue;
+		}
+
+		float g2 = norm2(gradients[i]);
+
+		if (!isfinite(g2)) {
+			return;
+		}
+
+		lower += w * g2;
+	}
+
+	if (fabsf(lower) < 1e-8f || !isfinite(lower)) {
+		return;
+	}
+
+	float s = C / lower;
+
+	if (fabsf(s) < 1e-8f || !isfinite(s)) {
+		return;
+	}
 
 	float weight = calcConstraintWeight(cons, consIndex, Bending, iterationCount);
+
+	if (fabsf(weight) < 1e-8f || !isfinite(weight)) {
+		return;
+	}
+
 	for (int i = 0; i < 4; i++) {
-		int verIndex = get(ids, i);
-		if (ver.invM[verIndex] == 0.0f) continue;
+		int verIndex = verIds[i];
 
-		float3 gradient = make_float3(0, 0, 0);
-		calcGradient(ver, cons, verIndex, consIndex, tstep, Bending, gradient);
+		if (ver.invM[verIndex] == 0.0f) {
+			continue;
+		}
 
-		float3 delta = mul(gradient, -s * ver.invM[verIndex] * weight);
+		float3 delta = mul(gradients[i], -s * ver.invM[verIndex] * weight);
+
+		if (!isfinite(delta.x) || !isfinite(delta.y) || !isfinite(delta.z)) {
+			continue;
+		}
+
 		ver.p[verIndex] = add(ver.p[verIndex], delta);
 	}
 
@@ -523,6 +580,10 @@ __global__ void velocityUpdateKernel(VertexDevice ver, ConstraintDevice cons, fl
 	int collisionCount = min(*(cons.collision.n), cons.collision.capacity);
 	float3 v = ver.v[verIndex];
 	bool touched = false;
+
+	float frictionScale = fmaxf(0.0f, 1.0f - clamp(friction, 0.0f, 1.0f));
+	float restitutionClamped = clamp(restitution, 0.0f, 1.0f);
+
 	for (int i = 0; i < collisionCount; i++) {
 		if (cons.collision.ver[i] != verIndex) {
 			continue;
@@ -534,19 +595,12 @@ __global__ void velocityUpdateKernel(VertexDevice ver, ConstraintDevice cons, fl
 		float3 relV = sub(v, colliderV);
 		float relVnMag = dot(relV, n);
 
-		if (relVnMag >= 0.0f) {
-			continue;
-		}
-
 		float3 relVn = mul(n, relVnMag);
 		float3 relVt = sub(relV, relVn);
 		float newRelVnMag = 0.0f;
 
-		if (relVnMag < 0.0f) {
-			newRelVnMag = -relVnMag * restitution;
-		}
-		else {
-			newRelVnMag = 0.0f;
+		if (relVnMag < 0.0f && restitutionClamped > 0.0f) {
+			newRelVnMag = -relVnMag * restitutionClamped;
 		}
 		float3 newRelVn = mul(n, newRelVnMag);
 		float frictionScale = fmaxf(0.0f, 1.0f - friction);
@@ -567,6 +621,10 @@ void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, std::vec
 	checkCudaKernel("computeDampingKernel launch failed");
 	int threads = 256;
 	int blocks = (ver.N + threads - 1) / threads;
+	
+
+	applyForceKernel<<<blocks, threads>>> (ver, forces, forceCount, tstep);
+	checkCudaKernel("applyForceKernel launch failed");
 	initDampingVariablesKernel << <1, 1 >> > (damp, d_totalMass);
 	computeDampingKernel << <blocks, threads >> > (ver, damp, d_totalMass);
 	finalizeCenterOfMassKernel << <1, 1 >> > (damp, d_totalMass);
@@ -576,11 +634,6 @@ void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, std::vec
 	finalizeOmegaKernel << <1, 1 >> > (damp);
 	checkCudaKernel("finalizeOmegaKernel launch failed");
 	applyDampingKernel << <blocks, threads >> > (ver, damp, k_damping);
-	checkCudaKernel("applyDampingKernel launch failed");
-
-	applyForceKernel<<<blocks, threads>>> (ver, forces, forceCount, tstep);
-	checkCudaKernel("applyForceKernel launch failed");
-	applyDampingKernel<<<blocks, threads>>> (ver, damp, k_damping);
 	checkCudaKernel("applyDampingKernel launch failed");
 	estimatePKernel<<<blocks, threads>>> (ver, tstep);
 	checkCudaKernel("estimatePKernel launch failed");
@@ -594,7 +647,7 @@ void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, std::vec
 	checkCudaKernel("cudaMemset selfCollision.n failed");
 
 	if (d_gridIndices != nullptr && d_cellStart != nullptr && d_cellEnd != nullptr && selfTris != nullptr && vertTriArray != nullptr && vertTriOffset != nullptr) {
-		//detectSelfCollisionKernel << <blocks, threads >> > (ver, cons, d_gridIndices, d_cellStart, d_cellEnd, selfTris, vertTriArray, vertTriOffset, cellSize, selfThickness, selfStiffness);
+		detectSelfCollisionKernel << <blocks, threads >> > (ver, cons, d_gridIndices, d_cellStart, d_cellEnd, selfTris, vertTriArray, vertTriOffset, cellSize, selfThickness, selfStiffness);
 		checkCudaKernel("detectSelfCollisionKernel launch failed");
 	}
 
@@ -619,7 +672,7 @@ void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, std::vec
 			}
 
 			int colorBlocks = (count + threads - 1) / threads;
-			//solveBendingColorKernel<<<colorBlocks, threads >>> (ver, cons, cons.bending.color.constraintIds + start, count, tstep, iterationCount);
+			solveBendingColorKernel<<<colorBlocks, threads >>> (ver, cons, cons.bending.color.constraintIds + start, count, tstep, iterationCount);
 			checkCudaKernel("solveBendingColorKernel launch failed");
 		}
 		cudaMemset(cons.collision.n, 0, sizeof(int));
@@ -652,7 +705,7 @@ void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, std::vec
 	}
 	updateVerticesKernel<<<blocks, threads>>>(ver, tstep);
 	checkCudaKernel("updateVerticesKernel launch failed");
-	//velocityUpdateKernel << <blocks, threads >> > (ver, cons, friction, restitution);
+	velocityUpdateKernel << <blocks, threads >> > (ver, cons, friction, restitution);
 	checkCudaKernel("velocityUpdateKernel launch failed");
 
 }

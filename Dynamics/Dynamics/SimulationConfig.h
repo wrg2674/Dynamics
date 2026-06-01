@@ -3,7 +3,7 @@ struct SimulationConfig {
 	unsigned int screenWidth = 800;
 	unsigned int screenHeight = 600;
 
-	float timestep = 0.001f;
+	float timestep = 0.005f;
 	int substep = 4;
 	int iterationCount = 10;
 
@@ -11,14 +11,14 @@ struct SimulationConfig {
 	int cols = 50;
 
 	float stretchK = 0.92f;
-	float bendingK = 0.01f;
+	float bendingK = 0.02f;
 	float dampingK = 0.02f;
 
 	float selfCollisionRadius = 0.025f;
 	float selfCollisionThickness = 0.006f;
 	float selfCollisionK = 0.5f;
 
-	float friction = 0.1f;
+	float friction = 0.5f;
 	float restitution = 0.1f;
 
 	int gridCapacity = 200000;
