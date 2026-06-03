@@ -17,7 +17,6 @@ __device__ void projectionFunction(VertexDevice ver, ConstraintDevice cons, int 
 __device__ float calcScale(VertexDevice ver, ConstraintDevice cons, int verIndex, int consIndex, Type type, float tstep);
 __device__ void GSiteration(VertexDevice ver, ConstraintDevice cons, int verIndex, float tstep, int iterationCount);
 
-
 __global__ void applyForceKernel(VertexDevice ver, float3* forces, int forceCount, float tstep);
 __global__ void applyAverageDeltaToPredictedKernel(VertexDevice ver);
 __global__ void initDampingVariablesKernel(DampingDevice damp, float* d_totalMass);

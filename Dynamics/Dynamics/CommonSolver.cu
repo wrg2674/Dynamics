@@ -99,13 +99,8 @@ __device__ void calcGradient(VertexDevice ver, ConstraintDevice cons, int verInd
 		break;
 	}
 	case Bending: {
-		//calcCentralDiff(ver, cons, verIndex, consIndex, tstep, type, result);
 		float3 grads[4];
 		calcBendingGradient(ver, cons, consIndex, grads);
-		//float dotValue =  dot(normalize(result), normalize(grads[0]));
-		//if (consIndex == 0) {
-		//	printf("dot = %f\n", dotValue);
-		//}
 		int4 ids = cons.bending.ver[consIndex];
 		if (verIndex == ids.x) {
 			result = grads[0]; 
@@ -121,9 +116,8 @@ __device__ void calcGradient(VertexDevice ver, ConstraintDevice cons, int verInd
 		}
 		else {
 			result = make_float3(0, 0, 0);
-
-			break;
 		}
+		break;
 	}
 	default: {
 		calcCentralDiff(ver, cons, verIndex, consIndex, tstep, type, result);

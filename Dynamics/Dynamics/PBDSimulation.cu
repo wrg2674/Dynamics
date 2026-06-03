@@ -200,6 +200,9 @@ bool PBDSimulation::initializeDeviceData() {
 	uploadColorBatch(h_cons.stretch.color, d_cons.stretch.color);
 	uploadColorBatch(h_cons.bending.color, d_cons.bending.color);
 
+	std::cout<< "Stretch color count: "<< d_cons.stretch.color.colorCount<< '\n';
+	std::cout<< "Bending color count: "<< d_cons.bending.color.colorCount<< '\n';
+
 	checkCuda(cudaMalloc(&d_damp.poscm, sizeof(float3)), "cudaMalloc damp.poscm failed");
 	checkCuda(cudaMalloc(&d_damp.vcm, sizeof(float3)), "cudaMalloc damp.vcm failed");
 	checkCuda(cudaMalloc(&d_damp.omega, sizeof(float3)), "cudaMalloc damp.omega failed");
@@ -282,7 +285,11 @@ bool PBDSimulation::initializeSimulationBuffers() {
 	checkCuda(cudaMemcpy(d_forces, h_forces.data(), sizeof(float3) * h_forces.size(), cudaMemcpyHostToDevice), "cudaMemcpy d_forces failed");
 
 	checkCuda(cudaMalloc(&d_totalMass, sizeof(float)), "totalMass malloc");
-
+	
+	d_damp.partialCount = (vertexCount + DAMPING_REDUCTION_THREADS - 1) / DAMPING_REDUCTION_THREADS;
+	checkCuda(cudaMalloc(&d_damp.centerPartials, sizeof(DampingCenterPartial) * d_damp.partialCount), "cudaMalloc damp.centerPartials failed");
+	checkCuda(cudaMalloc(&d_damp.angularPartials, sizeof(DampingAngularPartial) * d_damp.partialCount), "cudaMalloc damp.angularPartials failed");
+	
 	checkCuda(cudaEventCreate(&simStartEvent), "cudaEventCreate simStartEvent failed");
 	checkCuda(cudaEventCreate(&simEndEvent), "cudaEventCreate simEndEvent failed");
 
@@ -339,25 +346,6 @@ void PBDSimulation::simulateSubsteps(float currentTime) {
 	}
 
 	updateFloorRenderBuffer(currentFloorY);
-
-	checkCuda(cudaEventRecord(simEndEvent), "cudaEventRecord simEndEvent failed");
-	checkCuda(cudaEventSynchronize(simEndEvent), "cudaEventSynchronize simEndEvent failed");
-
-	float simMs = 0.0f;
-	checkCuda(cudaEventElapsedTime(&simMs, simStartEvent, simEndEvent), "cudaEventElapsedTime failed");
-
-	simTimeSumMs += simMs;
-	simFrameCount++;
-
-	if (simFrameCount >= 60) {
-		double avgSimMs = simTimeSumMs / simFrameCount;
-		double simFps = 1000.0 / avgSimMs;
-
-		std::cout << "Average GPU simulation frame time: " << avgSimMs << " ms, FPS: " << simFps << std::endl;
-
-		simTimeSumMs = 0.0;
-		simFrameCount = 0;
-	}
 }
 
 void PBDSimulation::updateFloorDevice(float floorY) {
@@ -464,6 +452,8 @@ void PBDSimulation::releaseCudaResources() {
 	cudaFree(d_damp.omega);
 	cudaFree(d_damp.angularMomentum);
 	cudaFree(d_damp.inertia);
+	cudaFree(d_damp.centerPartials);
+	cudaFree(d_damp.angularPartials);
 
 	cudaFree(d_cons.collision.tri);
 	cudaFree(d_cons.collision.ver);

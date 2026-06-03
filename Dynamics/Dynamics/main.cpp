@@ -33,6 +33,8 @@ int main() {
 			std::cin.get();
 			return -1;
 		}
+		double fpsMeasureStartTime = static_cast<double>(app.getCurrentTime());
+		int renderedFrameCount = 0;
 
 		while (!app.shouldClose()) {
 			app.beginFrame();
@@ -44,6 +46,19 @@ int main() {
 			simulation.render(renderContext);
 
 			app.endFrame();
+			renderedFrameCount++;
+
+			double currentTime = static_cast<double>(app.getCurrentTime());
+			double elapsedTime = currentTime - fpsMeasureStartTime;
+
+			if (elapsedTime >= 1.0) {
+				double renderedFps = static_cast<double>(renderedFrameCount) / elapsedTime;
+
+				std::cout<< "Actual rendered FPS: "<< renderedFps<< std::endl;
+
+				fpsMeasureStartTime = currentTime;
+				renderedFrameCount = 0;
+			}
 		}
 
 		simulation.release();
