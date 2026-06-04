@@ -1,6 +1,36 @@
 ﻿  Compiling CUDA source file PBDSolver.cu...
+  Compiling CUDA source file CommonSolver.cu...
   
   D:\wrg\Github\Dynamics\Dynamics\Dynamics>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\bin\nvcc.exe" -gencode=arch=compute_52,code=\"sm_52,compute_52\" --use-local-env -ccbin "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64" -x cu -rdc=true  -ID:\wrg\Github\Dynamics\Dynamics\/include -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8/include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include"     --keep-dir x64\Release  -maxrregcount=0    --machine 64 --compile -cudart static    -DNDEBUG -D_CONSOLE -D_UNICODE -DUNICODE -Xcompiler "/EHsc /W3 /nologo /O2 /FS   /MD " -Xcompiler "/Fdx64\Release\vc143.pdb" -o D:\wrg\Github\Dynamics\Dynamics\Dynamics\x64\Release\PBDSolver.cu.obj "D:\wrg\Github\Dynamics\Dynamics\Dynamics\PBDSolver.cu" 
+  
+  D:\wrg\Github\Dynamics\Dynamics\Dynamics>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\bin\nvcc.exe" -gencode=arch=compute_52,code=\"sm_52,compute_52\" --use-local-env -ccbin "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\HostX64\x64" -x cu -rdc=true  -ID:\wrg\Github\Dynamics\Dynamics\/include -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8/include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include"     --keep-dir x64\Release  -maxrregcount=0    --machine 64 --compile -cudart static    -DNDEBUG -D_CONSOLE -D_UNICODE -DUNICODE -Xcompiler "/EHsc /W3 /nologo /O2 /FS   /MD " -Xcompiler "/Fdx64\Release\vc143.pdb" -o D:\wrg\Github\Dynamics\Dynamics\Dynamics\x64\Release\CommonSolver.cu.obj "D:\wrg\Github\Dynamics\Dynamics\Dynamics\CommonSolver.cu" 
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
@@ -17,18 +47,8 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
@@ -38,30 +58,80 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda.h(846): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda.h(8133): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda.h(846): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda.h(8133): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda.h(16897): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda.h(16897): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda.h(20496): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda.h(20496): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda.h(23382): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda.h(23382): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda.h(23937): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda.h(23937): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cub/warp/specializations/warp_exchange_shfl.cuh(1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cub/warp/specializations/warp_exchange_shfl.cuh(1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda/std/detail/libcxx/include/cmath(1032): warning #221-D: floating-point value does not fit in required floating-point type
+      if (__r >= ::nextafter(static_cast<_RealT>(_MaxVal), ((float)(1e+300))))
+                                                            ^
+  
+  Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+  
 C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda/std/detail/libcxx/include/cmath(1032): warning #221-D: floating-point value does not fit in required floating-point type
       if (__r >= ::nextafter(static_cast<_RealT>(_MaxVal), ((float)(1e+300))))
                                                             ^
@@ -126,25 +196,89 @@ C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda_runtime_ap
 C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cub/warp/specializations/warp_exchange_shfl.cuh(1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda.h(846): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda.h(8133): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda.h(16897): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda.h(20496): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda.h(23382): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda.h(23937): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cub/warp/specializations/warp_exchange_shfl.cuh(1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
   C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\thrust/detail/config/cpp_dialect.h:117: warning: Thrust requires at least C++ 17.C++ 14 is deprecated but still supported.C++ 14 support will be removed in a future release.Define THRUST_IGNORE_DEPRECATED_CPP_DIALECT to suppress this message.
   C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cub/util_cpp_dialect.cuh:129: warning: CUB requires at least C++ 17.C++ 14 is deprecated but still supported.C++ 14 support will be removed in a future release.Define CUB_IGNORE_DEPRECATED_CPP_DIALECT to suppress this message.
-D:\wrg\Github\Dynamics\Dynamics\Dynamics\PBDSolver.cu(729): warning #177-D: variable "consIndex" was declared but never referenced
-    	int consIndex = constraintIds[idx];
+  C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\thrust/detail/config/cpp_dialect.h:117: warning: Thrust requires at least C++ 17.C++ 14 is deprecated but still supported.C++ 14 support will be removed in a future release.Define THRUST_IGNORE_DEPRECATED_CPP_DIALECT to suppress this message.
+  C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cub/util_cpp_dialect.cuh:129: warning: CUB requires at least C++ 17.C++ 14 is deprecated but still supported.C++ 14 support will be removed in a future release.Define CUB_IGNORE_DEPRECATED_CPP_DIALECT to suppress this message.
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(74): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+    			return vec<2, T, Q>(Func(a.x, b.x), Func(a.y, b.y));
+    			                        ^
+            detected during:
+              instantiation of "vec<2, T, Q> glm::detail::functor2<vec, 2, T, Q>::call(Fct, const vec<2, T, Q> &, const vec<2, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=glm::TMax<float>]" at line 274 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_max_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=2, T=float, Q=glm::highp, Aligned=false]" at line 644 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::max(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=2, T=float, Q=glm::highp]" at line 283 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_clamp_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=2, T=float, Q=glm::highp, Aligned=false]" at line 659 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::clamp(const glm::vec<L, T, Q> &, T, T) [with L=2, T=float, Q=glm::highp]" at line 17 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_packing.inl
+  
+  Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+  
+D:\wrg\Github\Dynamics\Dynamics\Dynamics\PBDSolver.cu(296): warning #177-D: variable "zero" was declared but never referenced
+    	int zero = 0;
     	    ^
   
   Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
   
-D:\wrg\Github\Dynamics\Dynamics\Dynamics\PBDSolver.cu(736): warning #177-D: variable "consIndex" was declared but never referenced
-    	int consIndex = constraintIds[idx];
-    	    ^
-  
-D:\wrg\Github\Dynamics\Dynamics\Dynamics\PBDSolver.cu(932): warning #177-D: variable "zero" was declared but never referenced
-    	int zero = 0;
-    	    ^
-  
 D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(74): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
     			return vec<2, T, Q>(Func(a.x, b.x), Func(a.y, b.y));
-    			                        ^
+    			                                        ^
             detected during:
               instantiation of "vec<2, T, Q> glm::detail::functor2<vec, 2, T, Q>::call(Fct, const vec<2, T, Q> &, const vec<2, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=glm::TMax<float>]" at line 274 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
               instantiation of "glm::vec<L, T, Q> glm::detail::compute_max_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=2, T=float, Q=glm::highp, Aligned=false]" at line 644 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
@@ -154,7 +288,7 @@ D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(74): warning #
   
 D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(74): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
     			return vec<2, T, Q>(Func(a.x, b.x), Func(a.y, b.y));
-    			                                        ^
+    			                        ^
             detected during:
               instantiation of "vec<2, T, Q> glm::detail::functor2<vec, 2, T, Q>::call(Fct, const vec<2, T, Q> &, const vec<2, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=glm::TMax<float>]" at line 274 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
               instantiation of "glm::vec<L, T, Q> glm::detail::compute_max_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=2, T=float, Q=glm::highp, Aligned=false]" at line 644 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
@@ -176,6 +310,26 @@ D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(74): warning #
     			return vec<2, T, Q>(Func(a.x, b.x), Func(a.y, b.y));
     			                                        ^
             detected during:
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(74): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+    			return vec<2, T, Q>(Func(a.x, b.x), Func(a.y, b.y));
+    			                                        ^
+            detected during:
+              instantiation of "vec<2, T, Q> glm::detail::functor2<vec, 2, T, Q>::call(Fct, const vec<2, T, Q> &, const vec<2, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=glm::TMin<float>]" at line 265 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_min_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=2, T=float, Q=glm::highp, Aligned=false]" at line 630 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "vec<2, T, Q> glm::detail::functor2<vec, 2, T, Q>::call(Fct, const vec<2, T, Q> &, const vec<2, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=glm::TMax<float>]" at line 274 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::min(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=2, T=float, Q=glm::highp]" at line 283 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_clamp_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=2, T=float, Q=glm::highp, Aligned=false]" at line 659 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::clamp(const glm::vec<L, T, Q> &, T, T) [with L=2, T=float, Q=glm::highp]" at line 17 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_packing.inl
+  
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_max_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=2, T=float, Q=glm::highp, Aligned=false]" at line 644 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::max(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=2, T=float, Q=glm::highp]" at line 283 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_clamp_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=2, T=float, Q=glm::highp, Aligned=false]" at line 659 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::clamp(const glm::vec<L, T, Q> &, T, T) [with L=2, T=float, Q=glm::highp]" at line 17 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_packing.inl
+  
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(74): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+    			return vec<2, T, Q>(Func(a.x, b.x), Func(a.y, b.y));
+    			                        ^
+            detected during:
               instantiation of "vec<2, T, Q> glm::detail::functor2<vec, 2, T, Q>::call(Fct, const vec<2, T, Q> &, const vec<2, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=glm::TMin<float>]" at line 265 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
               instantiation of "glm::vec<L, T, Q> glm::detail::compute_min_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=2, T=float, Q=glm::highp, Aligned=false]" at line 630 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
               instantiation of "glm::vec<L, T, Q> glm::min(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=2, T=float, Q=glm::highp]" at line 283 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
@@ -192,6 +346,16 @@ D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning 
               instantiation of "glm::vec<L, T, Q> glm::detail::compute_clamp_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp, Aligned=false]" at line 659 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
               instantiation of "glm::vec<L, T, Q> glm::clamp(const glm::vec<L, T, Q> &, T, T) [with L=4, T=float, Q=glm::highp]" at line 75 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_packing.inl
   
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(74): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+    			return vec<2, T, Q>(Func(a.x, b.x), Func(a.y, b.y));
+    			                                        ^
+            detected during:
+              instantiation of "vec<2, T, Q> glm::detail::functor2<vec, 2, T, Q>::call(Fct, const vec<2, T, Q> &, const vec<2, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=glm::TMin<float>]" at line 265 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_min_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=2, T=float, Q=glm::highp, Aligned=false]" at line 630 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::min(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=2, T=float, Q=glm::highp]" at line 283 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_clamp_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=2, T=float, Q=glm::highp, Aligned=false]" at line 659 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::clamp(const glm::vec<L, T, Q> &, T, T) [with L=2, T=float, Q=glm::highp]" at line 17 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_packing.inl
+  
 D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
     			return vec<4, T, Q>(Func(a.x, b.x), Func(a.y, b.y), Func(a.z, b.z), Func(a.w, b.w));
     			                                        ^
@@ -204,11 +368,61 @@ D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning 
   
 D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
     			return vec<4, T, Q>(Func(a.x, b.x), Func(a.y, b.y), Func(a.z, b.z), Func(a.w, b.w));
+    			                        ^
+            detected during:
+              instantiation of "vec<4, T, Q> glm::detail::functor2<vec, 4, T, Q>::call(Fct, const vec<4, T, Q> &, const vec<4, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=glm::TMax<float>]" at line 274 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_max_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp, Aligned=false]" at line 644 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::max(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp]" at line 283 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_clamp_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp, Aligned=false]" at line 659 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::clamp(const glm::vec<L, T, Q> &, T, T) [with L=4, T=float, Q=glm::highp]" at line 75 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_packing.inl
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+    			return vec<4, T, Q>(Func(a.x, b.x), Func(a.y, b.y), Func(a.z, b.z), Func(a.w, b.w));
+    			                                                        ^
+            detected during:
+              instantiation of "vec<4, T, Q> glm::detail::functor2<vec, 4, T, Q>::call(Fct, const vec<4, T, Q> &, const vec<4, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=glm::TMax<float>]" at line 274 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+  
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_max_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp, Aligned=false]" at line 644 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::max(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp]" at line 283 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_clamp_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp, Aligned=false]" at line 659 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::clamp(const glm::vec<L, T, Q> &, T, T) [with L=4, T=float, Q=glm::highp]" at line 75 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_packing.inl
+  
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+    			return vec<4, T, Q>(Func(a.x, b.x), Func(a.y, b.y), Func(a.z, b.z), Func(a.w, b.w));
+    			                                        ^
+            detected during:
+              instantiation of "vec<4, T, Q> glm::detail::functor2<vec, 4, T, Q>::call(Fct, const vec<4, T, Q> &, const vec<4, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=glm::TMax<float>]" at line 274 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_max_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp, Aligned=false]" at line 644 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::max(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp]" at line 283 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_clamp_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp, Aligned=false]" at line 659 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+    			return vec<4, T, Q>(Func(a.x, b.x), Func(a.y, b.y), Func(a.z, b.z), Func(a.w, b.w));
+    			                                                                        ^
+            detected during:
+              instantiation of "vec<4, T, Q> glm::detail::functor2<vec, 4, T, Q>::call(Fct, const vec<4, T, Q> &, const vec<4, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=glm::TMax<float>]" at line 274 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_max_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp, Aligned=false]" at line 644 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::max(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp]" at line 283 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_clamp_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp, Aligned=false]" at line 659 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::clamp(const glm::vec<L, T, Q> &, T, T) [with L=4, T=float, Q=glm::highp]" at line 75 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_packing.inl
+              instantiation of "glm::vec<L, T, Q> glm::clamp(const glm::vec<L, T, Q> &, T, T) [with L=4, T=float, Q=glm::highp]" at line 75 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_packing.inl
+  
+  
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+    			return vec<4, T, Q>(Func(a.x, b.x), Func(a.y, b.y), Func(a.z, b.z), Func(a.w, b.w));
     			                                                        ^
             detected during:
               instantiation of "vec<4, T, Q> glm::detail::functor2<vec, 4, T, Q>::call(Fct, const vec<4, T, Q> &, const vec<4, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=glm::TMax<float>]" at line 274 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
               instantiation of "glm::vec<L, T, Q> glm::detail::compute_max_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp, Aligned=false]" at line 644 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
               instantiation of "glm::vec<L, T, Q> glm::max(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp]" at line 283 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_clamp_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp, Aligned=false]" at line 659 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::clamp(const glm::vec<L, T, Q> &, T, T) [with L=4, T=float, Q=glm::highp]" at line 75 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_packing.inl
+  
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+    			return vec<4, T, Q>(Func(a.x, b.x), Func(a.y, b.y), Func(a.z, b.z), Func(a.w, b.w));
+    			                        ^
+            detected during:
+              instantiation of "vec<4, T, Q> glm::detail::functor2<vec, 4, T, Q>::call(Fct, const vec<4, T, Q> &, const vec<4, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=glm::TMin<float>]" at line 265 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_min_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp, Aligned=false]" at line 630 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::min(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp]" at line 283 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
               instantiation of "glm::vec<L, T, Q> glm::detail::compute_clamp_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp, Aligned=false]" at line 659 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
               instantiation of "glm::vec<L, T, Q> glm::clamp(const glm::vec<L, T, Q> &, T, T) [with L=4, T=float, Q=glm::highp]" at line 75 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_packing.inl
   
@@ -224,7 +438,27 @@ D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning 
   
 D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
     			return vec<4, T, Q>(Func(a.x, b.x), Func(a.y, b.y), Func(a.z, b.z), Func(a.w, b.w));
+    			                                        ^
+            detected during:
+              instantiation of "vec<4, T, Q> glm::detail::functor2<vec, 4, T, Q>::call(Fct, const vec<4, T, Q> &, const vec<4, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=glm::TMin<float>]" at line 265 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_min_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp, Aligned=false]" at line 630 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::min(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp]" at line 283 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_clamp_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp, Aligned=false]" at line 659 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::clamp(const glm::vec<L, T, Q> &, T, T) [with L=4, T=float, Q=glm::highp]" at line 75 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_packing.inl
+  
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+    			return vec<4, T, Q>(Func(a.x, b.x), Func(a.y, b.y), Func(a.z, b.z), Func(a.w, b.w));
     			                        ^
+            detected during:
+              instantiation of "vec<4, T, Q> glm::detail::functor2<vec, 4, T, Q>::call(Fct, const vec<4, T, Q> &, const vec<4, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=glm::TMin<float>]" at line 265 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_min_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp, Aligned=false]" at line 630 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::min(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp]" at line 283 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_clamp_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp, Aligned=false]" at line 659 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::clamp(const glm::vec<L, T, Q> &, T, T) [with L=4, T=float, Q=glm::highp]" at line 75 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_packing.inl
+  
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+    			return vec<4, T, Q>(Func(a.x, b.x), Func(a.y, b.y), Func(a.z, b.z), Func(a.w, b.w));
+    			                                                        ^
             detected during:
               instantiation of "vec<4, T, Q> glm::detail::functor2<vec, 4, T, Q>::call(Fct, const vec<4, T, Q> &, const vec<4, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=glm::TMin<float>]" at line 265 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
               instantiation of "glm::vec<L, T, Q> glm::detail::compute_min_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp, Aligned=false]" at line 630 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
@@ -244,6 +478,16 @@ D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning 
   
 D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
     			return vec<4, T, Q>(Func(a.x, b.x), Func(a.y, b.y), Func(a.z, b.z), Func(a.w, b.w));
+    			                                                                        ^
+            detected during:
+              instantiation of "vec<4, T, Q> glm::detail::functor2<vec, 4, T, Q>::call(Fct, const vec<4, T, Q> &, const vec<4, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=glm::TMin<float>]" at line 265 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_min_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp, Aligned=false]" at line 630 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::min(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp]" at line 283 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_clamp_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp, Aligned=false]" at line 659 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
+              instantiation of "glm::vec<L, T, Q> glm::clamp(const glm::vec<L, T, Q> &, T, T) [with L=4, T=float, Q=glm::highp]" at line 75 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_packing.inl
+  
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+    			return vec<4, T, Q>(Func(a.x, b.x), Func(a.y, b.y), Func(a.z, b.z), Func(a.w, b.w));
     			                                                        ^
             detected during:
               instantiation of "vec<4, T, Q> glm::detail::functor2<vec, 4, T, Q>::call(Fct, const vec<4, T, Q> &, const vec<4, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=glm::TMin<float>]" at line 265 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
@@ -251,6 +495,15 @@ D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning 
               instantiation of "glm::vec<L, T, Q> glm::min(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp]" at line 283 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
               instantiation of "glm::vec<L, T, Q> glm::detail::compute_clamp_vector<L, T, Q, Aligned>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp, Aligned=false]" at line 659 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_common.inl
               instantiation of "glm::vec<L, T, Q> glm::clamp(const glm::vec<L, T, Q> &, T, T) [with L=4, T=float, Q=glm::highp]" at line 75 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_packing.inl
+  
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning #20013-D: calling a constexpr __host__ function("operator()") from a __host__ __device__ function("call") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+    			return vec<4, T, Q>(Func(a.x, b.x), Func(a.y, b.y), Func(a.z, b.z), Func(a.w, b.w));
+    			                        ^
+            detected during:
+              instantiation of "vec<4, T, Q> glm::detail::functor2<vec, 4, T, Q>::call(Fct, const vec<4, T, Q> &, const vec<4, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=std::multiplies<float>]" at line 74 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\compute_vector_decl.hpp
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_vec_mul<L, T, Q, false>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp]" at line 468 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec4.inl
+              instantiation of "glm::vec<4, T, Q> &glm::vec<4, T, Q>::operator*=(U) [with T=float, Q=glm::highp, U=float]" at line 751 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec4.inl
+              instantiation of "glm::vec<4, T, Q> glm::operator*(const glm::vec<4, T, Q> &, T) [with T=float, Q=glm::highp]" at line 75 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_packing.inl
   
 D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
     			return vec<4, T, Q>(Func(a.x, b.x), Func(a.y, b.y), Func(a.z, b.z), Func(a.w, b.w));
@@ -291,6 +544,24 @@ D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning 
   
 D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning #20013-D: calling a constexpr __host__ function("operator()") from a __host__ __device__ function("call") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
     			return vec<4, T, Q>(Func(a.x, b.x), Func(a.y, b.y), Func(a.z, b.z), Func(a.w, b.w));
+    			                        ^
+            detected during:
+              instantiation of "vec<4, T, Q> glm::detail::functor2<vec, 4, T, Q>::call(Fct, const vec<4, T, Q> &, const vec<4, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=std::multiplies<float>]" at line 74 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\compute_vector_decl.hpp
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_vec_mul<L, T, Q, false>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp]" at line 468 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec4.inl
+              instantiation of "glm::vec<4, T, Q> &glm::vec<4, T, Q>::operator*=(U) [with T=float, Q=glm::highp, U=float]" at line 751 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec4.inl
+              instantiation of "glm::vec<4, T, Q> glm::operator*(const glm::vec<4, T, Q> &, T) [with T=float, Q=glm::highp]" at line 75 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_packing.inl
+  
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning #20013-D: calling a constexpr __host__ function("operator()") from a __host__ __device__ function("call") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+    			return vec<4, T, Q>(Func(a.x, b.x), Func(a.y, b.y), Func(a.z, b.z), Func(a.w, b.w));
+    			                                        ^
+            detected during:
+              instantiation of "vec<4, T, Q> glm::detail::functor2<vec, 4, T, Q>::call(Fct, const vec<4, T, Q> &, const vec<4, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=std::multiplies<float>]" at line 74 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\compute_vector_decl.hpp
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_vec_mul<L, T, Q, false>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp]" at line 468 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec4.inl
+              instantiation of "glm::vec<4, T, Q> &glm::vec<4, T, Q>::operator*=(U) [with T=float, Q=glm::highp, U=float]" at line 751 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec4.inl
+              instantiation of "glm::vec<4, T, Q> glm::operator*(const glm::vec<4, T, Q> &, T) [with T=float, Q=glm::highp]" at line 75 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_packing.inl
+  
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning #20013-D: calling a constexpr __host__ function("operator()") from a __host__ __device__ function("call") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+    			return vec<4, T, Q>(Func(a.x, b.x), Func(a.y, b.y), Func(a.z, b.z), Func(a.w, b.w));
     			                                        ^
             detected during:
               instantiation of "vec<4, T, Q> glm::detail::functor2<vec, 4, T, Q>::call(Fct, const vec<4, T, Q> &, const vec<4, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=std::multiplies<float>]" at line 74 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\compute_vector_decl.hpp
@@ -301,6 +572,42 @@ D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning 
 D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning #20013-D: calling a constexpr __host__ function("operator()") from a __host__ __device__ function("call") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
     			return vec<4, T, Q>(Func(a.x, b.x), Func(a.y, b.y), Func(a.z, b.z), Func(a.w, b.w));
     			                                                        ^
+            detected during:
+              instantiation of "vec<4, T, Q> glm::detail::functor2<vec, 4, T, Q>::call(Fct, const vec<4, T, Q> &, const vec<4, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=std::multiplies<float>]" at line 74 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\compute_vector_decl.hpp
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_vec_mul<L, T, Q, false>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp]" at line 468 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec4.inl
+              instantiation of "glm::vec<4, T, Q> &glm::vec<4, T, Q>::operator*=(U) [with T=float, Q=glm::highp, U=float]" at line 751 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec4.inl
+              instantiation of "glm::vec<4, T, Q> glm::operator*(const glm::vec<4, T, Q> &, T) [with T=float, Q=glm::highp]" at line 75 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_packing.inl
+  
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning #20013-D: calling a constexpr __host__ function("operator()") from a __host__ __device__ function("call") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+    			return vec<4, T, Q>(Func(a.x, b.x), Func(a.y, b.y), Func(a.z, b.z), Func(a.w, b.w));
+    			                                        ^
+            detected during:
+              instantiation of "vec<4, T, Q> glm::detail::functor2<vec, 4, T, Q>::call(Fct, const vec<4, T, Q> &, const vec<4, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=std::multiplies<float>]" at line 74 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\compute_vector_decl.hpp
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_vec_mul<L, T, Q, false>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp]" at line 468 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec4.inl
+              instantiation of "glm::vec<4, T, Q> &glm::vec<4, T, Q>::operator*=(U) [with T=float, Q=glm::highp, U=float]" at line 751 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec4.inl
+              instantiation of "glm::vec<4, T, Q> glm::operator*(const glm::vec<4, T, Q> &, T) [with T=float, Q=glm::highp]" at line 75 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_packing.inl
+  
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning #20013-D: calling a constexpr __host__ function("operator()") from a __host__ __device__ function("call") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+    			return vec<4, T, Q>(Func(a.x, b.x), Func(a.y, b.y), Func(a.z, b.z), Func(a.w, b.w));
+    			                                                        ^
+            detected during:
+              instantiation of "vec<4, T, Q> glm::detail::functor2<vec, 4, T, Q>::call(Fct, const vec<4, T, Q> &, const vec<4, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=std::multiplies<float>]" at line 74 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\compute_vector_decl.hpp
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_vec_mul<L, T, Q, false>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp]" at line 468 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec4.inl
+              instantiation of "glm::vec<4, T, Q> &glm::vec<4, T, Q>::operator*=(U) [with T=float, Q=glm::highp, U=float]" at line 751 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec4.inl
+              instantiation of "glm::vec<4, T, Q> glm::operator*(const glm::vec<4, T, Q> &, T) [with T=float, Q=glm::highp]" at line 75 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_packing.inl
+  
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning #20013-D: calling a constexpr __host__ function("operator()") from a __host__ __device__ function("call") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+    			return vec<4, T, Q>(Func(a.x, b.x), Func(a.y, b.y), Func(a.z, b.z), Func(a.w, b.w));
+    			                                                        ^
+            detected during:
+              instantiation of "vec<4, T, Q> glm::detail::functor2<vec, 4, T, Q>::call(Fct, const vec<4, T, Q> &, const vec<4, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=std::multiplies<float>]" at line 74 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\compute_vector_decl.hpp
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_vec_mul<L, T, Q, false>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp]" at line 468 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec4.inl
+              instantiation of "glm::vec<4, T, Q> &glm::vec<4, T, Q>::operator*=(U) [with T=float, Q=glm::highp, U=float]" at line 751 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec4.inl
+              instantiation of "glm::vec<4, T, Q> glm::operator*(const glm::vec<4, T, Q> &, T) [with T=float, Q=glm::highp]" at line 75 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_packing.inl
+  
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning #20013-D: calling a constexpr __host__ function("operator()") from a __host__ __device__ function("call") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+    			return vec<4, T, Q>(Func(a.x, b.x), Func(a.y, b.y), Func(a.z, b.z), Func(a.w, b.w));
+    			                                                                        ^
             detected during:
               instantiation of "vec<4, T, Q> glm::detail::functor2<vec, 4, T, Q>::call(Fct, const vec<4, T, Q> &, const vec<4, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=std::multiplies<float>]" at line 74 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\compute_vector_decl.hpp
               instantiation of "glm::vec<L, T, Q> glm::detail::compute_vec_mul<L, T, Q, false>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp]" at line 468 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec4.inl
@@ -343,9 +650,54 @@ D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning 
               instantiation of "glm::vec<4, T, Q> &glm::vec<4, T, Q>::operator*=(U) [with T=float, Q=glm::highp, U=float]" at line 751 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec4.inl
               instantiation of "glm::vec<4, T, Q> glm::operator*(const glm::vec<4, T, Q> &, T) [with T=float, Q=glm::highp]" at line 75 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_packing.inl
   
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning #20013-D: calling a constexpr __host__ function("operator()") from a __host__ __device__ function("call") is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+    			return vec<4, T, Q>(Func(a.x, b.x), Func(a.y, b.y), Func(a.z, b.z), Func(a.w, b.w));
+    			                                                                        ^
+            detected during:
+              instantiation of "vec<4, T, Q> glm::detail::functor2<vec, 4, T, Q>::call(Fct, const vec<4, T, Q> &, const vec<4, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=std::multiplies<float>]" at line 74 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\compute_vector_decl.hpp
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_vec_mul<L, T, Q, false>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp]" at line 468 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec4.inl
+              instantiation of "glm::vec<4, T, Q> &glm::vec<4, T, Q>::operator*=(U) [with T=float, Q=glm::highp, U=float]" at line 751 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec4.inl
+              instantiation of "glm::vec<4, T, Q> glm::operator*(const glm::vec<4, T, Q> &, T) [with T=float, Q=glm::highp]" at line 75 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_packing.inl
+  
 D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning #20015-D: calling a constexpr __host__ function from a __host__ __device__ function is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
     			return vec<4, T, Q>(Func(a.x, b.x), Func(a.y, b.y), Func(a.z, b.z), Func(a.w, b.w));
     			                                        ^
+            detected during:
+              instantiation of "vec<4, T, Q> glm::detail::functor2<vec, 4, T, Q>::call(Fct, const vec<4, T, Q> &, const vec<4, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=std::multiplies<float>]" at line 74 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\compute_vector_decl.hpp
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_vec_mul<L, T, Q, false>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp]" at line 468 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec4.inl
+              instantiation of "glm::vec<4, T, Q> &glm::vec<4, T, Q>::operator*=(U) [with T=float, Q=glm::highp, U=float]" at line 751 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec4.inl
+              instantiation of "glm::vec<4, T, Q> glm::operator*(const glm::vec<4, T, Q> &, T) [with T=float, Q=glm::highp]" at line 75 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_packing.inl
+  
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning #20015-D: calling a constexpr __host__ function from a __host__ __device__ function is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+    			return vec<4, T, Q>(Func(a.x, b.x), Func(a.y, b.y), Func(a.z, b.z), Func(a.w, b.w));
+    			                        ^
+            detected during:
+              instantiation of "vec<4, T, Q> glm::detail::functor2<vec, 4, T, Q>::call(Fct, const vec<4, T, Q> &, const vec<4, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=std::multiplies<float>]" at line 74 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\compute_vector_decl.hpp
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_vec_mul<L, T, Q, false>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp]" at line 468 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec4.inl
+              instantiation of "glm::vec<4, T, Q> &glm::vec<4, T, Q>::operator*=(U) [with T=float, Q=glm::highp, U=float]" at line 751 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec4.inl
+              instantiation of "glm::vec<4, T, Q> glm::operator*(const glm::vec<4, T, Q> &, T) [with T=float, Q=glm::highp]" at line 75 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_packing.inl
+  
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning #20015-D: calling a constexpr __host__ function from a __host__ __device__ function is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+    			return vec<4, T, Q>(Func(a.x, b.x), Func(a.y, b.y), Func(a.z, b.z), Func(a.w, b.w));
+    			                                                        ^
+            detected during:
+              instantiation of "vec<4, T, Q> glm::detail::functor2<vec, 4, T, Q>::call(Fct, const vec<4, T, Q> &, const vec<4, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=std::multiplies<float>]" at line 74 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\compute_vector_decl.hpp
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_vec_mul<L, T, Q, false>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp]" at line 468 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec4.inl
+              instantiation of "glm::vec<4, T, Q> &glm::vec<4, T, Q>::operator*=(U) [with T=float, Q=glm::highp, U=float]" at line 751 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec4.inl
+              instantiation of "glm::vec<4, T, Q> glm::operator*(const glm::vec<4, T, Q> &, T) [with T=float, Q=glm::highp]" at line 75 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_packing.inl
+  
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning #20015-D: calling a constexpr __host__ function from a __host__ __device__ function is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+    			return vec<4, T, Q>(Func(a.x, b.x), Func(a.y, b.y), Func(a.z, b.z), Func(a.w, b.w));
+    			                                        ^
+            detected during:
+              instantiation of "vec<4, T, Q> glm::detail::functor2<vec, 4, T, Q>::call(Fct, const vec<4, T, Q> &, const vec<4, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=std::multiplies<float>]" at line 74 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\compute_vector_decl.hpp
+              instantiation of "glm::vec<L, T, Q> glm::detail::compute_vec_mul<L, T, Q, false>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp]" at line 468 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec4.inl
+              instantiation of "glm::vec<4, T, Q> &glm::vec<4, T, Q>::operator*=(U) [with T=float, Q=glm::highp, U=float]" at line 751 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec4.inl
+              instantiation of "glm::vec<4, T, Q> glm::operator*(const glm::vec<4, T, Q> &, T) [with T=float, Q=glm::highp]" at line 75 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail/func_packing.inl
+  
+D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning #20015-D: calling a constexpr __host__ function from a __host__ __device__ function is not allowed. The experimental flag '--expt-relaxed-constexpr' can be used to allow this.
+    			return vec<4, T, Q>(Func(a.x, b.x), Func(a.y, b.y), Func(a.z, b.z), Func(a.w, b.w));
+    			                                                                        ^
             detected during:
               instantiation of "vec<4, T, Q> glm::detail::functor2<vec, 4, T, Q>::call(Fct, const vec<4, T, Q> &, const vec<4, T, Q> &) [with vec=glm::vec, T=float, Q=glm::highp, Fct=std::multiplies<float>]" at line 74 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\compute_vector_decl.hpp
               instantiation of "glm::vec<L, T, Q> glm::detail::compute_vec_mul<L, T, Q, false>::call(const glm::vec<L, T, Q> &, const glm::vec<L, T, Q> &) [with L=4, T=float, Q=glm::highp]" at line 468 of D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\type_vec4.inl
@@ -372,7 +724,18 @@ D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning 
   
 CUDACOMPILE : nvcc warning : Support for offline compilation for architectures prior to '<compute/sm/lto>_75' will be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
   PBDSolver.cu
-  tmpxft_000003f4_00000000-7_PBDSolver.cudafe1.cpp
+CUDACOMPILE : nvcc warning : Support for offline compilation for architectures prior to '<compute/sm/lto>_75' will be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
+  CommonSolver.cu
+  tmpxft_000059d4_00000000-7_PBDSolver.cudafe1.cpp
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\thrust/detail/config/cpp_dialect.h:117: warning: Thrust requires at least C++ 17.C++ 14 is deprecated but still supported.C++ 14 support will be removed in a future release.Define THRUST_IGNORE_DEPRECATED_CPP_DIALECT to suppress this message.
+  C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cub/util_cpp_dialect.cuh:129: warning: CUB requires at least C++ 17.C++ 14 is deprecated but still supported.C++ 14 support will be removed in a future release.Define CUB_IGNORE_DEPRECATED_CPP_DIALECT to suppress this message.
+  tmpxft_00004c84_00000000-7_CommonSolver.cudafe1.cpp
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
@@ -382,7 +745,7 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(
   C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\thrust/detail/config/cpp_dialect.h:117: warning: Thrust requires at least C++ 17.C++ 14 is deprecated but still supported.C++ 14 support will be removed in a future release.Define THRUST_IGNORE_DEPRECATED_CPP_DIALECT to suppress this message.
   C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cub/util_cpp_dialect.cuh:129: warning: CUB requires at least C++ 17.C++ 14 is deprecated but still supported.C++ 14 support will be removed in a future release.Define CUB_IGNORE_DEPRECATED_CPP_DIALECT to suppress this message.
   
-  D:\wrg\Github\Dynamics\Dynamics\Dynamics>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\bin\nvcc.exe" -dlink  -o x64\Release\Dynamics.device-link.obj -Xcompiler "/EHsc /W3 /nologo /O2   /MD " -Xcompiler "/Fdx64\Release\vc143.pdb" -L"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\bin/crt" -LD:\wrg\Github\Dynamics\Dynamics\/lib -L"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\lib\x64" glfw3.lib opengl32.lib cudart.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib cudadevrt.lib  -gencode=arch=compute_52,code=sm_52   D:\wrg\Github\Dynamics\Dynamics\Dynamics\x64\Release\CommonSolver.cu.obj D:\wrg\Github\Dynamics\Dynamics\Dynamics\x64\Release\CudaConstraintUtils.cu.obj D:\wrg\Github\Dynamics\Dynamics\Dynamics\x64\Release\PBDSolver.cu.obj D:\wrg\Github\Dynamics\Dynamics\Dynamics\x64\Release\Utility.cu.obj 
+  D:\wrg\Github\Dynamics\Dynamics\Dynamics>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\bin\nvcc.exe" -dlink  -o x64\Release\Dynamics.device-link.obj -Xcompiler "/EHsc /W3 /nologo /O2   /MD " -Xcompiler "/Fdx64\Release\vc143.pdb" -L"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\bin/crt" -LD:\wrg\Github\Dynamics\Dynamics\/lib -L"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\lib\x64" glfw3.lib opengl32.lib cudart.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib cudadevrt.lib  -gencode=arch=compute_52,code=sm_52   D:\wrg\Github\Dynamics\Dynamics\Dynamics\x64\Release\PBDSimulation.cu.obj D:\wrg\Github\Dynamics\Dynamics\Dynamics\x64\Release\CommonSolver.cu.obj D:\wrg\Github\Dynamics\Dynamics\Dynamics\x64\Release\CudaConstraintUtils.cu.obj D:\wrg\Github\Dynamics\Dynamics\Dynamics\x64\Release\PBDSolver.cu.obj D:\wrg\Github\Dynamics\Dynamics\Dynamics\x64\Release\Utility.cu.obj 
 CUDALINK : nvcc warning : Support for offline compilation for architectures prior to '<compute/sm/lto>_75' will be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
   glfw3.lib
   opengl32.lib
@@ -400,12 +763,14 @@ CUDALINK : nvcc warning : Support for offline compilation for architectures prio
   odbc32.lib
   odbccp32.lib
   cudadevrt.lib
+  PBDSimulation.cu.obj
   CommonSolver.cu.obj
   CudaConstraintUtils.cu.obj
   PBDSolver.cu.obj
   Utility.cu.obj
   코드를 생성하고 있습니다.
-  Previous IPDB and IOBJ mismatch, fall back to full compilation.
-  All 1077 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  0 of 896 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.
   Dynamics.vcxproj -> D:\wrg\Github\Dynamics\Dynamics\x64\Release\Dynamics.exe

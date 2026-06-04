@@ -14,7 +14,6 @@ struct mat3 {
 	float3 row2;
 };
 
-void checkCudaKernel(const char* msg);
 __device__ float get(const float3& value, int index);
 __device__ void set(float3& value, int index, const float item);
 __device__ int get(const int3& value, int index);

@@ -25,7 +25,9 @@
     <ClCompile Include="Constraint.h" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="PBDSimulation.cu" />
+    <CudaCompile Include="PBDSimulation.cu">
+      <FileType>Document</FileType>
+    </CudaCompile>
     <ClCompile Include="RenderContext.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -42,6 +44,7 @@
     <ClInclude Include="SimulationConfig.h" />
     <ClInclude Include="Utility.cuh" />
     <ClInclude Include="Vertex.h" />
+    <ClInclude Include="XPBDSolver.cuh" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="CommonSolver.cu" />

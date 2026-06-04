@@ -14,6 +14,12 @@
 #include "Vertex.h"
 #include "Constraint.h"
 #include "Damping.h"
+#include "CudaConstraintUtils.cuh"
+
+
+__global__ void updateFloorKernel(float* d_floorVertices, float floorY);
+void launchUpdateFloor(float* d_floorVertices, float floorY);
+
 
 class PBDSimulation {
 public:
@@ -46,6 +52,7 @@ private:
 	void releaseOpenGLResources();
 
 private:
+	CudaConstraintGraph constraintIterationGraph;
 	SimulationConfig config;
 
 	int vertexCount = 0;

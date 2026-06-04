@@ -12,6 +12,19 @@
 #include "PBDSolver.cuh"
 #include "CommonSolver.cuh"
 
+
+__global__ void updateFloorKernel(float* d_floorVertices, float floorY) {
+	if (blockIdx.x == 0 && threadIdx.x == 0) {
+		d_floorVertices[1] = floorY;
+		d_floorVertices[4] = floorY;
+		d_floorVertices[7] = floorY;
+		d_floorVertices[10] = floorY;
+	}
+}
+
+void launchUpdateFloor(float* d_floorVertices, float floorY) {
+	updateFloorKernel <<<1, 1 >>> (d_floorVertices, floorY);
+}
 PBDSimulation::PBDSimulation(const SimulationConfig& config_) : config(config_) {
 	vertexCount = config.rows * config.cols;
 	currentFloorY = config.floorBaseY;
@@ -39,7 +52,6 @@ bool PBDSimulation::initialize() {
 	if (!initializeSimulationBuffers()) {
 		return false;
 	}
-
 	return true;
 }
 
@@ -200,9 +212,6 @@ bool PBDSimulation::initializeDeviceData() {
 	uploadColorBatch(h_cons.stretch.color, d_cons.stretch.color);
 	uploadColorBatch(h_cons.bending.color, d_cons.bending.color);
 
-	std::cout<< "Stretch color count: "<< d_cons.stretch.color.colorCount<< '\n';
-	std::cout<< "Bending color count: "<< d_cons.bending.color.colorCount<< '\n';
-
 	checkCuda(cudaMalloc(&d_damp.poscm, sizeof(float3)), "cudaMalloc damp.poscm failed");
 	checkCuda(cudaMalloc(&d_damp.vcm, sizeof(float3)), "cudaMalloc damp.vcm failed");
 	checkCuda(cudaMalloc(&d_damp.omega, sizeof(float3)), "cudaMalloc damp.omega failed");
@@ -318,7 +327,7 @@ void PBDSimulation::mapClothVBO() {
 	d_ver.pos = d_mappedVboPos;
 }
 void PBDSimulation::solveOneSubstep(float dtSub, float currentTime) {
-	::solve(d_ver, d_cons, d_damp, vertexSet, prevVertexSet, indexSet, indexSetN, d_gridIndices, d_cellStart, d_cellEnd, d_gridHashes, d_totalMass, d_selfTris, d_vertTriArray, d_vertTriOffset, config.selfCollisionRadius, config.selfCollisionThickness, config.selfCollisionK, config.gridCapacity, d_forces, config.dampingK, dtSub, currentTime, config.iterationCount, static_cast<int>(h_forces.size()), vertexCount, h_cons.stretch.color.colorOffset, h_cons.bending.color.colorOffset, config.friction, config.restitution);
+	::solve(d_ver, d_cons, d_damp, constraintIterationGraph, vertexSet, prevVertexSet, indexSet, indexSetN, d_gridIndices, d_cellStart, d_cellEnd, d_gridHashes, d_totalMass, d_selfTris, d_vertTriArray, d_vertTriOffset, config.selfCollisionRadius, config.selfCollisionThickness, config.selfCollisionK, config.gridCapacity, d_forces, config.dampingK, dtSub, currentTime, config.iterationCount, static_cast<int>(h_forces.size()), vertexCount, h_cons.stretch.color.colorOffset, h_cons.bending.color.colorOffset, config.friction, config.restitution);
 }
 void PBDSimulation::unmapClothVBO() {
 	checkCuda(cudaGraphicsUnmapResources(1, &cudaVBO), "cudaGraphicsUnmapResources(frame) failed");
@@ -416,6 +425,8 @@ void PBDSimulation::release() {
 }
 
 void PBDSimulation::releaseCudaResources() {
+	constraintIterationGraph.release();
+
 	if (simStartEvent != nullptr) {
 		cudaEventDestroy(simStartEvent);
 		simStartEvent = nullptr;

@@ -3,14 +3,6 @@
 
 #include <cmath>
 
-void checkCudaKernel(const char* msg) {
-	cudaError_t err = cudaPeekAtLastError();
-	if (err != cudaSuccess) {
-		std::cerr << msg << " : " << cudaGetErrorString(err) << std::endl;
-		exit(EXIT_FAILURE);
-	}
-}
-
 __device__ float get(const float3& value, int index) {
 	return (&value.x)[index];
 }
