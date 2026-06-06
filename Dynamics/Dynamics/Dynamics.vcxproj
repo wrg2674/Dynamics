@@ -29,6 +29,7 @@
       <FileType>Document</FileType>
     </CudaCompile>
     <ClCompile Include="RenderContext.cpp" />
+    <CudaCompile Include="XPBDSolver.cu" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\learnopengl\camera.h" />

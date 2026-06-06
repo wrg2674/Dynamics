@@ -793,20 +793,7 @@ void launchBuildSelfPairs(VertexDevice ver, int2* outPairs, int* pairCount, int 
 }
 
 
-__global__ void applyForceKernel(VertexDevice ver, float3* forces, int forceCount, float tstep) {
-	int verIndex = blockIdx.x * blockDim.x + threadIdx.x;
-	if (verIndex >= ver.N) return;
-	if (ver.invM[verIndex] == 0.0f) return;
 
-	float3 totalForce = make_float3(0, 0, 0);
-	for (int i = 0; i < forceCount; i++) {
-		totalForce = add(totalForce, forces[i]);
-	}
-	float invM = ver.invM[verIndex];
-	float3& curV = ver.v[verIndex];
-	float3 accel = add(mul(totalForce, invM), make_float3(0, -9.8, 0));
-	curV = add(curV, mul(accel, tstep));
-}
 __global__ void applyAverageDeltaToPredictedKernel(VertexDevice ver) {
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
 

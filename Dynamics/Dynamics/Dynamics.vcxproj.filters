@@ -97,5 +97,8 @@
     <CudaCompile Include="PBDSimulation.cu">
       <Filter>소스 파일</Filter>
     </CudaCompile>
+    <CudaCompile Include="XPBDSolver.cu">
+      <Filter>소스 파일</Filter>
+    </CudaCompile>
   </ItemGroup>
 </Project>

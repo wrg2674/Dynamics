@@ -36,12 +36,7 @@ __global__ void detectSelfCollisionKernel(VertexDevice ver, ConstraintDevice con
 __device__ bool triangleSharesOneRingOfVertex(const int3& candidateTri, int queryVertex, const int4* selfTris, const int* vertTriArray, const int* vertTriOffset);
 __global__ void buildSelfPairsGPUKernel(VertexDevice ver, int2* outPairs, int* pairCount, int maxPairs, float cellSize);
 
-//__device__ void calcDeltaP(VertexDevice ver, ConstraintDevice cons, int verIndex, int consIndex, Type type, float tstep);
-//__device__ void projectionFunction(VertexDevice ver, ConstraintDevice cons, int verIndex, int consIndex, Type type, float tstep, int ns);
-//__device__ float calcScale(VertexDevice ver, ConstraintDevice cons, int verIndex, int consIndex, Type type, float tstep);
-//__device__ void GSiteration(VertexDevice ver, ConstraintDevice cons, int verIndex, float tstep, int iterationCount);
 
-__global__ void applyForceKernel(VertexDevice ver, float3* forces, int forceCount, float tstep);
 __global__ void applyAverageDeltaToPredictedKernel(VertexDevice ver);
 __global__ void initDampingVariablesKernel(DampingDevice damp, float* d_totalMass);
 __global__ void computeDampingKernel(VertexDevice ver, DampingDevice damp, float* d_totalMass);
@@ -51,9 +46,7 @@ __global__ void finalizeOmegaKernel(DampingDevice damp);
 __global__ void applyDampingKernel(VertexDevice ver, DampingDevice damp, float k_damping);
 __global__ void estimatePKernel(VertexDevice ver, float tstep);
 __global__ void updateVerticesKernel(VertexDevice ver, float tstep);
-//__global__ void solveConstraintsKernel(VertexDevice ver, ConstraintDevice cons, float tstep, int iterationCount);
 
-//__device__ float calcConstraintWeight(ConstraintDevice cons, int consIndex, Type type, int ns);
 template <typename StretchProjector>
 __global__ void solveStretchColorKernel(VertexDevice ver, ConstraintDevice cons, const int* constraintIds, int count, float tstep, int iterationCount, StretchProjector projector) {
 	int idx = blockIdx.x * blockDim.x + threadIdx.x;

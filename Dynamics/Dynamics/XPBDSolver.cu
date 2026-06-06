@@ -2,149 +2,151 @@
 #include "CommonSolver.cuh"
 #include "CudaUtils.cuh"
 
+#include <math_constants.h>
 #include <device_launch_parameters.h>
 
-__global__ void applyForceKernel(VertexDevice ver, float3* forces, int forceCount, float tstep) {
-	int verIndex = blockIdx.x * blockDim.x + threadIdx.x;
-	if (verIndex >= ver.N) return;
-	if (ver.invM[verIndex] == 0.0f) return;
 
-	float3 totalForce = make_float3(0, 0, 0);
-	for (int i = 0; i < forceCount; i++) {
-		totalForce = add(totalForce, forces[i]);
-	}
-	float invM = ver.invM[verIndex];
-	float3& curV = ver.v[verIndex];
-	float3 accel = add(mul(totalForce, invM), make_float3(0, -9.8, 0));
-	curV = add(curV, mul(accel, tstep));
-}
-__device__ float calcScale(VertexDevice ver, ConstraintDevice cons, int verIndex, int consIndex, Type type, float tstep) {
-	float result = 0;
-	float upper = 0;
-	float lower = 0;
-
-	switch (type) {
-	case Stretch: {
-		upper = calcStretch(ver, cons, consIndex);
-		int2 verIndexList = cons.stretch.ver[consIndex];
-		for (int i = 0; i < 2; i++) {
-			float3 gradient = make_float3(0, 0, 0);
-			calcGradient(ver, cons, get(verIndexList, i), consIndex, tstep, type, gradient);
-			float norm = norm2(gradient);
-			lower += ver.invM[get(verIndexList, i)] * norm;
-		}
-		break;
-	}
-	case Bending: {
-		upper = calcBending(ver, cons, consIndex);
-		int4 verIndexList = cons.bending.ver[consIndex];
-		for (int i = 0; i < 4; i++) {
-			float3 gradient = make_float3(0, 0, 0);
-			calcGradient(ver, cons, get(verIndexList, i), consIndex, tstep, type, gradient);
-			float norm = norm2(gradient);
-			lower += ver.invM[get(verIndexList, i)] * norm;
-		}
-		break;
-	}
-	}
-	if (fabsf(lower) <= 1e-6f || !isfinite(lower)) {
-		return 0.0f;
-	}
-	if (fabsf(upper) <= 1e-6f || !isfinite(upper)) {
-		return 0.0f;
-	}
-	result = upper / lower;
-	return result;
+__device__ float calcScaledCompliance(float stiff, float tstep) {
+	float compliance = 1.0f / stiff;
+	return compliance / ((tstep) * (tstep));
 }
 
-__device__ float calcConstraintWeight(ConstraintDevice cons, int consIndex, Type type, int ns) {
-	if (ns <= 0) return 0.0f;
-	switch (type) {
-	case Stretch:
-		return 1.0f - powf(1.0f - cons.stretch.k[consIndex], 1.0f / ns);
-	case Bending:
-		return 1.0f - powf(1.0f - cons.bending.k[consIndex], 1.0f / ns);
-	default:
-		return 0.0f;
+__device__ void projectStretchConstraint(VertexDevice ver, ConstraintDevice cons, int consIndex, float tstep, int iterationCount, float& lambda) {
+	float stiff = cons.stretch.k[consIndex];
+	if (stiff <= 1e-8f) {
+		return;
 	}
-}
-__device__ void projectStretchConstraint(VertexDevice ver, ConstraintDevice cons, int consIndex, float tstep, int iterationCount) {
+	float scaledCompliance = calcScaledCompliance(stiff, tstep);
 	int2 ids = cons.stretch.ver[consIndex];
-	float s = calcScale(ver, cons, ids.x, consIndex, Stretch, tstep);
-	if (fabsf(s) < 1e-8f) return;
+	float3 p0 = ver.pos[ids.x];
+	float3 p1 = ver.pos[ids.y];
 
-	float weight = calcConstraintWeight(cons, consIndex, Stretch, iterationCount);
-
-	for (int i = 0; i < 2; i++) {
-		int verIndex = get(ids, i);
-		if (ver.invM[verIndex] == 0.0f) continue;
-
-		float3 gradient = make_float3(0, 0, 0);
-		calcGradient(ver, cons, verIndex, consIndex, tstep, Stretch, gradient);
-
-		float3 delta = mul(gradient, -s * ver.invM[verIndex] * weight);
-		ver.p[verIndex] = add(ver.p[verIndex], delta);
+	float3 diff = sub(p0, p1);
+	float currentLength = length(diff);
+	float restLength = cons.stretch.l0[consIndex];
+	
+	float C = currentLength - restLength;
+	if (currentLength <= 1e-8f) {
+		return;
 	}
+	float3 gradient0 = mul(diff, 1.0f / currentLength);
+	float3 gradient1 = mul(gradient0, -1.0f);
+
+	float upper = -C - scaledCompliance * lambda;
+	float lower = ver.invM[ids.x] * dot(gradient0, gradient0) + ver.invM[ids.y] * dot(gradient1, gradient1)+scaledCompliance;
+
+	float deltaLambda = upper / lower;
+	float3 deltaPos0 = mul(gradient0, ver.invM[ids.x] * deltaLambda);
+	float3 deltaPos1 = mul(gradient1, ver.invM[ids.y] * deltaLambda);
+
+	lambda += deltaLambda;
+	p0 = add(deltaPos0, p0);
+	p1 = add(deltaPos1, p1);
+
+	ver.pos[ids.x] = p0;
+	ver.pos[ids.y] = p1;
 }
-__device__ void projectBendingConstraint(VertexDevice ver, ConstraintDevice cons, int consIndex, float tstep, int iterationCount) {
+__device__ void projectBendingConstraint(VertexDevice ver, ConstraintDevice cons, int consIndex, float tstep, int iterationCount, float& lambda) {
+	float stiff = cons.bending.k[consIndex];
+	if (stiff <= 1e-8f) {
+		return;
+	}
+	float scaledCompliance = calcScaledCompliance(stiff, tstep);
 	int4 ids = cons.bending.ver[consIndex];
+	
+	float3 p0 = ver.pos[ids.x];
+	float3 p1 = ver.pos[ids.y];
+	float3 p2 = ver.pos[ids.z];
+	float3 p3 = ver.pos[ids.w];
 
-	float C = calcBending(ver, cons, consIndex);
-	if (fabsf(C) < 1e-8f || !isfinite(C)) {
+	float3 e = sub(p1, p0);
+	float3 a = sub(p2, p0);
+	float3 b = sub(p3, p0);
+	float eLength = length(e);
+	if (eLength <= 1e-8f) {
 		return;
 	}
+	float3 ehat = mul(e, 1.0f / eLength);
 
-	float3 gradients[4];
-	calcBendingGradient(ver, cons, consIndex, gradients);
-
-	int verIds[4] = { ids.x,ids.y,ids.z,ids.w };
-	float lower = 0.0f;
-
-	for (int i = 0; i < 4; i++) {
-		int verIndex = verIds[i];
-		if (verIndex < 0 || verIndex >= ver.N) {
-			return;
-		}
-
-		float w = ver.invM[verIndex];
-		if (w == 0.0f) {
-			continue;
-		}
-
-		float g2 = norm2(gradients[i]);
-		if (!isfinite(g2)) {
-			return;
-		}
-		lower += w * g2;
-	}
-
-	if (fabsf(lower) < 1e-8f || !isfinite(lower)) {
+	float3 n0Upper = cross(e, a);
+	float n0Lower = length(n0Upper);
+	if (n0Lower <= 1e-8) {
 		return;
 	}
+	float3 n0 = mul(n0Upper, 1.0f / n0Lower);
 
-	float s = C / lower;
-	if (fabsf(s) < 1e-8f || !isfinite(s)) {
+	float3 n1Upper = cross(e, b);
+	float n1Lower = length(n1Upper);
+	if (n1Lower <= 1e-8) {
 		return;
 	}
+	float3 n1 = mul(n1Upper, 1.0f / n1Lower);
 
-	float weight = calcConstraintWeight(cons, consIndex, Bending, iterationCount);
-	if (fabsf(weight) < 1e-8f || !isfinite(weight)) {
+	float d = dot(n0, n1);
+	d = fminf(1.0f, fmaxf(-1.0f, d));
+
+	float3 angleN0 = mul(n0, -1.0f);
+	float3 angleN1 = n1;
+	float currentAngle = atan2f(dot(ehat, cross(angleN1, angleN0)), dot(angleN0, angleN1));
+	//float currentAngle = acos(d);
+	float restAngle = cons.bending.phi0[consIndex];
+
+	float C = currentAngle - restAngle;
+	// 각도가 179-(-179)=358로 계산되지 않고 2로 계산되도록 보정
+	if (C > CUDART_PI_F) {
+		C -= 2.0f * CUDART_PI_F;
+	}
+	else if (C < -CUDART_PI_F) {
+		C += 2.0f * CUDART_PI_F;
+	}
+
+	//if (currentAngle <= 1e-8f) {
+	//	return;
+	//}
+
+
+	float3 q2 = mul(add(cross(e, n1), mul(cross(n0, e), d)), 1.0f / n0Lower);
+	float3 q3 = mul(add(cross(e, n0), mul(cross(n1, e), d)), 1.0f / n1Lower);
+	float3 q1 = add(mul(add(cross(a, n1), mul(cross(n0, a), d)), -1.0f / n0Lower), mul(add(cross(b, n0), mul(cross(n1, b), d)), -1.0f / n1Lower));
+	
+	float oneMinusDSquared = 1.0f - d * d;
+	if (oneMinusDSquared <= 1e-8f) {
 		return;
 	}
+	float commonFactor = -1.0f / sqrt(oneMinusDSquared);
+	float3 gradient2 = mul(q2, commonFactor);
+	float3 gradient3 = mul(q3, commonFactor);
+	float3 gradient1 = mul(q1, commonFactor);
+	float3 gradient0 = mul(add(add(gradient2, gradient3), gradient1), -1.0f);
+	
+	float signedSin = dot(ehat, cross(angleN1, angleN0));
+	float gradientSign = signedSin > 0.0f ? -1.0f : 1.0f;
+	gradient0 = mul(gradient0, gradientSign);
+	gradient1 = mul(gradient1, gradientSign);
+	gradient2 = mul(gradient2, gradientSign);
+	gradient3 = mul(gradient3, gradientSign);
 
-	for (int i = 0; i < 4; i++) {
-		int verIndex = verIds[i];
-
-		if (ver.invM[verIndex] == 0.0f) {
-			continue;
-		}
-		float3 delta = mul(gradients[i], -s * ver.invM[verIndex] * weight);
-		if (!isfinite(delta.x) || !isfinite(delta.y) || !isfinite(delta.z)) {
-			continue;
-		}
-		ver.p[verIndex] = add(ver.p[verIndex], delta);
+	float upper = -C - scaledCompliance * lambda;
+	float lower = ver.invM[ids.x] * dot(gradient0, gradient0) + ver.invM[ids.y] * dot(gradient1, gradient1) + ver.invM[ids.z] * dot(gradient2, gradient2) + ver.invM[ids.w] * dot(gradient3, gradient3) + scaledCompliance;
+	if (lower <= 1e-8f) {
+		return;
 	}
+	float deltaLambda = upper / lower;
+	float3 deltaPos0 = mul(gradient0, ver.invM[ids.x] * deltaLambda);
+	float3 deltaPos1 = mul(gradient1, ver.invM[ids.y] * deltaLambda);
+	float3 deltaPos2 = mul(gradient2, ver.invM[ids.z] * deltaLambda);
+	float3 deltaPos3 = mul(gradient3, ver.invM[ids.w] * deltaLambda);
 
+	lambda += deltaLambda;
+	p0 = add(deltaPos0, p0);
+	p1 = add(deltaPos1, p1);
+	p2 = add(deltaPos2, p2);
+	p3 = add(deltaPos3, p3);
+
+	ver.pos[ids.x] = p0;
+	ver.pos[ids.y] = p1;
+	ver.pos[ids.z] = p2;
+	ver.pos[ids.w] = p3;
 }
 
 __global__ void projectCollisionConstraint(VertexDevice ver, ConstraintDevice cons, int count) {
@@ -164,7 +166,7 @@ __global__ void projectCollisionConstraint(VertexDevice ver, ConstraintDevice co
 	float thickness = cons.collision.thickness[i];
 	float stiffness = clamp(cons.collision.k[i], 0.0f, 1.0f);
 
-	float C = dot(sub(p, q), n)- thickness;
+	float C = dot(sub(p, q), n) - thickness;
 	if (C >= 0.0f) {
 		return;
 	}
@@ -270,7 +272,7 @@ __global__ void projectSelfCollisionConstraintKernel(VertexDevice ver, Constrain
 		atomicAdd(&(ver.dpCount[i2]), 1);
 	}
 }
-namespace pbd {
+namespace xpbd {
 	struct StretchProjector {
 		__device__ __forceinline__ void operator()(VertexDevice ver, ConstraintDevice cons, int consIndex, float tstep, int iterationCount) const {
 			projectStretchConstraint(ver, cons, consIndex, tstep, iterationCount);
@@ -287,8 +289,8 @@ namespace pbd {
 void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, CudaConstraintGraph& constraintIterationGraph, std::vector<float*>& vertexSet, std::vector<float*>& prevVertexSet, std::vector<unsigned int*>& indexSet, std::vector<int>& indexSetN, int* d_gridIndices, int* d_cellStart, int* d_cellEnd, unsigned int* d_gridHashes, float* d_totalMass, const int4* selfTris, const int* vertTriArray, const int* vertTriOffset, float cellSize, float selfThickness, float selfStiffness, int gridCapacity, float3* forces, float k_damping, float tstep, float currentTime, int iterationCount, int forceCount, int n, std::vector<int>& stretchColorOffset, std::vector<int>& bendingColorOffset, const float friction, const float restitution) {
 	int threads = 256;
 	int blocks = (ver.N + threads - 1) / threads;
-	
-	applyForceKernel<<<blocks, threads>>> (ver, forces, forceCount, tstep);
+
+	applyForceKernel << <blocks, threads >> > (ver, forces, forceCount, tstep);
 	checkCudaKernel("applyForceKernel launch failed");
 	initDampingVariablesKernel << <1, 1 >> > (damp, d_totalMass);
 	computeDampingKernel << <blocks, threads >> > (ver, damp, d_totalMass);
@@ -300,7 +302,7 @@ void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, CudaCons
 	checkCudaKernel("finalizeOmegaKernel launch failed");
 	applyDampingKernel << <blocks, threads >> > (ver, damp, k_damping);
 	checkCudaKernel("applyDampingKernel launch failed");
-	estimatePKernel<<<blocks, threads>>> (ver, tstep);
+	estimatePKernel << <blocks, threads >> > (ver, tstep);
 	checkCudaKernel("estimatePKernel launch failed");
 
 	int staticCollBlocks = (cons.collision.capacity + threads - 1) / threads;
@@ -345,7 +347,7 @@ void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, CudaCons
 			});
 	}
 
-	for (int iter = 0; iter < iterationCount; iter++) {		
+	for (int iter = 0; iter < iterationCount; iter++) {
 		constraintIterationGraph.launch();
 		bool runCCD = (iter == 0) || ((iter % CCD_INTERVAL) == 0);
 		for (int i = 0; i < vertexSet.size(); i++) {
@@ -366,12 +368,12 @@ void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, CudaCons
 			checkCudaKernel("clearIntKernel ver.dpCount launch failed");
 			projectCollisionConstraint << <staticCollBlocks, threads >> > (ver, cons, 0);
 			projectSelfCollisionConstraintKernel << <selfCollBlocks, threads >> > (ver, cons);
-			
+
 			applyAverageDeltaToPredictedKernel << <blocks, threads >> > (ver);
 			checkCudaKernel("applyAverageDeltaToPredictedKernel launch failed");
 		}
 	}
-	updateVerticesKernel<<<blocks, threads>>>(ver, tstep);
+	updateVerticesKernel << <blocks, threads >> > (ver, tstep);
 	checkCudaKernel("updateVerticesKernel launch failed");
 	velocityUpdateKernel << <blocks, threads >> > (ver, cons, friction, restitution);
 	checkCudaKernel("velocityUpdateKernel launch failed");
