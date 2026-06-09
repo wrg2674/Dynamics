@@ -2,6 +2,7 @@
 #include "RenderContext.h"
 #include "SimulationConfig.h"
 #include "PBDSimulation.cuh"
+#include "XPBDSimulation.cuh"
 
 #include <iostream>
 #include <exception>
@@ -25,7 +26,7 @@ int main() {
 			return -1;
 		}
 
-		PBDSimulation simulation(config);
+		XPBDSimulation simulation(config);
 		if (!simulation.initialize()) {
 			std::cerr << "Simulation initialization failed." << std::endl;
 			renderContext.release();

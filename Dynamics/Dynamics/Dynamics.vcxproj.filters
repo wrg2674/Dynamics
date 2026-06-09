@@ -71,13 +71,16 @@
     <ClInclude Include="PBDSimulation.cuh">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="XPBDSolver.cuh">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="CudaConstraintUtils.cuh">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="CudaUtils.cuh">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="XPBDSimulation.cuh">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="XPBDSolver.cuh">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -98,6 +101,9 @@
       <Filter>소스 파일</Filter>
     </CudaCompile>
     <CudaCompile Include="XPBDSolver.cu">
+      <Filter>소스 파일</Filter>
+    </CudaCompile>
+    <CudaCompile Include="XPBDSimulation.cu">
       <Filter>소스 파일</Filter>
     </CudaCompile>
   </ItemGroup>

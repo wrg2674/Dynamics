@@ -1,4 +1,3 @@
-#include "PBDSimulation.cuh"
 
 #include <iostream>
 #include <cmath>
@@ -9,8 +8,9 @@
 #include "ClothBuilder.h"
 #include "CudaUtils.cuh"
 #include "CudaConstraintUtils.cuh"
-#include "PBDSolver.cuh"
 #include "CommonSolver.cuh"
+#include "XPBDSimulation.cuh"
+#include "XPBDSolver.cuh"
 
 namespace {
 	__global__ void updateFloorKernel(float* d_floorVertices, float floorY) {
@@ -27,12 +27,12 @@ namespace {
 	}
 }
 
-PBDSimulation::PBDSimulation(const SimulationConfig& config_) : config(config_) {
+XPBDSimulation::XPBDSimulation(const SimulationConfig& config_) : config(config_) {
 	vertexCount = config.rows * config.cols;
 	currentFloorY = config.floorBaseY;
 }
 
-bool PBDSimulation::initialize() {
+bool XPBDSimulation::initialize() {
 	checkCuda(cudaGLSetGLDevice(0), "cudaGLSetGLDevice failed");
 
 	if (!initializeHostData()) {
@@ -57,7 +57,7 @@ bool PBDSimulation::initialize() {
 	return true;
 }
 
-bool PBDSimulation::initializeHostData() {
+bool XPBDSimulation::initializeHostData() {
 	buildClothPositions(h_pos, h_v, h_p, h_dp, h_invM, config.rows, config.cols);
 
 	buildStretchConstraints(h_cons, h_pos, config.rows, config.cols, config.stretchK);
@@ -76,7 +76,7 @@ bool PBDSimulation::initializeHostData() {
 	return true;
 }
 
-bool PBDSimulation::initializeClothRenderResources() {
+bool XPBDSimulation::initializeClothRenderResources() {
 	glGenVertexArrays(1, &clothVAO);
 	glBindVertexArray(clothVAO);
 
@@ -108,7 +108,7 @@ bool PBDSimulation::initializeClothRenderResources() {
 	return true;
 }
 
-bool PBDSimulation::initializeDeviceData() {
+bool XPBDSimulation::initializeDeviceData() {
 	checkCuda(cudaMalloc(&d_triangleIndices, sizeof(unsigned int) * triangleIndices.size()), "cudaMalloc d_triangleIndices failed");
 	checkCuda(cudaMemcpy(d_triangleIndices, triangleIndices.data(), sizeof(unsigned int) * triangleIndices.size(), cudaMemcpyHostToDevice), "cudaMemcpy d_triangleIndices failed");
 
@@ -146,10 +146,11 @@ bool PBDSimulation::initializeDeviceData() {
 	d_cons.bending.color.colorOffset = nullptr;
 	d_cons.bending.color.colorCount = 0;
 
-
 	d_cons.collision.tri = nullptr;
 	d_cons.collision.ver = nullptr;
 	d_cons.collision.k = nullptr;
+	d_cons.collision.lambda = nullptr;
+	d_cons.collision.compliance = nullptr;
 	d_cons.collision.thickness = nullptr;
 	d_cons.collision.q = nullptr;
 	d_cons.collision.normal = nullptr;
@@ -160,18 +161,24 @@ bool PBDSimulation::initializeDeviceData() {
 	checkCuda(cudaMalloc(&d_cons.collision.tri, sizeof(int3) * d_cons.collision.capacity), "cudaMalloc collision.tri failed");
 	checkCuda(cudaMalloc(&d_cons.collision.ver, sizeof(int) * d_cons.collision.capacity), "cudaMalloc collision.ver failed");
 	checkCuda(cudaMalloc(&d_cons.collision.k, sizeof(float) * d_cons.collision.capacity), "cudaMalloc collision.k failed");
+	checkCuda(cudaMalloc(&d_cons.collision.compliance, sizeof(float) * d_cons.collision.capacity), "cudaMalloc collision.compliance failed");
+	checkCuda(cudaMalloc(&d_cons.collision.lambda, sizeof(float) * d_cons.collision.capacity), "cudaMalloc collision.lambda failed");
 	checkCuda(cudaMalloc(&d_cons.collision.thickness, sizeof(float) * d_cons.collision.capacity), "cudaMalloc collision.thickness failed");
 	checkCuda(cudaMalloc(&d_cons.collision.q, sizeof(float3) * d_cons.collision.capacity), "cudaMalloc collision.q failed");
 	checkCuda(cudaMalloc(&d_cons.collision.normal, sizeof(float3) * d_cons.collision.capacity), "cudaMalloc collision.normal failed");
-	checkCuda(cudaMalloc(&d_cons.collision.colliderVelocity, sizeof(float3) * d_cons.collision.capacity),"cudaMalloc collision.colliderVelocity failed");
+	checkCuda(cudaMalloc(&d_cons.collision.colliderVelocity, sizeof(float3) * d_cons.collision.capacity), "cudaMalloc collision.colliderVelocity failed");
 	checkCuda(cudaMalloc(&d_cons.collision.n, sizeof(int)), "cudaMalloc collision.n failed");
 
 	int zero = 0;
 	checkCuda(cudaMemcpy(d_cons.collision.n, &zero, sizeof(int), cudaMemcpyHostToDevice), "init collision.n failed");
+	checkCuda(cudaMemset(d_cons.collision.compliance, 0, sizeof(float) * d_cons.collision.capacity), "cudaMemset collision.compliance failed");
+	checkCuda(cudaMemset(d_cons.collision.lambda, 0, sizeof(float) * d_cons.collision.capacity), "cudaMemset collision.lambda failed");
 
 	d_cons.selfCollision.tri = nullptr;
 	d_cons.selfCollision.ver = nullptr;
 	d_cons.selfCollision.k = nullptr;
+	d_cons.selfCollision.compliance = nullptr;
+	d_cons.selfCollision.lambda = nullptr;
 	d_cons.selfCollision.thickness = nullptr;
 	d_cons.selfCollision.q = nullptr;
 	d_cons.selfCollision.normal = nullptr;
@@ -181,10 +188,15 @@ bool PBDSimulation::initializeDeviceData() {
 	checkCuda(cudaMalloc(&d_cons.selfCollision.tri, sizeof(int3) * d_cons.selfCollision.capacity), "cudaMalloc selfCollision.tri failed");
 	checkCuda(cudaMalloc(&d_cons.selfCollision.ver, sizeof(int) * d_cons.selfCollision.capacity), "cudaMalloc selfCollision.ver failed");
 	checkCuda(cudaMalloc(&d_cons.selfCollision.k, sizeof(float) * d_cons.selfCollision.capacity), "cudaMalloc selfCollision.k failed");
+	checkCuda(cudaMalloc(&d_cons.selfCollision.compliance, sizeof(float) * d_cons.selfCollision.capacity), "cudaMalloc selfCollision.compliance failed");
+	checkCuda(cudaMalloc(&d_cons.selfCollision.lambda, sizeof(float) * d_cons.selfCollision.capacity), "cudaMalloc selfCollision.lambda failed");
 	checkCuda(cudaMalloc(&d_cons.selfCollision.thickness, sizeof(float) * d_cons.selfCollision.capacity), "cudaMalloc selfCollision.thickness failed");
 	checkCuda(cudaMalloc(&d_cons.selfCollision.q, sizeof(float3) * d_cons.selfCollision.capacity), "cudaMalloc selfCollision.q failed");
 	checkCuda(cudaMalloc(&d_cons.selfCollision.normal, sizeof(float3) * d_cons.selfCollision.capacity), "cudaMalloc selfCollision.normal failed");
 	checkCuda(cudaMalloc(&d_cons.selfCollision.n, sizeof(int)), "cudaMalloc selfCollision.n failed");
+	
+	checkCuda(cudaMemset(d_cons.selfCollision.compliance, 0, sizeof(float) * d_cons.selfCollision.capacity), "cudaMemset selfCollision.compliance failed");
+	checkCuda(cudaMemset(d_cons.selfCollision.lambda, 0, sizeof(float) * d_cons.selfCollision.capacity), "cudaMemset selfCollision.lambda failed");
 
 	int zeroSelfCollision = 0;
 	checkCuda(cudaMemcpy(d_cons.selfCollision.n, &zeroSelfCollision, sizeof(int), cudaMemcpyHostToDevice), "init selfCollision.n failed");
@@ -204,21 +216,24 @@ bool PBDSimulation::initializeDeviceData() {
 	checkCuda(cudaMalloc(&d_cons.stretch.ver, sizeof(int2) * d_cons.stretch.n), "cudaMalloc stretch.ver failed");
 	checkCuda(cudaMalloc(&d_cons.stretch.k, sizeof(float) * d_cons.stretch.n), "cudaMalloc stretch.k failed");
 	checkCuda(cudaMalloc(&d_cons.stretch.l0, sizeof(float) * d_cons.stretch.n), "cudaMalloc stretch.l0 failed");
+	checkCuda(cudaMalloc(&d_cons.stretch.lambda, sizeof(float) * d_cons.stretch.n), "cudaMalloc stretch.lambda failed");
 
 	if (d_cons.stretch.n > 0) {
 		checkCuda(cudaMemcpy(d_cons.stretch.ver, h_cons.stretch.ver.data(), sizeof(int2) * d_cons.stretch.n, cudaMemcpyHostToDevice), "cudaMemcpy stretch.ver failed");
 		checkCuda(cudaMemcpy(d_cons.stretch.k, h_cons.stretch.k.data(), sizeof(float) * d_cons.stretch.n, cudaMemcpyHostToDevice), "cudaMemcpy stretch.k failed");
 		checkCuda(cudaMemcpy(d_cons.stretch.l0, h_cons.stretch.l0.data(), sizeof(float) * d_cons.stretch.n, cudaMemcpyHostToDevice), "cudaMemcpy stretch.l0 failed");
+		checkCuda(cudaMemset(d_cons.stretch.lambda, 0, sizeof(float) * d_cons.stretch.n), "cudaMemset stretch.lambda failed");
 	}
 
 	checkCuda(cudaMalloc(&d_cons.bending.ver, sizeof(int4) * d_cons.bending.n), "cudaMalloc bending.ver failed");
 	checkCuda(cudaMalloc(&d_cons.bending.k, sizeof(float) * d_cons.bending.n), "cudaMalloc bending.k failed");
 	checkCuda(cudaMalloc(&d_cons.bending.phi0, sizeof(float) * d_cons.bending.n), "cudaMalloc bending.phi0 failed");
-
+	checkCuda(cudaMalloc(&d_cons.bending.lambda, sizeof(float) * d_cons.bending.n), "cudaMalloc bending.lambda failed");
 	if (d_cons.bending.n > 0) {
 		checkCuda(cudaMemcpy(d_cons.bending.ver, h_cons.bending.ver.data(), sizeof(int4) * d_cons.bending.n, cudaMemcpyHostToDevice), "cudaMemcpy bending.ver failed");
 		checkCuda(cudaMemcpy(d_cons.bending.k, h_cons.bending.k.data(), sizeof(float) * d_cons.bending.n, cudaMemcpyHostToDevice), "cudaMemcpy bending.k failed");
 		checkCuda(cudaMemcpy(d_cons.bending.phi0, h_cons.bending.phi0.data(), sizeof(float) * d_cons.bending.n, cudaMemcpyHostToDevice), "cudaMemcpy bending.phi0 failed");
+		checkCuda(cudaMemset(d_cons.bending.lambda, 0, sizeof(float) * d_cons.bending.n), "cudaMemset bending.lambda failed");
 	}
 
 	uploadColorBatch(h_cons.stretch.color, d_cons.stretch.color);
@@ -233,7 +248,7 @@ bool PBDSimulation::initializeDeviceData() {
 	return true;
 }
 
-bool PBDSimulation::initializeFloorResources() {
+bool XPBDSimulation::initializeFloorResources() {
 	float floorVertices[] = {
 		-2.0f, currentFloorY, -2.0f,
 		 2.0f, currentFloorY, -2.0f,
@@ -278,7 +293,7 @@ bool PBDSimulation::initializeFloorResources() {
 	return true;
 }
 
-bool PBDSimulation::initializeSimulationBuffers() {
+bool XPBDSimulation::initializeSimulationBuffers() {
 	checkCuda(cudaMalloc(&d_selfPairs, sizeof(int2) * config.maxSelfPairs), "d_selfPairs malloc");
 	checkCuda(cudaMalloc(&d_selfPairCount, sizeof(int)), "d_selfPairCount malloc");
 
@@ -306,11 +321,12 @@ bool PBDSimulation::initializeSimulationBuffers() {
 	checkCuda(cudaMemcpy(d_forces, h_forces.data(), sizeof(float3) * h_forces.size(), cudaMemcpyHostToDevice), "cudaMemcpy d_forces failed");
 
 	checkCuda(cudaMalloc(&d_totalMass, sizeof(float)), "totalMass malloc");
-	
+	checkCuda(cudaMalloc(&d_totalForce, sizeof(float3)), "cudaMalloc d_totalForce failed");
+
 	d_damp.partialCount = (vertexCount + DAMPING_REDUCTION_THREADS - 1) / DAMPING_REDUCTION_THREADS;
 	checkCuda(cudaMalloc(&d_damp.centerPartials, sizeof(DampingCenterPartial) * d_damp.partialCount), "cudaMalloc damp.centerPartials failed");
 	checkCuda(cudaMalloc(&d_damp.angularPartials, sizeof(DampingAngularPartial) * d_damp.partialCount), "cudaMalloc damp.angularPartials failed");
-	
+
 	checkCuda(cudaEventCreate(&simStartEvent), "cudaEventCreate simStartEvent failed");
 	checkCuda(cudaEventCreate(&simEndEvent), "cudaEventCreate simEndEvent failed");
 
@@ -322,7 +338,7 @@ bool PBDSimulation::initializeSimulationBuffers() {
 	return true;
 }
 
-void PBDSimulation::step(float currentTime) {
+void XPBDSimulation::step(float currentTime) {
 	mapClothVBO();
 
 	simulateSubsteps(currentTime);
@@ -330,7 +346,7 @@ void PBDSimulation::step(float currentTime) {
 	unmapClothVBO();
 }
 
-void PBDSimulation::mapClothVBO() {
+void XPBDSimulation::mapClothVBO() {
 	checkCuda(cudaGraphicsMapResources(1, &cudaVBO), "cudaGraphicsMapResources(frame) failed");
 
 	size_t mappedSize = 0;
@@ -338,17 +354,17 @@ void PBDSimulation::mapClothVBO() {
 
 	d_ver.pos = d_mappedVboPos;
 }
-void PBDSimulation::solveOneSubstep(float dtSub, float currentTime) {
-	::solve(d_ver, d_cons, d_damp, constraintIterationGraph, vertexSet, prevVertexSet, indexSet, indexSetN, d_gridIndices, d_cellStart, d_cellEnd, d_gridHashes, d_totalMass, d_selfTris, d_vertTriArray, d_vertTriOffset, config.selfCollisionRadius, config.selfCollisionThickness, config.selfCollisionK, config.gridCapacity, d_forces, config.dampingK, dtSub, currentTime, config.iterationCount, static_cast<int>(h_forces.size()), vertexCount, h_cons.stretch.color.colorOffset, h_cons.bending.color.colorOffset, config.friction, config.restitution);
+void XPBDSimulation::solveOneSubstep(float dtSub, float currentTime) {
+	xpbd::solve(d_ver, d_cons, d_damp, constraintIterationGraph, vertexSet, prevVertexSet, indexSet, indexSetN, d_gridIndices, d_cellStart, d_cellEnd, d_gridHashes, d_totalMass, d_totalForce, d_selfTris, d_vertTriArray, d_vertTriOffset, config.selfCollisionRadius, config.selfCollisionThickness, config.selfCollisionK, config.gridCapacity, d_forces, config.dampingK, dtSub, currentTime, config.iterationCount, static_cast<int>(h_forces.size()), vertexCount, h_cons.stretch.color.colorOffset, h_cons.bending.color.colorOffset, config.friction, config.restitution);
 }
-void PBDSimulation::unmapClothVBO() {
+void XPBDSimulation::unmapClothVBO() {
 	checkCuda(cudaGraphicsUnmapResources(1, &cudaVBO), "cudaGraphicsUnmapResources(frame) failed");
 
 	d_mappedVboPos = nullptr;
 	d_ver.pos = nullptr;
 }
 
-void PBDSimulation::simulateSubsteps(float currentTime) {
+void XPBDSimulation::simulateSubsteps(float currentTime) {
 	float dtSub = config.timestep / static_cast<float>(config.substep);
 
 	checkCuda(cudaEventRecord(simStartEvent), "cudaEventRecord simStartEvent failed");
@@ -369,7 +385,7 @@ void PBDSimulation::simulateSubsteps(float currentTime) {
 	updateFloorRenderBuffer(currentFloorY);
 }
 
-void PBDSimulation::updateFloorDevice(float floorY) {
+void XPBDSimulation::updateFloorDevice(float floorY) {
 	checkCuda(cudaMemcpy(d_prevFloorVertices, d_floorVertices, sizeof(float) * 12, cudaMemcpyDeviceToDevice), "cudaMemcpy d_floorVertices to d_prevFloorVertices failed");
 
 	float floorVertices[] = {
@@ -382,7 +398,7 @@ void PBDSimulation::updateFloorDevice(float floorY) {
 	checkCuda(cudaMemcpy(d_floorVertices, floorVertices, sizeof(floorVertices), cudaMemcpyHostToDevice), "cudaMemcpy moving floor to device failed");
 }
 
-void PBDSimulation::updateFloorRenderBuffer(float floorY) {
+void XPBDSimulation::updateFloorRenderBuffer(float floorY) {
 	float floorVertices[] = {
 		-2.0f, floorY, -2.0f,
 		 2.0f, floorY, -2.0f,
@@ -394,12 +410,12 @@ void PBDSimulation::updateFloorRenderBuffer(float floorY) {
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(floorVertices), floorVertices);
 }
 
-void PBDSimulation::render(RenderContext& renderContext) {
+void XPBDSimulation::render(RenderContext& renderContext) {
 	renderCloth(renderContext);
 	renderFloor(renderContext);
 }
 
-void PBDSimulation::renderCloth(RenderContext& renderContext) {
+void XPBDSimulation::renderCloth(RenderContext& renderContext) {
 	Shader& clothShader = renderContext.getClothShader();
 
 	glm::mat4 projection = renderContext.getProjection();
@@ -415,7 +431,7 @@ void PBDSimulation::renderCloth(RenderContext& renderContext) {
 	glDrawElements(GL_LINES, static_cast<GLsizei>(triangleIndices.size()), GL_UNSIGNED_INT, 0);
 }
 
-void PBDSimulation::renderFloor(RenderContext& renderContext) {
+void XPBDSimulation::renderFloor(RenderContext& renderContext) {
 	Shader& floorShader = renderContext.getFloorShader();
 
 	glm::mat4 projection = renderContext.getProjection();
@@ -431,12 +447,12 @@ void PBDSimulation::renderFloor(RenderContext& renderContext) {
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
-void PBDSimulation::release() {
+void XPBDSimulation::release() {
 	releaseCudaResources();
 	releaseOpenGLResources();
 }
 
-void PBDSimulation::releaseCudaResources() {
+void XPBDSimulation::releaseCudaResources() {
 	constraintIterationGraph.release();
 
 	if (simStartEvent != nullptr) {
@@ -456,6 +472,8 @@ void PBDSimulation::releaseCudaResources() {
 
 	cudaFree(d_totalMass);
 	cudaFree(d_forces);
+	cudaFree(d_totalForce);
+
 
 	cudaFree(d_selfPairs);
 	cudaFree(d_selfPairCount);
@@ -481,6 +499,8 @@ void PBDSimulation::releaseCudaResources() {
 	cudaFree(d_cons.collision.tri);
 	cudaFree(d_cons.collision.ver);
 	cudaFree(d_cons.collision.k);
+	cudaFree(d_cons.collision.compliance);
+	cudaFree(d_cons.collision.lambda);
 	cudaFree(d_cons.collision.thickness);
 	cudaFree(d_cons.collision.q);
 	cudaFree(d_cons.collision.normal);
@@ -490,6 +510,8 @@ void PBDSimulation::releaseCudaResources() {
 	cudaFree(d_cons.selfCollision.tri);
 	cudaFree(d_cons.selfCollision.ver);
 	cudaFree(d_cons.selfCollision.k);
+	cudaFree(d_cons.selfCollision.compliance);
+	cudaFree(d_cons.selfCollision.lambda);
 	cudaFree(d_cons.selfCollision.thickness);
 	cudaFree(d_cons.selfCollision.q);
 	cudaFree(d_cons.selfCollision.normal);
@@ -498,10 +520,12 @@ void PBDSimulation::releaseCudaResources() {
 	cudaFree(d_cons.stretch.ver);
 	cudaFree(d_cons.stretch.k);
 	cudaFree(d_cons.stretch.l0);
+	cudaFree(d_cons.stretch.lambda);
 
 	cudaFree(d_cons.bending.ver);
 	cudaFree(d_cons.bending.k);
 	cudaFree(d_cons.bending.phi0);
+	cudaFree(d_cons.bending.lambda);
 
 	cudaFree(d_cons.stretch.color.constraintIds);
 	cudaFree(d_cons.stretch.color.colorOffset);
@@ -522,7 +546,7 @@ void PBDSimulation::releaseCudaResources() {
 	cudaFree(d_floorIndices);
 }
 
-void PBDSimulation::releaseOpenGLResources() {
+void XPBDSimulation::releaseOpenGLResources() {
 	if (clothVAO != 0) {
 		glDeleteVertexArrays(1, &clothVAO);
 		clothVAO = 0;

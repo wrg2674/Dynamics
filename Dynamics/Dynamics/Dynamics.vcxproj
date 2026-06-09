@@ -29,6 +29,7 @@
       <FileType>Document</FileType>
     </CudaCompile>
     <ClCompile Include="RenderContext.cpp" />
+    <CudaCompile Include="XPBDSimulation.cu" />
     <CudaCompile Include="XPBDSolver.cu" />
   </ItemGroup>
   <ItemGroup>
@@ -45,6 +46,7 @@
     <ClInclude Include="SimulationConfig.h" />
     <ClInclude Include="Utility.cuh" />
     <ClInclude Include="Vertex.h" />
+    <ClInclude Include="XPBDSimulation.cuh" />
     <ClInclude Include="XPBDSolver.cuh" />
   </ItemGroup>
   <ItemGroup>

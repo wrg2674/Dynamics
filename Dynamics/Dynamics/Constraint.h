@@ -18,6 +18,7 @@ struct StretchHost {
 	std::vector<int2> ver;
 	std::vector<float> k;
 	std::vector<float> l0; //¼Ò¹®ÀÚ L
+	std::vector<float> lambda;
 	ColorBatchHost color;
 };
 struct StretchDevice {
@@ -25,12 +26,14 @@ struct StretchDevice {
 	float* k;
 	float* l0;
 	int n;
+	float* lambda;
 	ColorBatchDevice color;
 };
 struct BendingHost {
 	std::vector<int4> ver;
 	std::vector<float> k;
 	std::vector<float> phi0;
+	std::vector<float> lambda;
 	ColorBatchHost color;
 };
 struct BendingDevice {
@@ -38,6 +41,7 @@ struct BendingDevice {
 	float* k;
 	float* phi0;
 	int n;
+	float* lambda;
 	ColorBatchDevice color;
 };
 struct CollisionHost {
@@ -49,6 +53,9 @@ struct CollisionHost {
 	std::vector<float3> normal;
 	std::vector<float3> colliderVelocity;
 	int* n;
+
+	std::vector<float> compliance; 
+	std::vector<float> lambda;
 };
 struct CollisionDevice {
 	int3* tri;
@@ -60,6 +67,9 @@ struct CollisionDevice {
 	float3* colliderVelocity;
 	int* n;
 	int capacity;
+
+	float* compliance;
+	float* lambda;
 };
 struct SelfCollisionHost {
 	std::vector<int3> tri;
@@ -70,6 +80,9 @@ struct SelfCollisionHost {
 	std::vector<float3> normal;
 	std::vector<int> n;
 	int capacity;
+
+	std::vector<float> compliance;
+	std::vector<float> lambda;
 };
 struct SelfCollisionDevice {
 	int3* tri;
@@ -80,6 +93,9 @@ struct SelfCollisionDevice {
 	float3* normal;
 	int* n;
 	int capacity;
+
+	float* compliance;
+	float* lambda;
 };
 struct ConstraintHost {
 	StretchHost stretch;

@@ -1,2 +1,10 @@
 .vs/
 *.ipch
+x64/
+.vs/
+*.obj
+*.pdb
+*.exe
+*.tlog
+*.cache
+*.deps
