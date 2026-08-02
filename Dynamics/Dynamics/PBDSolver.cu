@@ -146,6 +146,228 @@ __device__ void projectBendingConstraint(VertexDevice ver, ConstraintDevice cons
 	}
 
 }
+__global__ void initDampingVariablesKernel(DampingDevice damp, float* d_totalMass) {
+	if (blockIdx.x == 0 && threadIdx.x == 0) {
+		*damp.poscm = make_float3(0, 0, 0);
+		*damp.vcm = make_float3(0, 0, 0);
+		*damp.omega = make_float3(0, 0, 0);
+		*damp.angularMomentum = make_float3(0.0f, 0.0f, 0.0f);
+		*d_totalMass = 0.0f;
+		for (int i = 0; i < 9; i++) {
+			damp.inertia[i] = 0.0f;
+		}
+	}
+}
+
+__global__ void computeDampingKernel(VertexDevice ver, DampingDevice damp, float* d_totalMass) {
+	__shared__ float warpScalarSums[32];
+	__shared__ float3 warpVectorSums[32];
+
+	int vertexIndex = blockIdx.x * blockDim.x + threadIdx.x;
+
+	float3 weightedPosition = make_float3(0.0f, 0.0f, 0.0f);
+	float3 weightedVelocity = make_float3(0.0f, 0.0f, 0.0f);
+	float totalMass = 0.0f;
+
+	if (vertexIndex < ver.N && ver.invM[vertexIndex] > 0.0f) {
+		float mass = 1.0f / ver.invM[vertexIndex];
+
+		weightedPosition = mul(ver.pos[vertexIndex], mass);
+		weightedVelocity = mul(ver.v[vertexIndex], mass);
+		totalMass = mass;
+	}
+
+	float3 blockWeightedPosition = blockReduceSum(weightedPosition, warpVectorSums);
+	float3 blockWeightedVelocity = blockReduceSum(weightedVelocity, warpVectorSums);
+	float blockTotalMass = blockReduceSum(totalMass, warpScalarSums);
+
+	if (threadIdx.x == 0) {
+		damp.centerPartials[blockIdx.x].weightedPosition = blockWeightedPosition;
+		damp.centerPartials[blockIdx.x].weightedVelocity = blockWeightedVelocity;
+		damp.centerPartials[blockIdx.x].totalMass = blockTotalMass;
+	}
+}
+
+__global__ void finalizeCenterOfMassKernel(DampingDevice damp, float* d_totalMass) {
+	if (blockIdx.x == 0 && threadIdx.x == 0) {
+		float3 weightedPosition = make_float3(0.0f, 0.0f, 0.0f);
+		float3 weightedVelocity = make_float3(0.0f, 0.0f, 0.0f);
+
+		float totalMass = 0.0f;
+
+		for (int partialIndex = 0; partialIndex < damp.partialCount; partialIndex++) {
+			weightedPosition = add(
+				weightedPosition,
+				damp.centerPartials[partialIndex].weightedPosition
+			);
+
+			weightedVelocity = add(
+				weightedVelocity,
+				damp.centerPartials[partialIndex].weightedVelocity
+			);
+
+			totalMass += damp.centerPartials[partialIndex].totalMass;
+		}
+
+		*d_totalMass = totalMass;
+
+		if (totalMass <= 1e-8f || !isfinite(totalMass)) {
+			*damp.poscm = make_float3(0.0f, 0.0f, 0.0f);
+			*damp.vcm = make_float3(0.0f, 0.0f, 0.0f);
+			*damp.omega = make_float3(0.0f, 0.0f, 0.0f);
+			*damp.angularMomentum = make_float3(0.0f, 0.0f, 0.0f);
+
+			for (int i = 0; i < 9; i++) {
+				damp.inertia[i] = 0.0f;
+			}
+
+			return;
+		}
+
+		float inverseTotalMass = 1.0f / totalMass;
+
+		*damp.poscm = mul(weightedPosition, inverseTotalMass);
+		*damp.vcm = mul(weightedVelocity, inverseTotalMass);
+	}
+}
+
+__global__ void computeAngularDampingKernel(VertexDevice ver, DampingDevice damp) {
+	__shared__ float3 warpVectorSums[32];
+	__shared__ Float3x3 warpTensorSums[32];
+
+	int vertexIndex = blockIdx.x * blockDim.x + threadIdx.x;
+
+	float3 angularMomentum = make_float3(0.0f, 0.0f, 0.0f);
+	Float3x3 inertia = makeZeroFloat3x3();
+
+	if (vertexIndex < ver.N && ver.invM[vertexIndex] > 0.0f) {
+		float mass = 1.0f / ver.invM[vertexIndex];
+
+		float3 poscm = *damp.poscm;
+		float3 vcm = *damp.vcm;
+
+		float3 r = sub(ver.pos[vertexIndex], poscm);
+		float3 relativeVelocity = sub(ver.v[vertexIndex], vcm);
+
+		angularMomentum = cross(r, mul(relativeVelocity, mass));
+
+		float squaredRadius = dot(r, r);
+
+		inertia.row0 = make_float3(mass * (squaredRadius - r.x * r.x), mass * (0.0f - r.x * r.y), mass * (0.0f - r.x * r.z));
+		inertia.row1 = make_float3(mass * (0.0f - r.y * r.x), mass * (squaredRadius - r.y * r.y), mass * (0.0f - r.y * r.z));
+		inertia.row2 = make_float3(mass * (0.0f - r.z * r.x), mass * (0.0f - r.z * r.y), mass * (squaredRadius - r.z * r.z));
+	}
+
+	float3 blockAngularMomentum = blockReduceSum(angularMomentum, warpVectorSums);
+	Float3x3 blockInertia = blockReduceSum(inertia, warpTensorSums);
+	if (threadIdx.x == 0) {
+		damp.angularPartials[blockIdx.x].angularMomentum = blockAngularMomentum;
+
+		damp.angularPartials[blockIdx.x].inertia[0] = blockInertia.row0.x;
+		damp.angularPartials[blockIdx.x].inertia[1] = blockInertia.row0.y;
+		damp.angularPartials[blockIdx.x].inertia[2] = blockInertia.row0.z;
+
+		damp.angularPartials[blockIdx.x].inertia[3] = blockInertia.row1.x;
+		damp.angularPartials[blockIdx.x].inertia[4] = blockInertia.row1.y;
+		damp.angularPartials[blockIdx.x].inertia[5] = blockInertia.row1.z;
+
+		damp.angularPartials[blockIdx.x].inertia[6] = blockInertia.row2.x;
+		damp.angularPartials[blockIdx.x].inertia[7] = blockInertia.row2.y;
+		damp.angularPartials[blockIdx.x].inertia[8] = blockInertia.row2.z;
+	}
+}
+
+__global__ void finalizeOmegaKernel(DampingDevice damp) {
+	if (blockIdx.x == 0 && threadIdx.x == 0) {
+		float3 angularMomentum = make_float3(0.0f, 0.0f, 0.0f);
+		float inertiaValues[9];
+
+		for (int i = 0; i < 9; i++) {
+			inertiaValues[i] = 0.0f;
+		}
+
+		for (int partialIndex = 0; partialIndex < damp.partialCount; partialIndex++) {
+			angularMomentum = add(angularMomentum, damp.angularPartials[partialIndex].angularMomentum);
+
+			for (int inertiaIndex = 0; inertiaIndex < 9; inertiaIndex++) {
+				inertiaValues[inertiaIndex] += damp.angularPartials[partialIndex].inertia[inertiaIndex];
+			}
+		}
+
+		*damp.angularMomentum = angularMomentum;
+
+		for (int i = 0; i < 9; i++) {
+			damp.inertia[i] = inertiaValues[i];
+		}
+
+		mat3 inertia;
+		inertia.row0 = make_float3(inertiaValues[0], inertiaValues[1], inertiaValues[2]);
+		inertia.row1 = make_float3(inertiaValues[3], inertiaValues[4], inertiaValues[5]);
+		inertia.row2 = make_float3(inertiaValues[6], inertiaValues[7], inertiaValues[8]);
+
+		const float epsilon = 1e-6f;
+
+		inertia.row0.x += epsilon;
+		inertia.row1.y += epsilon;
+		inertia.row2.z += epsilon;
+
+		float determinant = det(inertia);
+
+		if (fabsf(determinant) <= 1e-10f || !isfinite(determinant)) {
+			*damp.omega = make_float3(0.0f, 0.0f, 0.0f);
+			return;
+		}
+
+		if (!isfinite(angularMomentum.x) || !isfinite(angularMomentum.y) || !isfinite(angularMomentum.z)) {
+			*damp.omega = make_float3(0.0f, 0.0f, 0.0f);
+			return;
+		}
+
+		*damp.omega = mul(inverse(inertia), angularMomentum);
+
+		if (!isfinite(damp.omega->x) || !isfinite(damp.omega->y) || !isfinite(damp.omega->z)) {
+			*damp.omega = make_float3(0.0f, 0.0f, 0.0f);
+		}
+	}
+}
+
+__global__ void applyDampingKernel(VertexDevice ver, DampingDevice damp, float k_damping) {
+	int verIndex = blockIdx.x * blockDim.x + threadIdx.x;
+
+	if (verIndex >= ver.N) {
+		return;
+	}
+
+	if (ver.invM[verIndex] == 0.0f) {
+		return;
+	}
+
+	float k = fminf(fmaxf(k_damping, 0.0f), 1.0f);
+
+	float3 poscm = *damp.poscm;
+	float3 vcm = *damp.vcm;
+	float3 omega = *damp.omega;
+
+	if (
+		!isfinite(poscm.x) || !isfinite(poscm.y) || !isfinite(poscm.z) ||
+		!isfinite(vcm.x) || !isfinite(vcm.y) || !isfinite(vcm.z) ||
+		!isfinite(omega.x) || !isfinite(omega.y) || !isfinite(omega.z)
+		) {
+		return;
+	}
+
+	float3 r = sub(ver.pos[verIndex], poscm);
+	float3 rigidVelocity = add(vcm, cross(omega, r));
+
+	float3 deltaV = sub(rigidVelocity, ver.v[verIndex]);
+	ver.v[verIndex] = add(ver.v[verIndex], mul(deltaV, k));
+}
+
+__global__ void estimatePKernel(VertexDevice ver, float tstep) {
+	int verIndex = blockIdx.x * blockDim.x + threadIdx.x;
+	if (verIndex >= ver.N) return;
+	ver.p[verIndex] = add(ver.pos[verIndex], mul(ver.v[verIndex], tstep));
+}
 
 __global__ void projectCollisionConstraint(VertexDevice ver, ConstraintDevice cons, int count) {
 	int i = blockIdx.x * blockDim.x + threadIdx.x;

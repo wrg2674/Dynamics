@@ -12,6 +12,21 @@
 #include <device_launch_parameters.h>
 
 const int CCD_INTERVAL = 4;
+struct Float3x3 {
+	float3 row0;
+	float3 row1;
+	float3 row2;
+};
+
+
+__device__ float warpReduceSum(float value);
+__device__ float blockReduceSum(float value, float* warpSums);
+__device__ float3 warpReduceSum(float3 value);
+__device__ float3 blockReduceSum(float3 value, float3 * warpSums);
+__device__ Float3x3 makeFloat3x3(float3 row0, float3 row1, float3 row2);
+__device__ Float3x3 makeZeroFloat3x3();
+__device__ Float3x3 warpReduceSum(Float3x3 value);
+__device__ Float3x3 blockReduceSum(Float3x3 value, Float3x3* warpSums);
 
 __device__ void calcCentralDiff(VertexDevice ver, ConstraintDevice cons, int verIndex, int consIndex, float tstep, Type type, float3& result);
 __device__ void calcStretchGradient(VertexDevice ver, ConstraintDevice cons, int verIndex, int consIndex, float3& result);
@@ -38,13 +53,7 @@ __global__ void buildSelfPairsGPUKernel(VertexDevice ver, int2* outPairs, int* p
 
 
 __global__ void applyAverageDeltaToPredictedKernel(VertexDevice ver);
-__global__ void initDampingVariablesKernel(DampingDevice damp, float* d_totalMass);
-__global__ void computeDampingKernel(VertexDevice ver, DampingDevice damp, float* d_totalMass);
-__global__ void computeAngularDampingKernel(VertexDevice ver, DampingDevice damp);
-__global__ void finalizeCenterOfMassKernel(DampingDevice damp, float* d_totalMass);
-__global__ void finalizeOmegaKernel(DampingDevice damp);
-__global__ void applyDampingKernel(VertexDevice ver, DampingDevice damp, float k_damping);
-__global__ void estimatePKernel(VertexDevice ver, float tstep);
+
 __global__ void updateVerticesKernel(VertexDevice ver, float tstep);
 
 template <typename StretchProjector>

@@ -30,20 +30,34 @@ namespace xpbd {
 			return;
 		}
 		float3 force = *totalForce;
-		ver.pos[idx] = add(add(ver.pos[idx], mul(ver.v[idx], tstep)), mul(force, ver.invM[idx] * tstep * tstep));
+		float3 acceleration = mul(force, ver.invM[idx]);
+
+		ver.p[idx] = add(add(ver.pos[idx], mul(ver.v[idx], tstep)), mul(force, ver.invM[idx] * tstep * tstep));
 	}
 
 	__device__ float calcScaledCompliance(float stiff, float tstep) {
+		constexpr float minStiffness = 1e-6f;
+		if (!isfinite(stiff) || stiff < minStiffness || !isfinite(tstep) || tstep <= 0.0f) {
+			return CUDART_INF_F;
+		}
 		float compliance = 1.0f / stiff;
 		return compliance / ((tstep) * (tstep));
 	}
-
-	__device__ void projectStretchConstraint(VertexDevice ver, ConstraintDevice cons, int consIndex, float tstep, int iterationCount, float& lambda) {
+	__device__ float calcDampingGamma(float stiff, float dampingStiff, float tstep) {
+		if (!isfinite(stiff) || stiff <= 1e-8f || !isfinite(dampingStiff) || dampingStiff <= 0.0f || !isfinite(tstep) || tstep <= 0.0f) {
+			return 0.0f;
+		}
+		return dampingStiff / (stiff * tstep);
+	}
+	__device__ void projectStretchConstraint(VertexDevice ver, ConstraintDevice cons, int consIndex, float dampingStiff, float tstep, int iterationCount, float& lambda) {
 		float stiff = cons.stretch.k[consIndex];
 		if (stiff <= 1e-8f) {
 			return;
 		}
 		float scaledCompliance = calcScaledCompliance(stiff, tstep);
+
+		float gamma = calcDampingGamma(stiff, dampingStiff, tstep);
+
 		int2 ids = cons.stretch.ver[consIndex];
 		float3 p0 = ver.p[ids.x];
 		float3 p1 = ver.p[ids.y];
@@ -58,10 +72,18 @@ namespace xpbd {
 		}
 		float3 gradient0 = mul(diff, 1.0f / currentLength);
 		float3 gradient1 = mul(gradient0, -1.0f);
+		
+		float effectiveMass = ver.invM[ids.x] * dot(gradient0, gradient0) + ver.invM[ids.y] * dot(gradient1, gradient1);
+		if (!isfinite(effectiveMass) || effectiveMass <= 1e-8f) {
+			return;
+		}
+		float constraintDisplacement = dot(gradient0, sub(p0, ver.pos[ids.x])) + dot(gradient1, sub(p1, ver.pos[ids.y]));
 
-		float upper = -C - scaledCompliance * lambda;
-		float lower = ver.invM[ids.x] * dot(gradient0, gradient0) + ver.invM[ids.y] * dot(gradient1, gradient1) + scaledCompliance;
-
+		float upper = -C - scaledCompliance * lambda - gamma * constraintDisplacement;
+		float lower = (1.0f + gamma) * effectiveMass + scaledCompliance;
+		if (!isfinite(lower) || lower <= 1e-8f) {
+			return;
+		}
 		float deltaLambda = upper / lower;
 		float3 deltaPos0 = mul(gradient0, ver.invM[ids.x] * deltaLambda);
 		float3 deltaPos1 = mul(gradient1, ver.invM[ids.y] * deltaLambda);
@@ -73,12 +95,14 @@ namespace xpbd {
 		ver.p[ids.x] = p0;
 		ver.p[ids.y] = p1;
 	}
-	__device__ void projectBendingConstraint(VertexDevice ver, ConstraintDevice cons, int consIndex, float tstep, int iterationCount, float& lambda) {
+	__device__ void projectBendingConstraint(VertexDevice ver, ConstraintDevice cons, int consIndex, float dampingStiff, float tstep, int iterationCount, float& lambda) {
 		float stiff = cons.bending.k[consIndex];
-		if (stiff <= 1e-8f) {
+		if (!isfinite(stiff) || stiff <= 1e-8f) {
 			return;
 		}
 		float scaledCompliance = calcScaledCompliance(stiff, tstep);
+		float gamma = calcDampingGamma(stiff, dampingStiff, tstep);
+
 		int4 ids = cons.bending.ver[consIndex];
 
 		float3 p0 = ver.p[ids.x];
@@ -127,35 +151,24 @@ namespace xpbd {
 			C += 2.0f * CUDART_PI_F;
 		}
 
-		//if (currentAngle <= 1e-8f) {
-		//	return;
-		//}
-
-
-		float3 q2 = mul(add(cross(e, n1), mul(cross(n0, e), d)), 1.0f / n0Lower);
-		float3 q3 = mul(add(cross(e, n0), mul(cross(n1, e), d)), 1.0f / n1Lower);
-		float3 q1 = add(mul(add(cross(a, n1), mul(cross(n0, a), d)), -1.0f / n0Lower), mul(add(cross(b, n0), mul(cross(n1, b), d)), -1.0f / n1Lower));
-
-		float oneMinusDSquared = 1.0f - d * d;
-		if (oneMinusDSquared <= 1e-8f) {
+		if (!isfinite(C) || fabsf(C) <= 1e-8f) {
 			return;
 		}
-		float commonFactor = -1.0f / sqrt(oneMinusDSquared);
-		float3 gradient2 = mul(q2, commonFactor);
-		float3 gradient3 = mul(q3, commonFactor);
-		float3 gradient1 = mul(q1, commonFactor);
-		float3 gradient0 = mul(add(add(gradient2, gradient3), gradient1), -1.0f);
+		float eLengthSquared = eLength * eLength;
+		float3 gradient2 = mul(n0Upper, eLength / (n0Lower * n0Lower));
+		float3 gradient3 = mul(n1Upper, -eLength / (n1Lower * n1Lower));
+		float3 gradient0 = add(mul(gradient2, dot(sub(p2, p1), e) / eLengthSquared), mul(gradient3, dot(sub(p3, p1), e) / eLengthSquared));
+		float3 gradient1 = add(mul(gradient2, -dot(sub(p2, p0), e) / eLengthSquared), mul(gradient3, -dot(sub(p3, p0), e) / eLengthSquared));
 
-		float signedSin = dot(ehat, cross(angleN1, angleN0));
-		float gradientSign = signedSin > 0.0f ? -1.0f : 1.0f;
-		gradient0 = mul(gradient0, gradientSign);
-		gradient1 = mul(gradient1, gradientSign);
-		gradient2 = mul(gradient2, gradientSign);
-		gradient3 = mul(gradient3, gradientSign);
+		float effectiveMass = ver.invM[ids.x] * dot(gradient0, gradient0) + ver.invM[ids.y] * dot(gradient1, gradient1) + ver.invM[ids.z] * dot(gradient2, gradient2) + ver.invM[ids.w] * dot(gradient3, gradient3);
+		if (!isfinite(effectiveMass) || effectiveMass <= 1e-8f) {
+			return;
+		}
+		float constraintDisplacement = dot(gradient0, sub(p0, ver.pos[ids.x])) + dot(gradient1, sub(p1, ver.pos[ids.y])) + dot(gradient2, sub(p2, ver.pos[ids.z])) + dot(gradient3, sub(p3, ver.pos[ids.w]));
 
-		float upper = -C - scaledCompliance * lambda;
-		float lower = ver.invM[ids.x] * dot(gradient0, gradient0) + ver.invM[ids.y] * dot(gradient1, gradient1) + ver.invM[ids.z] * dot(gradient2, gradient2) + ver.invM[ids.w] * dot(gradient3, gradient3) + scaledCompliance;
-		if (lower <= 1e-8f) {
+		float upper = -C - scaledCompliance * lambda - gamma * constraintDisplacement;
+		float lower = (1.0f + gamma) * effectiveMass + scaledCompliance;
+		if (!isfinite(lower) || lower <= 1e-8f) {
 			return;
 		}
 		float deltaLambda = upper / lower;
@@ -298,17 +311,6 @@ namespace xpbd {
 
 		float3 bary = barycentric(p0, p1, p2, cons.selfCollision.q[i]);
 
-		//float b0 = clamp(bary.x, 0.0f, 1.0f);
-		//float b1 = clamp(bary.y, 0.0f, 1.0f);
-		//float b2 = clamp(bary.z, 0.0f, 1.0f);
-
-		//float bSum = b0 + b1 + b2;
-		//if (bSum < 1e-8f || !isfinite(bSum)) {
-		//	return;
-		//}
-		//b0 /= bSum;
-		//b1 /= bSum;
-		//b2 /= bSum;
 		if (!isfinite(bary.x) || !isfinite(bary.y) || !isfinite(bary.z)) {
 			return;
 		}
@@ -387,7 +389,7 @@ namespace xpbd {
 
 		cons.selfCollision.lambda[i] = 0.0f;
 	}
-	void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, CudaConstraintGraph& constraintIterationGraph, std::vector<float*>& vertexSet, std::vector<float*>& prevVertexSet, std::vector<unsigned int*>& indexSet, std::vector<int>& indexSetN, int* d_gridIndices, int* d_cellStart, int* d_cellEnd, unsigned int* d_gridHashes, float* d_totalMass, float3* d_totalForce, const int4* selfTris, const int* vertTriArray, const int* vertTriOffset, float cellSize, float selfThickness, float selfStiffness, int gridCapacity, float3* forces, float k_damping, float tstep, float currentTime, int iterationCount, int forceCount, int n, std::vector<int>& stretchColorOffset, std::vector<int>& bendingColorOffset, const float friction, const float restitution) {
+	void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, CudaConstraintGraph& constraintIterationGraph, std::vector<float*>& vertexSet, std::vector<float*>& prevVertexSet, std::vector<unsigned int*>& indexSet, std::vector<int>& indexSetN, int* d_gridIndices, int* d_cellStart, int* d_cellEnd, unsigned int* d_gridHashes, float* d_totalMass, float3* d_totalForce, const int4* selfTris, const int* vertTriArray, const int* vertTriOffset, float cellSize, float selfThickness, float selfStiffness, int gridCapacity, float3* forces, float stretchDamping, float bendingDamping, float tstep, float currentTime, int iterationCount, int forceCount, int n, std::vector<int>& stretchColorOffset, std::vector<int>& bendingColorOffset, const float friction, const float restitution) {
 		int threads = 256;
 		int blocks = (ver.N + threads - 1) / threads;
 
@@ -397,18 +399,6 @@ namespace xpbd {
 		predictPositionKernel << <blocks, threads >> > (ver, d_totalForce, tstep);
 		checkCudaKernel("predictPositionKernel launch failed");
 
-		//initDampingVariablesKernel << <1, 1 >> > (damp, d_totalMass);
-		//computeDampingKernel << <blocks, threads >> > (ver, damp, d_totalMass);
-		//finalizeCenterOfMassKernel << <1, 1 >> > (damp, d_totalMass);
-		//checkCudaKernel("finalizeCenterOfMassKernel launch failed");
-		//computeAngularDampingKernel << <blocks, threads >> > (ver, damp);
-		//checkCudaKernel("computeAngularDampingKernel launch failed");
-		//finalizeOmegaKernel << <1, 1 >> > (damp);
-		//checkCudaKernel("finalizeOmegaKernel launch failed");
-		//applyDampingKernel << <blocks, threads >> > (ver, damp, k_damping);
-		//checkCudaKernel("applyDampingKernel launch failed");
-		//estimatePKernel << <blocks, threads >> > (ver, tstep);
-		//checkCudaKernel("estimatePKernel launch failed");
 
 		int staticCollBlocks = (cons.collision.capacity + threads - 1) / threads;
 		int selfCollBlocks = (cons.selfCollision.capacity + threads - 1) / threads;
@@ -435,7 +425,7 @@ namespace xpbd {
 
 					int colorBlocks = (count + threads - 1) / threads;
 
-					solveStretchColorKernel << <colorBlocks, threads, 0, stream >> > (ver, cons, cons.stretch.color.constraintIds + start, count, tstep, iterationCount, xpbd::StretchProjector{ cons.stretch.lambda });
+					solveStretchColorKernel << <colorBlocks, threads, 0, stream >> > (ver, cons, cons.stretch.color.constraintIds + start, count, tstep, iterationCount, xpbd::StretchProjector{ cons.stretch.lambda, stretchDamping });
 				}
 
 				for (int color = 0; color < cons.bending.color.colorCount; color++) {
@@ -447,7 +437,7 @@ namespace xpbd {
 
 					int colorBlocks = (count + threads - 1) / threads;
 
-					solveBendingColorKernel << <colorBlocks, threads, 0, stream >> > (ver, cons, cons.bending.color.constraintIds + start, count, tstep, iterationCount, xpbd::BendingProjector{ cons.bending.lambda });
+					solveBendingColorKernel << <colorBlocks, threads, 0, stream >> > (ver, cons, cons.bending.color.constraintIds + start, count, tstep, iterationCount, xpbd::BendingProjector{ cons.bending.lambda, bendingDamping });
 				}
 				checkCuda(cudaMemsetAsync(cons.collision.n, 0, sizeof(int), stream), "cudaMemsetAsync collision.n failed");
 				});
@@ -482,7 +472,7 @@ namespace xpbd {
 				projectCollisionConstraint << <staticCollBlocks, threads >> > (ver, cons, tstep);
 				projectSelfCollisionConstraintKernel << <selfCollBlocks, threads >> > (ver, cons, tstep);
 
-				//applyAverageDeltaToPredictedKernel << <blocks, threads >> > (ver);
+				applyAverageDeltaToPredictedKernel << <blocks, threads >> > (ver);
 				checkCudaKernel("applyAverageDeltaToPredictedKernel launch failed");
 			}
 		}

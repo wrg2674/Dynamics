@@ -15,6 +15,13 @@ __device__ float calcScale(VertexDevice ver, ConstraintDevice cons, int verIndex
 __device__ float calcConstraintWeight(ConstraintDevice cons, int consIndex, Type type, int ns);
 __device__ void projectStretchConstraint(VertexDevice ver, ConstraintDevice cons, int consIndex, float tstep, int iterationCount);
 __device__ void projectBendingConstraint(VertexDevice ver, ConstraintDevice cons, int consIndex, float tstep, int iterationCount);
+__global__ void initDampingVariablesKernel(DampingDevice damp, float* d_totalMass);
+__global__ void computeDampingKernel(VertexDevice ver, DampingDevice damp, float* d_totalMass);
+__global__ void computeAngularDampingKernel(VertexDevice ver, DampingDevice damp);
+__global__ void finalizeCenterOfMassKernel(DampingDevice damp, float* d_totalMass);
+__global__ void finalizeOmegaKernel(DampingDevice damp);
+__global__ void applyDampingKernel(VertexDevice ver, DampingDevice damp, float k_damping);
+__global__ void estimatePKernel(VertexDevice ver, float tstep);
 __global__ void projectCollisionConstraint(VertexDevice ver, ConstraintDevice cons, int count);
 __global__ void projectSelfCollisionConstraintKernel(VertexDevice ver, ConstraintDevice cons);
 

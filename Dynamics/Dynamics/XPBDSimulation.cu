@@ -315,20 +315,24 @@ bool XPBDSimulation::initializeSimulationBuffers() {
 	}
 
 	glm::vec3 wind = glm::vec3(rand() % 2, 0, rand() % 2);
-	h_forces.push_back(wind);
+	glm::vec3 gravity = glm::vec3(0.0f, -9.8f, 0.0f);
+	//h_forces.push_back(wind);
+	h_forces.push_back(gravity);
 
 	checkCuda(cudaMalloc(&d_forces, sizeof(float3) * h_forces.size()), "cudaMalloc d_forces failed");
 	checkCuda(cudaMemcpy(d_forces, h_forces.data(), sizeof(float3) * h_forces.size(), cudaMemcpyHostToDevice), "cudaMemcpy d_forces failed");
 
 	checkCuda(cudaMalloc(&d_totalMass, sizeof(float)), "totalMass malloc");
 	checkCuda(cudaMalloc(&d_totalForce, sizeof(float3)), "cudaMalloc d_totalForce failed");
-
+	if (d_totalForce == nullptr) {
+		throw std::runtime_error("cudaMalloc succeeded but d_totalForce is null");
+	}
 	d_damp.partialCount = (vertexCount + DAMPING_REDUCTION_THREADS - 1) / DAMPING_REDUCTION_THREADS;
 	checkCuda(cudaMalloc(&d_damp.centerPartials, sizeof(DampingCenterPartial) * d_damp.partialCount), "cudaMalloc damp.centerPartials failed");
 	checkCuda(cudaMalloc(&d_damp.angularPartials, sizeof(DampingAngularPartial) * d_damp.partialCount), "cudaMalloc damp.angularPartials failed");
 
-	checkCuda(cudaEventCreate(&simStartEvent), "cudaEventCreate simStartEvent failed");
-	checkCuda(cudaEventCreate(&simEndEvent), "cudaEventCreate simEndEvent failed");
+	//checkCuda(cudaEventCreate(&simStartEvent), "cudaEventCreate simStartEvent failed");
+	//checkCuda(cudaEventCreate(&simEndEvent), "cudaEventCreate simEndEvent failed");
 
 	checkCuda(cudaMalloc(&d_gridHashes, sizeof(unsigned int) * vertexCount), "cudaMalloc d_gridHashes failed");
 	checkCuda(cudaMalloc(&d_gridIndices, sizeof(int) * vertexCount), "cudaMalloc d_gridIndices failed");
@@ -343,6 +347,8 @@ void XPBDSimulation::step(float currentTime) {
 
 	simulateSubsteps(currentTime);
 
+	checkCuda(cudaDeviceSynchronize(),"XPBD GPU execution failed");
+
 	unmapClothVBO();
 }
 
@@ -355,7 +361,10 @@ void XPBDSimulation::mapClothVBO() {
 	d_ver.pos = d_mappedVboPos;
 }
 void XPBDSimulation::solveOneSubstep(float dtSub, float currentTime) {
-	xpbd::solve(d_ver, d_cons, d_damp, constraintIterationGraph, vertexSet, prevVertexSet, indexSet, indexSetN, d_gridIndices, d_cellStart, d_cellEnd, d_gridHashes, d_totalMass, d_totalForce, d_selfTris, d_vertTriArray, d_vertTriOffset, config.selfCollisionRadius, config.selfCollisionThickness, config.selfCollisionK, config.gridCapacity, d_forces, config.dampingK, dtSub, currentTime, config.iterationCount, static_cast<int>(h_forces.size()), vertexCount, h_cons.stretch.color.colorOffset, h_cons.bending.color.colorOffset, config.friction, config.restitution);
+	if (d_totalForce == nullptr) {
+		throw std::runtime_error("d_totalForce is null before xpbd::solve");
+	}
+	xpbd::solve(d_ver, d_cons, d_damp, constraintIterationGraph, vertexSet, prevVertexSet, indexSet, indexSetN, d_gridIndices, d_cellStart, d_cellEnd, d_gridHashes, d_totalMass, d_totalForce, d_selfTris, d_vertTriArray, d_vertTriOffset, config.selfCollisionRadius, config.selfCollisionThickness, config.selfCollisionK, config.gridCapacity, d_forces, config.stretchDamping, config.bendingDamping, dtSub, currentTime, config.iterationCount, static_cast<int>(h_forces.size()), vertexCount, h_cons.stretch.color.colorOffset, h_cons.bending.color.colorOffset, config.friction, config.restitution);
 }
 void XPBDSimulation::unmapClothVBO() {
 	checkCuda(cudaGraphicsUnmapResources(1, &cudaVBO), "cudaGraphicsUnmapResources(frame) failed");
@@ -367,7 +376,7 @@ void XPBDSimulation::unmapClothVBO() {
 void XPBDSimulation::simulateSubsteps(float currentTime) {
 	float dtSub = config.timestep / static_cast<float>(config.substep);
 
-	checkCuda(cudaEventRecord(simStartEvent), "cudaEventRecord simStartEvent failed");
+	//checkCuda(cudaEventRecord(simStartEvent), "cudaEventRecord simStartEvent failed");
 
 	for (int s = 0; s < config.substep; s++) {
 		float subAlpha = static_cast<float>(s + 1) / static_cast<float>(config.substep);
@@ -455,15 +464,15 @@ void XPBDSimulation::release() {
 void XPBDSimulation::releaseCudaResources() {
 	constraintIterationGraph.release();
 
-	if (simStartEvent != nullptr) {
-		cudaEventDestroy(simStartEvent);
-		simStartEvent = nullptr;
-	}
+	//if (simStartEvent != nullptr) {
+	//	cudaEventDestroy(simStartEvent);
+	//	simStartEvent = nullptr;
+	//}
 
-	if (simEndEvent != nullptr) {
-		cudaEventDestroy(simEndEvent);
-		simEndEvent = nullptr;
-	}
+	//if (simEndEvent != nullptr) {
+	//	cudaEventDestroy(simEndEvent);
+	//	simEndEvent = nullptr;
+	//}
 
 	if (cudaVBO != nullptr) {
 		cudaGraphicsUnregisterResource(cudaVBO);

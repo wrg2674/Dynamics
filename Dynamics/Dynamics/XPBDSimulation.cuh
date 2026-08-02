@@ -117,8 +117,8 @@ private:
 	int* d_cellStart = nullptr;
 	int* d_cellEnd = nullptr;
 
-	cudaEvent_t simStartEvent = nullptr;
-	cudaEvent_t simEndEvent = nullptr;
+	//cudaEvent_t simStartEvent = nullptr;
+	//cudaEvent_t simEndEvent = nullptr;
 
 	float3* d_mappedVboPos = nullptr;
 
