@@ -325,7 +325,7 @@ __device__ void createCollisionConstraint(ConstraintDevice cons, int3 tri, int v
 	cons.collision.q[idx] = q;
 	cons.collision.normal[idx] = normal;
 	cons.collision.colliderVelocity[idx] = colliderVelocity;
-	cons.collision.compliance[idx] = 0.0f;
+	cons.collision.compliance[idx] = 1.0f / k;
 	cons.collision.lambda[idx] = 0.0f;
 
 }
@@ -457,7 +457,7 @@ __global__ void detectStaticCollisionKernel(VertexDevice ver, ConstraintDevice c
 	}
 	float3 p = ver.p[verIdx];
 
-	const float thickness = 0.025f; // 0.0025f
+	const float thickness = 0.0025f;
 
 	float bestDist = 1e30f;
 	int3 bestTri = make_int3(0, 0, 0);
