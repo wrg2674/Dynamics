@@ -28,6 +28,6 @@ struct SimulationConfig {
 	int maxSelfPairs = 50000;
 
 	float floorBaseY = -1.5f;
-	float floorAmplitude = 2.0f;
+	float floorAmplitude = 1.0f;
 	float floorSpeed = 0.5f;
 };

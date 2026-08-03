@@ -451,14 +451,6 @@ namespace xpbd {
 		}
 		for (int iter = 0; iter < iterationCount; iter++) {
 			constraintIterationGraph.launch();
-
-			clearVectorKernel << <blocks, threads >> > (ver.dp, ver.N);
-			checkCudaKernel("self clearVectorKernel launch failed");
-			clearIntKernel << <blocks, threads >> > (ver.dpCount, ver.N);
-			checkCudaKernel("self clearIntKernel launch failed");
-			projectSelfCollisionConstraintKernel << <selfCollBlocks, threads >> > (ver, cons, tstep);
-			applyAverageDeltaToPredictedKernel << <blocks, threads >> > (ver);
-			checkCudaKernel("self applyAverageDeltaToPredictedKernel launch failed");
 			bool runCCD = (iter == 0) || ((iter % CCD_INTERVAL) == 0);
 			for (int i = 0; i < vertexSet.size(); i++) {
 				int triangleCount = indexSetN[i] / 3;
@@ -478,7 +470,7 @@ namespace xpbd {
 				checkCudaKernel("clearIntKernel ver.dpCount launch failed");
 
 				projectCollisionConstraint << <staticCollBlocks, threads >> > (ver, cons, tstep);
-				//projectSelfCollisionConstraintKernel << <selfCollBlocks, threads >> > (ver, cons, tstep);
+				projectSelfCollisionConstraintKernel << <selfCollBlocks, threads >> > (ver, cons, tstep);
 
 				applyAverageDeltaToPredictedKernel << <blocks, threads >> > (ver);
 				checkCudaKernel("applyAverageDeltaToPredictedKernel launch failed");

@@ -457,7 +457,7 @@ __global__ void detectStaticCollisionKernel(VertexDevice ver, ConstraintDevice c
 	}
 	float3 p = ver.p[verIdx];
 
-	const float thickness = 0.025f; // 0.0025f
+	const float thickness = 0.0025f; // 0.0025f
 
 	float bestDist = 1e30f;
 	int3 bestTri = make_int3(0, 0, 0);
