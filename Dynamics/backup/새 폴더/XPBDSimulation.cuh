@@ -29,7 +29,9 @@ public:
 	void step(float currentTime);
 	void render(RenderContext& renderContext);
 	void release();
-
+	bool beginMouseDrag(double mouseX, double mouseY, const glm::mat4& projection, const glm::mat4& view, unsigned int screenWidth, unsigned int screenHeight);
+	void updateMouseDrag(double mouseX, double mouseY, const glm::mat4& projection, const glm::mat4& view, unsigned int screenWidth, unsigned int screenHeight);
+	void endMouseDrag();
 private:
 	bool initializeHostData();
 	bool initializeClothRenderResources();
@@ -55,6 +57,11 @@ private:
 	CudaConstraintGraph constraintIterationGraph;
 	SimulationConfig config;
 
+	bool mouseDragActive = false;
+	int mouseDragVertex = -1;
+	float mouseDragDepth = 0.0f;
+	float3 mouseDragTarget = make_float3(0.0f, 0.0f, 0.0f);
+	float3* d_mouseDragLambda = nullptr;
 	int vertexCount = 0;
 
 	std::vector<glm::vec3> h_pos;

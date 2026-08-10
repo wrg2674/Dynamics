@@ -34,29 +34,56 @@ namespace xpbd {
 
 		ver.p[idx] = add(add(ver.pos[idx], mul(ver.v[idx], tstep)), mul(force, ver.invM[idx] * tstep * tstep));
 	}
-
-	__device__ float calcScaledCompliance(float stiff, float tstep) {
-		constexpr float minStiffness = 1e-6f;
-		if (!isfinite(stiff) || stiff < minStiffness || !isfinite(tstep) || tstep <= 0.0f) {
-			return CUDART_INF_F;
-		}
-		float compliance = 1.0f / stiff;
-		return compliance / ((tstep) * (tstep));
-	}
-	__device__ float calcDampingGamma(float stiff, float dampingStiff, float tstep) {
-		if (!isfinite(stiff) || stiff <= 1e-8f || !isfinite(dampingStiff) || dampingStiff <= 0.0f || !isfinite(tstep) || tstep <= 0.0f) {
-			return 0.0f;
-		}
-		return dampingStiff / (stiff * tstep);
-	}
-	__device__ void projectStretchConstraint(VertexDevice ver, ConstraintDevice cons, int consIndex, float dampingStiff, float tstep, int iterationCount, float& lambda) {
-		float stiff = cons.stretch.k[consIndex];
-		if (stiff <= 1e-8f) {
+	__global__ void projectMouseDragConstraintKernel(VertexDevice ver, int vertexIndex, float3 target, float compliance, float tstep, float3* lambda) {
+		if (blockIdx.x != 0 || threadIdx.x != 0) {
 			return;
 		}
-		float scaledCompliance = calcScaledCompliance(stiff, tstep);
+		if (vertexIndex < 0 || vertexIndex >= ver.N) {
+			return;
+		}
+		if (lambda == nullptr || !isfinite(compliance) || compliance < 0.0f || !isfinite(tstep) || tstep <= 0.0f) {
+			return;
+		}
+		float invM = ver.invM[vertexIndex];
+		if (invM <= 0.0f) {
+			return;
+		}
+		float scaledCompliance = calcScaledCompliance(compliance, tstep);
+		float denominator = invM + scaledCompliance;
+		if (!isfinite(denominator) || denominator <= 1.0e-8f) {
+			return;
+		}
+		float3 p = ver.p[vertexIndex];
+		float3 C = sub(p, target);
+		float3 oldLambda = *lambda;
 
-		float gamma = calcDampingGamma(stiff, dampingStiff, tstep);
+		float3 numerator = sub(mul(C, -1.0f), mul(oldLambda, scaledCompliance));
+		float3 deltaLambda = mul(numerator, 1.0f / denominator);
+
+		if (!isfinite(deltaLambda.x) || !isfinite(deltaLambda.y) || !isfinite(deltaLambda.z)) {
+			return;
+		}
+		*lambda = add(oldLambda, deltaLambda);
+		ver.p[vertexIndex] = add(p, mul(deltaLambda, invM));
+	}
+	__device__ float calcScaledCompliance(float compliance, float tstep) {
+		if (!isfinite(compliance) || compliance < 0.0f || !isfinite(tstep) || tstep <= 0.0f) {
+			return CUDART_INF_F;
+		}
+		return compliance / ((tstep) * (tstep));
+	}
+	__device__ float calcDampingGamma(float compliance, float dampingStiff, float tstep) {
+		if (!isfinite(compliance) || compliance <= 1e-8f || !isfinite(dampingStiff) || dampingStiff <= 0.0f || !isfinite(tstep) || tstep <= 0.0f) {
+			return 0.0f;
+		}
+		return compliance * dampingStiff / tstep;
+	}
+	__device__ void projectStretchConstraint(VertexDevice ver, ConstraintDevice cons, int consIndex, float dampingStiff, float tstep, int iterationCount, float& lambda) {
+		float compliance = cons.stretch.k[consIndex];
+
+		float scaledCompliance = calcScaledCompliance(compliance, tstep);
+
+		float gamma = calcDampingGamma(compliance, dampingStiff, tstep);
 
 		int2 ids = cons.stretch.ver[consIndex];
 		float3 p0 = ver.p[ids.x];
@@ -96,12 +123,12 @@ namespace xpbd {
 		ver.p[ids.y] = p1;
 	}
 	__device__ void projectBendingConstraint(VertexDevice ver, ConstraintDevice cons, int consIndex, float dampingStiff, float tstep, int iterationCount, float& lambda) {
-		float stiff = cons.bending.k[consIndex];
-		if (!isfinite(stiff) || stiff <= 1e-8f) {
+		float compliance = cons.bending.k[consIndex];
+		if (!isfinite(compliance)) {
 			return;
 		}
-		float scaledCompliance = calcScaledCompliance(stiff, tstep);
-		float gamma = calcDampingGamma(stiff, dampingStiff, tstep);
+		float scaledCompliance = calcScaledCompliance(compliance, tstep);
+		float gamma = calcDampingGamma(compliance, dampingStiff, tstep);
 
 		int4 ids = cons.bending.ver[consIndex];
 
@@ -389,7 +416,7 @@ namespace xpbd {
 
 		cons.selfCollision.lambda[i] = 0.0f;
 	}
-	void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, CudaConstraintGraph& constraintIterationGraph, std::vector<float*>& vertexSet, std::vector<float*>& prevVertexSet, std::vector<unsigned int*>& indexSet, std::vector<int>& indexSetN, int* d_gridIndices, int* d_cellStart, int* d_cellEnd, unsigned int* d_gridHashes, float* d_totalMass, float3* d_totalForce, const int4* selfTris, const int* vertTriArray, const int* vertTriOffset, float cellSize, float selfThickness, float selfStiffness, int gridCapacity, float3* forces, float stretchDamping, float bendingDamping, float tstep, float currentTime, int iterationCount, int forceCount, int n, std::vector<int>& stretchColorOffset, std::vector<int>& bendingColorOffset, const float friction, const float restitution) {
+	void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, CudaConstraintGraph& constraintIterationGraph, std::vector<float*>& vertexSet, std::vector<float*>& prevVertexSet, std::vector<unsigned int*>& indexSet, std::vector<int>& indexSetN, int* d_gridIndices, int* d_cellStart, int* d_cellEnd, unsigned int* d_gridHashes, float* d_totalMass, float3* d_totalForce, const int4* selfTris, const int* vertTriArray, const int* vertTriOffset, float cellSize, float selfThickness, float selfStiffness, int gridCapacity, float3* forces, float stretchDamping, float bendingDamping, float tstep, float currentTime, int iterationCount, int forceCount, int n, std::vector<int>& stretchColorOffset, std::vector<int>& bendingColorOffset, const float friction, const float restitution, bool mouseDragActive, int mouseDragVertex, float3 mouseDragTarget, float mouseDragCompliance, float3* mouseDragLambda) {
 		int threads = 256;
 		int blocks = (ver.N + threads - 1) / threads;
 
@@ -399,7 +426,9 @@ namespace xpbd {
 		predictPositionKernel << <blocks, threads >> > (ver, d_totalForce, tstep);
 		checkCudaKernel("predictPositionKernel launch failed");
 
-
+		if (mouseDragActive && mouseDragLambda != nullptr) {
+			checkCuda(cudaMemset(mouseDragLambda, 0, sizeof(float3)), "cudaMemset mouseDragLambda failed");
+		}
 		int staticCollBlocks = (cons.collision.capacity + threads - 1) / threads;
 		int selfCollBlocks = (cons.selfCollision.capacity + threads - 1) / threads;
 		updateSpatialHash(ver, cellSize, d_gridHashes, d_gridIndices, d_cellStart, d_cellEnd, gridCapacity);
@@ -450,7 +479,15 @@ namespace xpbd {
 			checkCuda(cudaMemset(cons.bending.lambda, 0, sizeof(float) * cons.bending.n), "cudaMemset bending.lambda failed");
 		}
 		for (int iter = 0; iter < iterationCount; iter++) {
+			if (mouseDragActive) {
+				projectMouseDragConstraintKernel << <1, 1 >> > (ver, mouseDragVertex, mouseDragTarget, mouseDragCompliance, tstep, mouseDragLambda);
+				checkCudaKernel("projectMouseDragConstraintKernel pre-solve failed");
+			}
 			constraintIterationGraph.launch();
+			if (mouseDragActive) {
+				projectMouseDragConstraintKernel << <1, 1 >> > (ver, mouseDragVertex, mouseDragTarget, mouseDragCompliance, tstep, mouseDragLambda);
+				checkCudaKernel("projectMouseDragConstraintKernel post-solve failed");
+			}
 			bool runCCD = (iter == 0) || ((iter % CCD_INTERVAL) == 0);
 			for (int i = 0; i < vertexSet.size(); i++) {
 				int triangleCount = indexSetN[i] / 3;

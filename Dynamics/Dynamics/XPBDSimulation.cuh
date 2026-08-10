@@ -61,7 +61,7 @@ private:
 	int mouseDragVertex = -1;
 	float mouseDragDepth = 0.0f;
 	float3 mouseDragTarget = make_float3(0.0f, 0.0f, 0.0f);
-
+	float3* d_mouseDragLambda = nullptr;
 	int vertexCount = 0;
 
 	std::vector<glm::vec3> h_pos;

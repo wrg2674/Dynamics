@@ -154,13 +154,13 @@ bool XPBDSimulation::initialize() {
 bool XPBDSimulation::initializeHostData() {
 	buildClothPositions(h_pos, h_v, h_p, h_dp, h_invM, config.rows, config.cols);
 
-	buildStretchConstraints(h_cons, h_pos, config.rows, config.cols, config.stretchK);
+	buildStretchConstraints(h_cons, h_pos, config.rows, config.cols, config.stretchCompliance);
 
 	buildTriangleIndices(triangleIndices, config.rows, config.cols);
 
 	buildVertexTriangleAdjacency(triangleIndices, vertexCount, h_vertTriArray, h_vertTriOffset);
 
-	buildBendingConstraints_AllSharedEdges(triangleIndices, h_pos, h_cons, config.bendingK);
+	buildBendingConstraints_AllSharedEdges(triangleIndices, h_pos, h_cons, config.bendingCompliance);
 
 	buildStretchColorBatches(h_cons);
 	buildBendingColorBatches(h_cons);
@@ -391,6 +391,9 @@ bool XPBDSimulation::initializeSimulationBuffers() {
 	checkCuda(cudaMalloc(&d_selfPairs, sizeof(int2) * config.maxSelfPairs), "d_selfPairs malloc");
 	checkCuda(cudaMalloc(&d_selfPairCount, sizeof(int)), "d_selfPairCount malloc");
 
+	checkCuda(cudaMalloc(&d_mouseDragLambda, sizeof(float3)), "cudaMalloc d_mouseDragLambda failed");
+	checkCuda(cudaMemset(d_mouseDragLambda, 0, sizeof(float3)), "cudaMemset d_mouseDragLambda failed");
+
 	std::vector<int4> h_selfTris;
 
 	for (size_t t = 0; t + 2 < triangleIndices.size(); t += 3) {
@@ -458,7 +461,7 @@ void XPBDSimulation::solveOneSubstep(float dtSub, float currentTime) {
 	if (d_totalForce == nullptr) {
 		throw std::runtime_error("d_totalForce is null before xpbd::solve");
 	}
-	xpbd::solve(d_ver, d_cons, d_damp, constraintIterationGraph, vertexSet, prevVertexSet, indexSet, indexSetN, d_gridIndices, d_cellStart, d_cellEnd, d_gridHashes, d_totalMass, d_totalForce, d_selfTris, d_vertTriArray, d_vertTriOffset, config.selfCollisionRadius, config.selfCollisionThickness, config.selfCollisionK, config.gridCapacity, d_forces, config.stretchDamping, config.bendingDamping, dtSub, currentTime, config.iterationCount, static_cast<int>(h_forces.size()), vertexCount, h_cons.stretch.color.colorOffset, h_cons.bending.color.colorOffset, config.friction, config.restitution ,mouseDragActive, mouseDragVertex, mouseDragTarget);
+	xpbd::solve(d_ver, d_cons, d_damp, constraintIterationGraph, vertexSet, prevVertexSet, indexSet, indexSetN, d_gridIndices, d_cellStart, d_cellEnd, d_gridHashes, d_totalMass, d_totalForce, d_selfTris, d_vertTriArray, d_vertTriOffset, config.selfCollisionRadius, config.selfCollisionThickness, config.selfCollisionK, config.gridCapacity, d_forces, config.stretchDamping, config.bendingDamping, dtSub, currentTime, config.iterationCount, static_cast<int>(h_forces.size()), vertexCount, h_cons.stretch.color.colorOffset, h_cons.bending.color.colorOffset, config.friction, config.restitution ,mouseDragActive, mouseDragVertex, mouseDragTarget, config.mouseDragCompliance, d_mouseDragLambda);
 }
 void XPBDSimulation::unmapClothVBO() {
 	checkCuda(cudaGraphicsUnmapResources(1, &cudaVBO), "cudaGraphicsUnmapResources(frame) failed");
@@ -572,6 +575,9 @@ void XPBDSimulation::releaseCudaResources() {
 		cudaGraphicsUnregisterResource(cudaVBO);
 		cudaVBO = nullptr;
 	}
+
+	cudaFree(d_mouseDragLambda);
+	d_mouseDragLambda = nullptr;
 
 	cudaFree(d_totalMass);
 	cudaFree(d_forces);
