@@ -4,6 +4,7 @@
 #include <cstdlib>
 
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_inverse.hpp>
 
 #include "ClothBuilder.h"
 #include "CudaUtils.cuh"
@@ -25,8 +26,101 @@ namespace {
 	void launchUpdateFloor(float* d_floorVertices, float floorY) {
 		updateFloorKernel << <1, 1 >> > (d_floorVertices, floorY);
 	}
-}
+	bool makeMouseRay(double mouseX, double mouseY, const glm::mat4& projection, const glm::mat4& view, unsigned int screenWidth, unsigned int screenHeight, glm::vec3& rayOrigin, glm::vec3& rayDirection) {
+		if (screenWidth == 0 || screenHeight == 0) {
+			return false;
+		}
+		float ndcX = 2.0f * static_cast<float>(mouseX) / static_cast<float>(screenWidth) - 1.0f;
+		float ndcY = 1.0f - 2.0f * static_cast<float>(mouseY) / static_cast<float>(screenHeight);
 
+		glm::mat4 inverseViewProjection = glm::inverse(projection * view);
+		glm::vec4 nearPoint = inverseViewProjection * glm::vec4(ndcX, ndcY, -1.0f, 1.0f);
+		glm::vec4 farPoint = inverseViewProjection * glm::vec4(ndcX, ndcY, 1.0f, 1.0f);
+
+		if (fabsf(nearPoint.w) < 1.0e-8f || fabsf(farPoint.w) < 1.0e-8f) {
+			return false;
+		}
+		nearPoint /= nearPoint.w;
+		farPoint /= farPoint.w;
+
+		rayOrigin = glm::vec3(nearPoint);
+
+		glm::vec3 direction = glm::vec3(farPoint) - rayOrigin;
+		float directionLengthSquared = glm::dot(direction, direction);
+
+		if (directionLengthSquared < 1.0e-12f) {
+			return false;
+		}
+		rayDirection = direction / sqrtf(directionLengthSquared);
+		return true;
+	}
+}
+bool XPBDSimulation::beginMouseDrag(double mouseX, double mouseY, const glm::mat4& projection, const glm::mat4& view, unsigned int screenWidth, unsigned int screenHeight) {
+	glm::vec3 rayOrigin;
+	glm::vec3 rayDirection;
+
+	if (!makeMouseRay(mouseX, mouseY, projection, view, screenWidth, screenHeight, rayOrigin, rayDirection)) {
+		return false;
+	}
+	std::vector<float3> currentPositions(vertexCount);
+	checkCuda(cudaMemcpy(currentPositions.data(), d_ver.p, sizeof(float3) * vertexCount, cudaMemcpyDeviceToHost), "cudaMemcpy mouse drag positions failed");
+	
+	float pickRadiusSquared = config.mousePickRadius * config.mousePickRadius;
+	float bestDistanceSquared = pickRadiusSquared;
+	float bestDepth = 0.0f;
+	int bestVertex = -1;
+
+	for (int i = 0; i < vertexCount; i++) {
+		if (h_invM[i] == 0.0f) {
+			continue;
+		}
+		const float3& p = currentPositions[i];
+		glm::vec3 vertexPosition(p.x, p.y, p.z);
+
+		float depth = glm::dot(vertexPosition - rayOrigin, rayDirection);
+		if (depth <= 0.0f) {
+			continue;
+		}
+		glm::vec3 closestPointOnRay = rayOrigin + depth * rayDirection;
+		glm::vec3 difference = vertexPosition - closestPointOnRay;
+		float distanceSquared = glm::dot(difference, difference);
+
+		if (distanceSquared < bestDistanceSquared) {
+			bestDistanceSquared = distanceSquared;
+			bestDepth = depth;
+			bestVertex = i;
+		}
+	}
+	if (bestVertex < 0) {
+		return false;
+	}
+	mouseDragActive = true;
+	mouseDragVertex = bestVertex;
+	mouseDragDepth = bestDepth;
+
+	glm::vec3 target = rayOrigin + mouseDragDepth * rayDirection;
+	mouseDragTarget = make_float3(target.x, target.y, target.z);
+
+	return true;
+}
+void XPBDSimulation::updateMouseDrag(double mouseX, double mouseY, const glm::mat4& projection, const glm::mat4& view, unsigned int screenWidth, unsigned int screenHeight) {
+	if (!mouseDragActive) {
+		return;
+	}
+	glm::vec3 rayOrigin;
+	glm::vec3 rayDirection;
+
+	if (!makeMouseRay(mouseX, mouseY, projection, view, screenWidth, screenHeight, rayOrigin, rayDirection)) {
+		return;
+	}
+	glm::vec3 target = rayOrigin + mouseDragDepth * rayDirection;
+	mouseDragTarget = make_float3(target.x, target.y, target.z);
+}
+void XPBDSimulation::endMouseDrag() {
+	mouseDragActive = false;
+	mouseDragVertex = -1;
+	mouseDragDepth = 0.0f;
+}
 XPBDSimulation::XPBDSimulation(const SimulationConfig& config_) : config(config_) {
 	vertexCount = config.rows * config.cols;
 	currentFloorY = config.floorBaseY;
@@ -364,7 +458,7 @@ void XPBDSimulation::solveOneSubstep(float dtSub, float currentTime) {
 	if (d_totalForce == nullptr) {
 		throw std::runtime_error("d_totalForce is null before xpbd::solve");
 	}
-	xpbd::solve(d_ver, d_cons, d_damp, constraintIterationGraph, vertexSet, prevVertexSet, indexSet, indexSetN, d_gridIndices, d_cellStart, d_cellEnd, d_gridHashes, d_totalMass, d_totalForce, d_selfTris, d_vertTriArray, d_vertTriOffset, config.selfCollisionRadius, config.selfCollisionThickness, config.selfCollisionK, config.gridCapacity, d_forces, config.stretchDamping, config.bendingDamping, dtSub, currentTime, config.iterationCount, static_cast<int>(h_forces.size()), vertexCount, h_cons.stretch.color.colorOffset, h_cons.bending.color.colorOffset, config.friction, config.restitution);
+	xpbd::solve(d_ver, d_cons, d_damp, constraintIterationGraph, vertexSet, prevVertexSet, indexSet, indexSetN, d_gridIndices, d_cellStart, d_cellEnd, d_gridHashes, d_totalMass, d_totalForce, d_selfTris, d_vertTriArray, d_vertTriOffset, config.selfCollisionRadius, config.selfCollisionThickness, config.selfCollisionK, config.gridCapacity, d_forces, config.stretchDamping, config.bendingDamping, dtSub, currentTime, config.iterationCount, static_cast<int>(h_forces.size()), vertexCount, h_cons.stretch.color.colorOffset, h_cons.bending.color.colorOffset, config.friction, config.restitution ,mouseDragActive, mouseDragVertex, mouseDragTarget);
 }
 void XPBDSimulation::unmapClothVBO() {
 	checkCuda(cudaGraphicsUnmapResources(1, &cudaVBO), "cudaGraphicsUnmapResources(frame) failed");

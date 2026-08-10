@@ -34,7 +34,20 @@ namespace xpbd {
 
 		ver.p[idx] = add(add(ver.pos[idx], mul(ver.v[idx], tstep)), mul(force, ver.invM[idx] * tstep * tstep));
 	}
-
+	__global__ void projectMouseDragConstraintKernel(VertexDevice ver, int vertexIndex, float3 target) {
+		if (blockIdx.x != 0 || threadIdx.x != 0) {
+			return;
+		}
+		if (vertexIndex < 0 || vertexIndex >= ver.N) {
+			return;
+		}
+		if (ver.invM[vertexIndex] == 0.0f) {
+			return;
+		}
+		ver.p[vertexIndex] = target;
+		ver.pos[vertexIndex] = target;
+		ver.v[vertexIndex] = make_float3(0.0f, 0.0f, 0.0f);
+	}
 	__device__ float calcScaledCompliance(float stiff, float tstep) {
 		constexpr float minStiffness = 1e-6f;
 		if (!isfinite(stiff) || stiff < minStiffness || !isfinite(tstep) || tstep <= 0.0f) {
@@ -389,7 +402,7 @@ namespace xpbd {
 
 		cons.selfCollision.lambda[i] = 0.0f;
 	}
-	void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, CudaConstraintGraph& constraintIterationGraph, std::vector<float*>& vertexSet, std::vector<float*>& prevVertexSet, std::vector<unsigned int*>& indexSet, std::vector<int>& indexSetN, int* d_gridIndices, int* d_cellStart, int* d_cellEnd, unsigned int* d_gridHashes, float* d_totalMass, float3* d_totalForce, const int4* selfTris, const int* vertTriArray, const int* vertTriOffset, float cellSize, float selfThickness, float selfStiffness, int gridCapacity, float3* forces, float stretchDamping, float bendingDamping, float tstep, float currentTime, int iterationCount, int forceCount, int n, std::vector<int>& stretchColorOffset, std::vector<int>& bendingColorOffset, const float friction, const float restitution) {
+	void solve(VertexDevice ver, ConstraintDevice cons, DampingDevice damp, CudaConstraintGraph& constraintIterationGraph, std::vector<float*>& vertexSet, std::vector<float*>& prevVertexSet, std::vector<unsigned int*>& indexSet, std::vector<int>& indexSetN, int* d_gridIndices, int* d_cellStart, int* d_cellEnd, unsigned int* d_gridHashes, float* d_totalMass, float3* d_totalForce, const int4* selfTris, const int* vertTriArray, const int* vertTriOffset, float cellSize, float selfThickness, float selfStiffness, int gridCapacity, float3* forces, float stretchDamping, float bendingDamping, float tstep, float currentTime, int iterationCount, int forceCount, int n, std::vector<int>& stretchColorOffset, std::vector<int>& bendingColorOffset, const float friction, const float restitution, bool mouseDragActive, int mouseDragVertex, float3 mouseDragTarget) {
 		int threads = 256;
 		int blocks = (ver.N + threads - 1) / threads;
 
@@ -450,7 +463,15 @@ namespace xpbd {
 			checkCuda(cudaMemset(cons.bending.lambda, 0, sizeof(float) * cons.bending.n), "cudaMemset bending.lambda failed");
 		}
 		for (int iter = 0; iter < iterationCount; iter++) {
+			if (mouseDragActive) {
+				projectMouseDragConstraintKernel << <1, 1 >> > (ver, mouseDragVertex, mouseDragTarget);
+				checkCudaKernel("projectMouseDragConstraintKernel pre-solve failed");
+			}
 			constraintIterationGraph.launch();
+			if (mouseDragActive) {
+				projectMouseDragConstraintKernel << <1, 1 >> > (ver, mouseDragVertex, mouseDragTarget);
+				checkCudaKernel("projectMouseDragConstraintKernel post-solve failed");
+			}
 			bool runCCD = (iter == 0) || ((iter % CCD_INTERVAL) == 0);
 			for (int i = 0; i < vertexSet.size(); i++) {
 				int triangleCount = indexSetN[i] / 3;

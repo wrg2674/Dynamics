@@ -36,10 +36,27 @@ int main() {
 		}
 		double fpsMeasureStartTime = static_cast<double>(app.getCurrentTime());
 		int renderedFrameCount = 0;
+		bool leftMouseWasDown = false;
 
 		while (!app.shouldClose()) {
 			app.beginFrame();
 			app.processInput();
+			renderContext.updateMatrices(app.getCamera(), config.screenWidth, config.screenHeight);
+			double mouseX = 0.0;
+			double mouseY = 0.0;
+
+			glfwGetCursorPos(app.getWindow(), &mouseX, &mouseY);
+			bool leftMouseIsDown = glfwGetMouseButton(app.getWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
+			if (leftMouseIsDown && !leftMouseWasDown) {
+				simulation.beginMouseDrag(mouseX, mouseY, renderContext.getProjection(), renderContext.getView(), config.screenWidth, config.screenHeight);
+			}
+			else if (leftMouseIsDown) {
+				simulation.updateMouseDrag(mouseX, mouseY, renderContext.getProjection(), renderContext.getView(), config.screenWidth, config.screenHeight);
+			}
+			else if (!leftMouseIsDown && leftMouseWasDown) {
+				simulation.endMouseDrag();
+			}
+			leftMouseWasDown = leftMouseIsDown;
 
 			simulation.step(app.getCurrentTime());
 

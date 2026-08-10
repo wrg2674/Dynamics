@@ -2,15 +2,16 @@
 struct SimulationConfig {
 	unsigned int screenWidth = 800;
 	unsigned int screenHeight = 600;
+	float mousePickRadius = 0.08f;
 
 	float timestep = 0.01f;
-	int substep = 4;
+	int substep = 2;
 	int iterationCount = 10;
 
 	int rows = 50;
 	int cols = 50;
 
-	float stretchK = 9.2e5f; 
+	float stretchK = 9.2e4f; 
 	float bendingK = 1.0f;
 	float dampingK = 1.0f; // PBD
 	float stretchDamping = 1.0e1f;

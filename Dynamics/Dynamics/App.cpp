@@ -42,7 +42,9 @@ bool App::initialize(unsigned int width_,unsigned int height_,const char* title)
 	glfwSetCursorPosCallback(window, mouseCallback);
 	glfwSetScrollCallback(window, scrollCallback);
 
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+
+	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetWindowPos(window, -1000, 50);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -153,6 +155,11 @@ void App::scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
 }
 
 void App::handleMouseMove(double xpos_, double ypos_) {
+
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) != GLFW_PRESS) {
+		firstMouse = true;
+		return;
+	}
 	float xpos = static_cast<float>(xpos_);
 	float ypos = static_cast<float>(ypos_);
 

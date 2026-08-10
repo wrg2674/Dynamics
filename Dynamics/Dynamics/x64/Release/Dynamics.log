@@ -128,7 +128,7 @@ C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cub/warp/specia
 C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cuda_runtime_api.h(12266): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
   C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\thrust/detail/config/cpp_dialect.h:117: warning: Thrust requires at least C++ 17.C++ 14 is deprecated but still supported.C++ 14 support will be removed in a future release.Define THRUST_IGNORE_DEPRECATED_CPP_DIALECT to suppress this message.
   C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/include\cub/util_cpp_dialect.cuh:129: warning: CUB requires at least C++ 17.C++ 14 is deprecated but still supported.C++ 14 support will be removed in a future release.Define CUB_IGNORE_DEPRECATED_CPP_DIALECT to suppress this message.
-D:\wrg\Github\Dynamics\Dynamics\Dynamics\XPBDSolver.cu(407): warning #177-D: variable "zero" was declared but never referenced
+D:\wrg\Github\Dynamics\Dynamics\Dynamics\XPBDSolver.cu(420): warning #177-D: variable "zero" was declared but never referenced
     		int zero = 0;
     		    ^
   
@@ -364,7 +364,7 @@ D:\wrg\Github\Dynamics\Dynamics\include\glm\detail\_vectorize.hpp(104): warning 
   
 CUDACOMPILE : nvcc warning : Support for offline compilation for architectures prior to '<compute/sm/lto>_75' will be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
   XPBDSolver.cu
-  tmpxft_00003018_00000000-7_XPBDSolver.cudafe1.cpp
+  tmpxft_000028a8_00000000-7_XPBDSolver.cudafe1.cpp
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(3131): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\include\driver_types.h(1331): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
@@ -400,7 +400,8 @@ CUDALINK : nvcc warning : Support for offline compilation for architectures prio
   PBDSolver.cu.obj
   Utility.cu.obj
   코드를 생성하고 있습니다.
-  Previous IPDB and IOBJ mismatch, fall back to full compilation.
-  All 896 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  0 of 897 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.
   Dynamics.vcxproj -> D:\wrg\Github\Dynamics\Dynamics\x64\Release\Dynamics.exe
